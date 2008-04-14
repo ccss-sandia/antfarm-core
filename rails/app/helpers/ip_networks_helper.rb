@@ -1,0 +1,2 @@
+module IpNetworksHelper
+end

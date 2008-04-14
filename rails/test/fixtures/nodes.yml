@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  certainty_factor: 1.5
+  name: MyString
+  type: MyString
+
+two:
+  certainty_factor: 1.5
+  name: MyString
+  type: MyString

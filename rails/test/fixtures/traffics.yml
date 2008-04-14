@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  from_layer3_interface_id: 1
+  to_layer3_interface_id: 1
+  port: 1
+  description: MyString
+  timestamp: MyString
+
+two:
+  from_layer3_interface_id: 1
+  to_layer3_interface_id: 1
+  port: 1
+  description: MyString
+  timestamp: MyString

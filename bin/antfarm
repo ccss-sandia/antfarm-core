@@ -1,0 +1,79 @@
+#! /usr/bin/ruby
+
+# Copyright 2008 Sandia National Laboratories
+# Original Author: Bryan T. Richardson <btricha@sandia.gov>
+
+require File.dirname(__FILE__) + "/../config/boot"
+
+require 'find'
+require 'ostruct'
+require 'scparse'
+require 'dbmanage'
+
+@opts = OpenStruct.new
+@opts.environment = 'antfarm'
+@opts.log_level = 'warn'
+
+app = SCParse::ScriptCommandParser.new('antfarm')
+app.options = OptionParser.new do |opts|
+  opts.on('-e ENV', "Antfarm environment to use") do |env|
+    @opts.environment = env
+  end
+  opts.on('-l LEVEL', [:debug, :info, :warn, :error, :fatal], "Antfarm log level to use (debug, info, warn, error, fatal)") do |level|
+    # Level comes in as a Symbol -- must convert it to a String
+    # since ENV array doesn't seem to like symbols
+    @opts.log_level = level.to_s
+  end
+end
+app.set_prerequisites_block do |cmd|
+  bootstrap
+end
+
+app.add_command(SCParse::HelpCommand.new)
+app.add_command(Antfarm::DBManager.new)
+
+rails = SCParse::Script.new('rails', 'script/server', false)
+rails.set_execution_block do |cmd,args|
+  ARGV.clear
+  ARGV << "-e"
+  ARGV << @opts.environment
+  ARGV.concat(args)
+  load cmd.path
+end
+app.add_command(rails)
+
+Find.find(ANTFARM_ROOT + "/lib/scripts/") do |path|
+  if File.file?(path) && path =~ /rb$/
+    name = File.basename(path, ".*")
+    script = SCParse::Script.new(name, path)
+    script.set_execution_block do |cmd,args|
+      ARGV.clear
+      ARGV.concat(args)
+      load cmd.path
+    end
+    app.add_command(script)
+  end
+end
+
+if ENV['ANTFARM_SCRIPTS_DIR']
+  Find.find(ENV['ANTFARM_SCRIPTS_DIR']) do |path|
+    if File.file?(path) && path =~ /rb$/
+      name = File.basename(path, ".*")
+      script = SCParse::Script.new(name, path)
+      script.set_execution_block do |cmd,args|
+        ARGV.clear
+        ARGV.concat(args)
+        load cmd.path
+      end
+      app.add_command(script)
+    end
+  end
+end
+
+def bootstrap
+  ENV['ANTFARM_ENV'] = @opts.environment
+  ENV['ANTFARM_LOG_LEVEL'] = @opts.log_level
+  require ANTFARM_ROOT + "/config/environment"
+end
+
+app.parse!

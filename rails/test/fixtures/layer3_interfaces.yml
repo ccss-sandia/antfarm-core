@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  certainty_factor: 1.5
+  layer2_interface: 
+  layer3_network: 
+  protocol: MyString
+
+two:
+  certainty_factor: 1.5
+  layer2_interface: 
+  layer3_network: 
+  protocol: MyString
