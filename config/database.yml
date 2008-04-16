@@ -1,6 +1,0 @@
-# DO NOT DELETE THE 'antfarm' ENVIRONMENT
-
---- 
-antfarm: 
-  adapter: sqlite3
-  database: db/antfarm.db

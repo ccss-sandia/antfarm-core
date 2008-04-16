@@ -55,8 +55,8 @@ Find.find(ANTFARM_ROOT + "/lib/scripts/") do |path|
   end
 end
 
-if ENV['ANTFARM_SCRIPTS_DIR']
-  Find.find(ENV['ANTFARM_SCRIPTS_DIR']) do |path|
+if defined? USER_DIR
+  Find.find("#{USER_DIR}/scripts") do |path|
     if File.file?(path) && path =~ /rb$/
       name = File.basename(path, ".*")
       script = SCParse::Script.new(name, path)

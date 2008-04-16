@@ -46,7 +46,6 @@ module SCParse
       @commands = CommandHash.new unless @commands
       @commands[command.name] = command
       command.parent = self
-      command.init
     end
 
     def scparser
@@ -68,8 +67,6 @@ module SCParse
     def has_commands?
       return @commands.nil? ? false : true
     end
-
-    def init; end
 
     def set_prerequisites_block(&block)
       @prerequisites_block = block

@@ -33,23 +33,18 @@ module Antfarm
       $LOAD_PATH.uniq!
     end
 
-    def initialize_database
-      config = YAML::load(ERB.new(IO.read(File.expand_path(ANTFARM_ROOT + "/config/database.yml"))).result)
-      config.each_value do |value|
-        value['database'] = File.expand_path("#{ANTFARM_ROOT}/#{value['database']}")
-      end
+    #######
+    private
+    #######
 
-      begin
-        ActiveRecord::Base.configurations = config
-        ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
-      rescue ActiveRecord::AdapterNotSpecified
-        puts "A database configuration does not exist for this environment.  Please add a database first."
-        exit
-      end
+    def initialize_database
+      config = { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => db_file_to_use } }
+      ActiveRecord::Base.configurations = config
+      ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
     end
 
     def initialize_logger
-      logger = Logger.new(File.expand_path(ANTFARM_ROOT + "/log/#{ANTFARM_ENV}.log"))
+      logger = Logger.new(log_file_to_use)
       logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
       ActiveRecord::Base.logger = logger
     end
@@ -59,6 +54,22 @@ module Antfarm
         if File.file?(path) && path =~ /rb$/
           require File.basename(path, ".*")
         end
+      end
+    end
+
+    def db_file_to_use
+      if defined? USER_DIR
+        return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
+      else
+        return File.expand_path("#{ANTFARM_ROOT}/db/#{ANTFARM_ENV}.db")
+      end
+    end
+
+    def log_file_to_use
+      if defined? USER_DIR
+        return File.expand_path("#{USER_DIR}/log/#{ANTFARM_ENV}.log")
+      else
+        return File.expand_path("#{ANTFARM_ROOT}/log/#{ANTFARM_ENV}.log")
       end
     end
   end
@@ -71,6 +82,10 @@ module Antfarm
       self.load_paths = default_load_paths
       self.log_level = default_log_level
     end
+
+    #######
+    private
+    #######
 
     def default_load_paths
       paths = Array.new

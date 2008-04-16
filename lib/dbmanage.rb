@@ -1,6 +1,8 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 
+require 'fileutils'
+
 module Antfarm
 
   class DBManager < SCParse::Command
@@ -8,39 +10,32 @@ module Antfarm
       super('db')
 
       @opts = OpenStruct.new
-      @opts.adapter = "sqlite3"
-      @opts.add = false
       @opts.clean = false
-      @opts.environment = nil
+      @opts.initialize = false
       @opts.migrate = false
       @opts.remove = false
       @opts.reset = false
 
       @options = OptionParser.new do |opts|
-        opts.on('--add ENV', "Add new database for the given environment") do |env|
-          @opts.add = true
-          @opts.environment = env
+        opts.on('--initialize', "Initialize user's environment") do
+          @opts.initialize = true
         end
-#       opts.on('--clean', "Clean the application's environment") { @opts.clean = true }
-#       opts.on('--adapter ADAPTER', "Database adapter to use (only useful when adding new Antfarm environment)") do |adapter|
-#         @opts.db_adapter = adapter
-#       end
-#       opts.on('--remove ENV', "Remove existing database for the given environment") do |env|
-#         @opts.remove = true
-#         @opts.environment = env
-#       end
-        opts.on('--migrate', "Migrate tables in database") do |version|
+        opts.on('--clean', "Clean the application's environment (remove all)") { @opts.clean = true }
+        opts.on('--remove', "Remove existing database and log file for the given environment") do
+          @opts.remove = true
+        end
+        opts.on('--migrate', "Migrate tables in database") do
           @opts.migrate = true
         end
-#       opts.on('--reset', "Reset tables in database") { @opts.reset = true }
+        opts.on('--reset', "Reset tables in database and clear the log file for the given environment") { @opts.reset = true }
       end
     end
 
     def execute(args)
       super(args)
 
-      if @opts.add
-        db_add
+      if @opts.initialize
+        init
       elsif @opts.remove
         db_remove
       elsif @opts.clean
@@ -56,78 +51,85 @@ module Antfarm
     private
     #######
 
-    def db_add
-      if @opts.environment
-        config = YAML::load(ERB.new(IO.read(File.expand_path(ANTFARM_ROOT + "/config/database.yml"))).result)
-
-        temp = Hash.new
-        temp['adapter'] = @opts.adapter
-        temp['database'] = "db/#{@opts.environment}.db"
-        config[@opts.environment] = temp
-
-        File.open(File.expand_path(ANTFARM_ROOT + "/config/database.yml"), 'w') do |output|
-          output.puts "# DO NOT DELETE THE 'antfarm' ENVIRONMENT"
-          output.puts
-          YAML::dump(config, output)
-        end
-      end
+    def init
+      FileUtils.makedirs("#{ENV['HOME']}/.antfarm/db")
+      FileUtils.makedirs("#{ENV['HOME']}/.antfarm/log")
+      FileUtils.makedirs("#{ENV['HOME']}/.antfarm/scripts")
     end
 
     def db_remove
-      if @opts.environment
-        config = YAML::load(ERB.new(IO.read(File.expand_path(ANTFARM_ROOT + "/config/database.yml"))).result)
-
-        config.delete(@opts.environment)
-
-        File.open(ANTFARM_ROOT + "/config/database.yml", 'w') do |output|
-          output.puts "# DO NOT DELETE THE 'antfarm' ENVIRONMENT"
-          output.puts
-          YAML::dump(config, output)
-        end
-      end
+      `rm #{log_file_to_use}` if File.exists?(log_file_to_use)
+      `rm #{db_file_to_use}` if File.exists?(db_file_to_use)
     end
 
     def db_clean
-      config = YAML.load_file(ANTFARM_ROOT + "/config/database.yml")
-      config.each_pair do |key,value|
-        `rm #{ANTFARM_ROOT}/log/#{key}.log` if File.exists?(ANTFARM_ROOT + "/log/#{key}.log")
-        `rm #{ANTFARM_ROOT}/#{value['database']}` if File.exists?(ANTFARM_ROOT + "/#{value['database']}")
+      Find.find(db_dir_to_use) do |path|
+        if File.basename(path) == 'migrate'
+          Find.prune
+        else
+          `rm #{path}` unless File.basename(path) == 'db' || File.basename(path) == 'schema.rb'
+        end
       end
-      `rm #{ANTFARM_ROOT}/db/schema.rb` if File.exists?(ANTFARM_ROOT + "/db/schema.rb")
+
+      Find.find(log_dir_to_use) do |path|
+        `rm #{path}` unless File.basename(path) == 'log'
+      end
     end
 
-    def db_migrate(version = nil)
-      if File.exists?(ANTFARM_ROOT + "/db/schema.rb")
-        load(ANTFARM_ROOT + "/db/schema.rb")
+    def db_migrate
+      if File.exists?(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
+        load(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
       else
         puts "A schema file did not exist. Running migrations instead."
 
         ActiveRecord::Migration.verbose = true
-        ActiveRecord::Migrator.migrate(ANTFARM_ROOT + "/db/migrate/", version ? version.to_i : nil)
+        ActiveRecord::Migrator.migrate(ANTFARM_ROOT + "/db/migrate/", nil)
         db_schema_dump if ActiveRecord::Base.schema_format == :ruby
       end
     end
 
     def db_reset
-      db_drop
+      db_remove
       db_migrate
-    end
-
-    def db_drop
-      config = YAML.load_file(ANTFARM_ROOT + "/config/database.yml")[ANTFARM_ENV]
-
-      if File.exists?(ANTFARM_ROOT + "/" + config['database'])
-        `rm #{ANTFARM_ROOT + "/" + config['database']}`
-      else
-        puts "The database #{config['database']} does not exist."
-      end
     end
 
     def db_schema_dump
       require 'active_record/schema_dumper'
 
-      File.open(ANTFARM_ROOT + "/db/schema.rb", "w") do |file|
+      File.open(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"), "w") do |file|
         ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+      end
+    end
+
+    def db_file_to_use
+      if defined? USER_DIR
+        return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
+      else
+        return File.expand_path("#{ANTFARM_ROOT}/db/#{ANTFARM_ENV}.db")
+      end
+    end
+
+    def db_dir_to_use
+      if defined? USER_DIR
+        return File.expand_path("#{USER_DIR}/db")
+      else
+        return File.expand_path("#{ANTFARM_ROOT}/db")
+      end
+    end
+
+    def log_file_to_use
+      if defined? USER_DIR
+        return File.expand_path("#{USER_DIR}/log/#{ANTFARM_ENV}.log")
+      else
+        return File.expand_path("#{ANTFARM_ROOT}/log/#{ANTFARM_ENV}.log")
+      end
+    end
+
+    def log_dir_to_use
+      if defined? USER_DIR
+        return File.expand_path("#{USER_DIR}/log")
+      else
+        return File.expand_path("#{ANTFARM_ROOT}/log")
       end
     end
   end
