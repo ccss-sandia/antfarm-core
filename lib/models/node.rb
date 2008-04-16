@@ -15,11 +15,9 @@ class Node < ActiveRecord::Base
   # "type" to describe the type of node this is.
   set_inheritance_column :table_type
 
-  validates_presence_of :certainty_factor
+  before_save :clamp_certainty_factor
 
-  def before_save
-    self.certainty_factor = Antfarm.clamp(self.certainty_factor)
-  end
+  validates_presence_of :certainty_factor
 
   def self.node_named(name)
     unless name
@@ -58,4 +56,13 @@ class Node < ActiveRecord::Base
       return nodes
     end
   end
+
+  #######
+  private
+  #######
+
+  def clamp_certainty_factor
+    self.certainty_factor = Antfarm.clamp(self.certainty_factor)
+  end
 end
+

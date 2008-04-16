@@ -9,6 +9,10 @@ class IpNetwork < ActiveRecord::Base
   belongs_to :layer3_network, :foreign_key => "id"
   belongs_to :private_network
 
+  before_validation :set_private_address
+  before_create :create_layer3_network
+  after_create :merge_layer3_networks
+
   # Added to make it possible to specify what to set for the protocol for the
   # Layer3Network that will be associated with this network.
   attr_writer :layer3_network_protocol, :private_network_description
@@ -36,20 +40,22 @@ class IpNetwork < ActiveRecord::Base
     end
   end
 
-  # Any variables native to this object that are being validated against must
-  # be present before the before_create method is called. This is why I have
-  # moved the private address check here. If I decide to validate associations
-  # in the future, then the creation of associated objects will probably have
-  # to be moved here as well.
-# def before_validation_on_create
-#   if @ip_net.private_address?
-#     self.private = true
-#     # TODO: Create private network objects.
-#   end
-# end
+  # This is for ActiveScaffold
+  def to_label
+    return address
+  end
 
-  # Things to do before saving a newly created network to the database.
-  def before_create
+  #######
+  private
+  #######
+
+  def set_private_address
+    self.private = @ip_net.private_address?
+    # TODO: Create private network objects.
+    return true
+  end
+
+  def create_layer3_network
     # If we get to this point, then we know a network does not
     # already exist because validate gets called before
     # this method and we're checking for existing networks in
@@ -72,20 +78,13 @@ class IpNetwork < ActiveRecord::Base
       end
 
       self.layer3_network = layer3_network
-
-      self.private = true if @ip_net.private_address?
     end
   end
 
-  # Things to do after a newly created network has been saved to the database.
-  def after_create
+  def merge_layer3_networks
     # Merge any existing networks already in the database that are
     # sub_networks of this new network.
     Layer3Network.merge(self.layer3_network, 0.80)
   end
-
-  # This is for ActiveScaffold
-  def to_label
-    return address
-  end
 end
+

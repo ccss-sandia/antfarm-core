@@ -61,3 +61,4 @@ class Traffic < ActiveRecord::Base
     end
   end
 end
+

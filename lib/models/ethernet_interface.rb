@@ -7,6 +7,8 @@ require 'layer2_interface'
 class EthernetInterface < ActiveRecord::Base
   belongs_to :layer2_interface, :foreign_key => "id"
 
+  before_create :create_layer2_interface
+
   # Added to make it possible to specify what to set for the media type and 
   # either the node object or the node type for the Layer2Interface that
   # will be associated with this interface.
@@ -21,8 +23,16 @@ class EthernetInterface < ActiveRecord::Base
 
   validates_presence_of :address
 
-  # Things to do before saving a newly created interface to the database.
-  def before_create
+  # This is for ActiveScaffold
+  def to_label
+    return address
+  end
+
+  #######
+  private
+  #######
+
+  def create_layer2_interface
     unless self.layer2_interface
       layer2_interface = Layer2Interface.new :certainty_factor => 0.75
       layer2_interface.media_type = @layer2_interface_media_type if @layer2_interface_media_type
@@ -44,9 +54,5 @@ class EthernetInterface < ActiveRecord::Base
       self.layer2_interface = layer2_interface
     end
   end
-
-  # This is for ActiveScaffold
-  def to_label
-    return address
-  end
 end
+

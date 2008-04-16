@@ -10,3 +10,4 @@ class PrivateNetwork < ActiveRecord::Base
     return "Private Network"
   end
 end
+

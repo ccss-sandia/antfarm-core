@@ -17,11 +17,9 @@ class Layer3Network < ActiveRecord::Base
   has_many :layer3_interfaces
   has_one  :ip_network, :foreign_key => "id", :dependent => :destroy
 
-  validates_presence_of :certainty_factor
+  before_save :clamp_certainty_factor
 
-  def before_save
-    self.certainty_factor = Antfarm.clamp(self.certainty_factor)
-  end
+  validates_presence_of :certainty_factor
 
   # This method takes the given network and merges with it any sub_networks of the given
   # network.
@@ -112,4 +110,13 @@ class Layer3Network < ActiveRecord::Base
     return "#{id} -- #{ip_network.address}" if ip_network
     return "#{id} -- Generic Layer3 Network"
   end
+
+  #######
+  private
+  #######
+
+  def clamp_certainty_factor
+    self.certainty_factor = Antfarm.clamp(self.certainty_factor)
+  end
 end
+

@@ -11,6 +11,8 @@ require 'layer3_network'
 class IpInterface < ActiveRecord::Base
   belongs_to :layer3_interface, :foreign_key => "id"
 
+  before_create :create_layer3_interface
+
   # Added to make it possible to specify what to set for the Layer3Network and/or
   # the Layer2Interface, as well as what to set for either the node object or the
   # node type for the Layer2Interface that will be associated with this interface.
@@ -48,8 +50,16 @@ class IpInterface < ActiveRecord::Base
     end
   end
 
-  # Things to do before saving a newly created interface to the database.
-  def before_create
+  # This is for ActiveScaffold
+  def to_label
+    return address
+  end
+
+  #######
+  private
+  #######
+
+  def create_layer3_interface
     # If we get to this point, then we know an interface does not
     # already exist because validate gets called before
     # this method and we're checking for existing interfaces in
@@ -121,9 +131,5 @@ class IpInterface < ActiveRecord::Base
       self.layer3_interface = layer3_interface
     end
   end
-
-  # This is for ActiveScaffold
-  def to_label
-    return address
-  end
 end
+

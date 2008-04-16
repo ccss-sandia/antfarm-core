@@ -24,6 +24,7 @@ module Antfarm
     def process
       initialize_database
       initialize_logger
+      require_models
     end
 
     def set_load_path
@@ -45,6 +46,14 @@ module Antfarm
       logger = Logger.new(File.expand_path(ANTFARM_ROOT + "/log/#{ANTFARM_ENV}.log"))
       logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
       ActiveRecord::Base.logger = logger
+    end
+
+    def require_models
+      Find.find(ANTFARM_ROOT + "/lib/models") do |path|
+        if File.file?(path) && path =~ /rb$/
+          require File.basename(path, ".*")
+        end
+      end
     end
   end
 
@@ -74,3 +83,4 @@ module Antfarm
   end
 
 end
+

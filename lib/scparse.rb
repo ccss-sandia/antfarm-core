@@ -266,7 +266,6 @@ module SCParse
       end
 
     rescue RuntimeError, OptionParser::ParseError => error
-      raise
       @main.commands['help'].execute([]) if @main.commands['help']
       exit
     end
@@ -274,3 +273,4 @@ module SCParse
   end
 
 end
+

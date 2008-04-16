@@ -1,9 +1,6 @@
 # DO NOT DELETE THE 'antfarm' ENVIRONMENT
 
 --- 
-pcap: 
-  adapter: sqlite3
-  database: db/pcap.db
 antfarm: 
   adapter: sqlite3
   database: db/antfarm.db
