@@ -38,8 +38,14 @@ module Antfarm
       config.each_value do |value|
         value['database'] = File.expand_path("#{ANTFARM_ROOT}/#{value['database']}")
       end
-      ActiveRecord::Base.configurations = config
-      ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
+
+      begin
+        ActiveRecord::Base.configurations = config
+        ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
+      rescue ActiveRecord::AdapterNotSpecified
+        puts "A database configuration does not exist for this environment.  Please add a database first."
+        exit
+      end
     end
 
     def initialize_logger
