@@ -2,20 +2,19 @@ require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s| 
   s.name = "ANTFARM"
-  s.version = "0.1.0"
+  s.version = "0.2.0"
   s.author = "Michael Berg & Bryan Richardson"
   s.email = "mjberg@sandia.gov & btricha@sandia.gov"
 # s.homepage = "http://antfarm.rubyforge.org"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
   s.files = FileList["{bin,config,db,lib,log,rails}/**/*"].to_a
-# s.require_path = "lib"
-# s.autorequire = "name"
   s.executables << 'antfarm'
-# s.test_files = FileList["{test}/**/*test.rb"].to_a
-  s.has_rdoc = false
-# s.extra_rdoc_files = ["README"]
+  s.has_rdoc = true
+  s.extra_rdoc_files = ["README"]
   s.add_dependency("rails", ">= 2.0.2")
+  s.add_dependency("sqlite3-ruby", ">= 1.2.1")
+  s.requirements << 'libsqlite3-dev'
 end
  
 Rake::GemPackageTask.new(spec) do |pkg| 
