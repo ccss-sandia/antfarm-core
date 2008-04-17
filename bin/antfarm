@@ -32,7 +32,7 @@ end
 app.add_command(SCParse::HelpCommand.new)
 app.add_command(Antfarm::DBManager.new)
 
-rails = SCParse::Script.new('rails', 'script/server', false)
+rails = SCParse::Script.new('rails', 'script/server')
 rails.set_execution_block do |cmd,args|
   ARGV.clear
   ARGV << "-e"

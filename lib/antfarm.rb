@@ -36,6 +36,38 @@ module Antfarm
     return Time.now.utc.xmlschema
   end
 
+  def self.db_file_to_use
+    if defined? USER_DIR
+      return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
+    else
+      return File.expand_path("#{ANTFARM_ROOT}/db/#{ANTFARM_ENV}.db")
+    end
+  end
+
+  def self.db_dir_to_use
+    if defined? USER_DIR
+      return File.expand_path("#{USER_DIR}/db")
+    else
+      return File.expand_path("#{ANTFARM_ROOT}/db")
+    end
+  end
+
+  def self.log_file_to_use
+    if defined? USER_DIR
+      return File.expand_path("#{USER_DIR}/log/#{ANTFARM_ENV}.log")
+    else
+      return File.expand_path("#{ANTFARM_ROOT}/log/#{ANTFARM_ENV}.log")
+    end
+  end
+
+  def self.log_dir_to_use
+    if defined? USER_DIR
+      return File.expand_path("#{USER_DIR}/log")
+    else
+      return File.expand_path("#{ANTFARM_ROOT}/log")
+    end
+  end
+
   # Some explanation to having @netmask and such:
   #   If you create a new IPAddr object and you include
   #   the network information for the IP address, IPAddr

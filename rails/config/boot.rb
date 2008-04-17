@@ -21,9 +21,7 @@ module Rails
     # database located in the application. This will probably only
     # work with file-based databases...
     def database_configuration
-      config = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
-      config[RAILS_ENV]['database'] = "../#{config[RAILS_ENV]['database']}"
-      return config
+      return { RAILS_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm.db_file_to_use } }
     end
   end
 

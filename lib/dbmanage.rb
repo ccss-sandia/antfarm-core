@@ -58,12 +58,12 @@ module Antfarm
     end
 
     def db_remove
-      `rm #{log_file_to_use}` if File.exists?(log_file_to_use)
-      `rm #{db_file_to_use}` if File.exists?(db_file_to_use)
+      `rm #{Antfarm.log_file_to_use}` if File.exists?(Antfarm.log_file_to_use)
+      `rm #{Antfarm.db_file_to_use}` if File.exists?(Antfarm.db_file_to_use)
     end
 
     def db_clean
-      Find.find(db_dir_to_use) do |path|
+      Find.find(Antfarm.db_dir_to_use) do |path|
         if File.basename(path) == 'migrate'
           Find.prune
         else
@@ -71,7 +71,7 @@ module Antfarm
         end
       end
 
-      Find.find(log_dir_to_use) do |path|
+      Find.find(Antfarm.log_dir_to_use) do |path|
         `rm #{path}` unless File.basename(path) == 'log'
       end
     end
@@ -98,38 +98,6 @@ module Antfarm
 
       File.open(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"), "w") do |file|
         ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
-      end
-    end
-
-    def db_file_to_use
-      if defined? USER_DIR
-        return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
-      else
-        return File.expand_path("#{ANTFARM_ROOT}/db/#{ANTFARM_ENV}.db")
-      end
-    end
-
-    def db_dir_to_use
-      if defined? USER_DIR
-        return File.expand_path("#{USER_DIR}/db")
-      else
-        return File.expand_path("#{ANTFARM_ROOT}/db")
-      end
-    end
-
-    def log_file_to_use
-      if defined? USER_DIR
-        return File.expand_path("#{USER_DIR}/log/#{ANTFARM_ENV}.log")
-      else
-        return File.expand_path("#{ANTFARM_ROOT}/log/#{ANTFARM_ENV}.log")
-      end
-    end
-
-    def log_dir_to_use
-      if defined? USER_DIR
-        return File.expand_path("#{USER_DIR}/log")
-      else
-        return File.expand_path("#{ANTFARM_ROOT}/log")
       end
     end
   end

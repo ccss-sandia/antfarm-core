@@ -22,9 +22,9 @@ module Antfarm
     end
 
     def process
+      load_requirements
       initialize_database
       initialize_logger
-      load_requirements
     end
 
     def set_load_path
@@ -38,13 +38,13 @@ module Antfarm
     #######
 
     def initialize_database
-      config = { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => db_file_to_use } }
+      config = { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm.db_file_to_use } }
       ActiveRecord::Base.configurations = config
       ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
     end
 
     def initialize_logger
-      logger = Logger.new(log_file_to_use)
+      logger = Logger.new(Antfarm.log_file_to_use)
       logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
       ActiveRecord::Base.logger = logger
     end
@@ -52,28 +52,6 @@ module Antfarm
     def load_requirements
       require 'antfarm'
       require 'models'
-
-#     Find.find(ANTFARM_ROOT + "/lib/models") do |path|
-#       if File.file?(path) && path =~ /rb$/
-#         require File.basename(path, ".*")
-#       end
-#     end
-    end
-
-    def db_file_to_use
-      if defined? USER_DIR
-        return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
-      else
-        return File.expand_path("#{ANTFARM_ROOT}/db/#{ANTFARM_ENV}.db")
-      end
-    end
-
-    def log_file_to_use
-      if defined? USER_DIR
-        return File.expand_path("#{USER_DIR}/log/#{ANTFARM_ENV}.log")
-      else
-        return File.expand_path("#{ANTFARM_ROOT}/log/#{ANTFARM_ENV}.log")
-      end
     end
   end
 

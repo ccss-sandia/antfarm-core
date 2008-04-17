@@ -27,16 +27,15 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
-  config.load_paths += %W( #{RAILS_ROOT}/../lib )
-  config.load_paths += %W( #{RAILS_ROOT}/../lib/models )
-
-  # I've added this line it such that we use the database configuration file from
-  # the antfarm application.
-  config.database_configuration_file = RAILS_ROOT + "/../config/database.yml"
+  config.load_paths += %W( #{ANTFARM_ROOT}/lib )
+  config.load_paths += %W( #{ANTFARM_ROOT}/lib/models )
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
   # config.log_level = :debug
+
+  # Changed log path to be in log directory of application
+  config.log_path = "#{Antfarm.log_dir_to_use}/#{RAILS_ENV}_rails.log"
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
