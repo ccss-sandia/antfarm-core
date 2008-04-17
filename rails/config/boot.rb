@@ -15,11 +15,8 @@ module Rails
       return File.expand_path("#{RAILS_ROOT}/config/environments/development.rb")
     end
 
-    # I've overridden the database_configuration method so as to be
-    # able to intercept the database configuration data and append
-    # to the database file location a '../' such that Rails uses the
-    # database located in the application. This will probably only
-    # work with file-based databases...
+    # I've overridden the database_configuration method in order to
+    # get the Rails application to use the correct database.
     def database_configuration
       return { RAILS_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm.db_file_to_use } }
     end
