@@ -3,10 +3,6 @@
 # Copyright 2008 -- Sandia National Laboratories
 # by Aura Morris (almorri@sandia.gov)
 
-require 'find'
-require 'ipaddrext'
-require 'vlan'
-
 module Aura
 
   class SwParser

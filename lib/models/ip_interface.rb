@@ -2,12 +2,6 @@
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 # Derived From: code written by Michael Berg <mjberg@sandia.gov>
 
-require 'ethernet_interface'
-require 'ipaddrext'
-require 'ip_network'
-require 'layer3_interface'
-require 'layer3_network'
-
 class IpInterface < ActiveRecord::Base
   belongs_to :layer3_interface, :foreign_key => "id"
 

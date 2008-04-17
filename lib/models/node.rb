@@ -2,10 +2,6 @@
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 # Derived From: code written by Michael Berg <mjberg@sandia.gov>
 
-require 'antfarm'
-require 'layer2_interface'
-require 'layer3_interface'
-
 class Node < ActiveRecord::Base
   has_many :layer2_interfaces
   has_many :layer3_interfaces, :through => :layer2_interfaces

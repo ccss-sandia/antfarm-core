@@ -3,9 +3,6 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 
-require 'find'
-require 'ip_interface'
-
 def print_help
   puts "Usage: antfarm [options] parse-cisco-network-objects [directories ...] [files ...]"
 end

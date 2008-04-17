@@ -3,8 +3,6 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 
-require 'find'
-
 def print_help
   puts "Usage: antfarm [options] parse-cisco-ports tcp|udp [directories ...] [files ...]"
 end

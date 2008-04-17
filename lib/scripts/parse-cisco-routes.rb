@@ -3,10 +3,6 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 
-require 'find'
-require 'layer3_interface'
-require 'traffic'
-
 def print_help
   puts "Usage: antfarm [options] parse-cisco-routes [directories ...] [files ...]"
 end

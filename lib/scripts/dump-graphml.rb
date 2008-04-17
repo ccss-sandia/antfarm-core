@@ -3,10 +3,6 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 
-require 'ipaddrext'
-require 'node'
-require 'traffic'
-
 def print_help
   puts "Usage: antfarm [options] dump-graphml <output_file>"
 end

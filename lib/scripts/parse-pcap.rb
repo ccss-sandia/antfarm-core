@@ -2,10 +2,6 @@
 
 require 'pcap'
 
-require 'ip_interface'
-require 'layer3_network'
-require 'traffic'
-
 cap = Pcap::Capture.open_offline(ARGV[0])
 cap.each do |pkt|
   if pkt.ip?

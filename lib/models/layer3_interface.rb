@@ -2,12 +2,6 @@
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 # Derived From: code written by Michael Berg <mjberg@sandia.gov>
 
-require 'antfarm'
-require 'ip_interface'
-require 'layer2_interface'
-require 'layer3_interface'
-require 'layer3_network'
-
 class Layer3Interface < ActiveRecord::Base
   has_many   :outbound_traffic, :class_name => "Traffic", :foreign_key => "source_layer3_interface_id"
   has_many   :inbound_traffic,  :class_name => "Traffic", :foreign_key => "target_layer3_interface_id"

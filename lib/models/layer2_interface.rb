@@ -2,10 +2,6 @@
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 # Derived From: code written by Michael Berg <mjberg@sandia.gov>
 
-require 'antfarm'
-require 'ethernet_interface'
-require 'node'
-
 class Layer2Interface < ActiveRecord::Base
   has_many   :layer3_interfaces
   has_one    :ethernet_interface, :foreign_key => "id"

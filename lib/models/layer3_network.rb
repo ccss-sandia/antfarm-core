@@ -9,10 +9,6 @@
 #
 # Added network_in_network? method to IPAddrExt.  This should fix the problem discussed above.
 
-require 'antfarm'
-require 'ipaddrext'
-require 'ip_network'
-
 class Layer3Network < ActiveRecord::Base
   has_many :layer3_interfaces
   has_one  :ip_network, :foreign_key => "id", :dependent => :destroy

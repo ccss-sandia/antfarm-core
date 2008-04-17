@@ -2,9 +2,6 @@
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 # Derived From: code written by Michael Berg <mjberg@sandia.gov>
 
-require 'ipaddrext'
-require 'layer3_network'
-
 class IpNetwork < ActiveRecord::Base
   belongs_to :layer3_network, :foreign_key => "id"
   belongs_to :private_network

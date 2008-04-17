@@ -5,10 +5,6 @@
 
 # TODO: Incomplete!!!  Need to look at PIX Version 7 config files.
 
-require 'find'
-require 'ip_interface'
-require 'traffic'
-
 def print_help
   puts "Usage: antfarm [options] parse-cisco-pix-tunnels [directories ...] [files ...]"
 end

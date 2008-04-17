@@ -2,8 +2,6 @@
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
 # Derived From: code written by Michael Berg <mjberg@sandia.gov>
 
-require 'layer2_interface'
-
 class EthernetInterface < ActiveRecord::Base
   belongs_to :layer2_interface, :foreign_key => "id"
 
