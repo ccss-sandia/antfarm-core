@@ -42,8 +42,19 @@ rails.set_execution_block do |cmd,args|
 end
 app.add_command(rails)
 
+# Scripts can be categorized using directories.  If directories
+# exist in the scripts directory, turn them into a command.
+sub_commands = Hash.new
 Find.find(ANTFARM_ROOT + "/lib/scripts/") do |path|
-  if File.file?(path) && path =~ /rb$/
+  if File.directory?(path)
+    base_name = File.basename(path)
+    unless base_name == 'scripts'
+      command = SCParse::Command.new(File.basename(path))
+      app.add_command(command)
+      sub_commands[base_name] = command
+    end
+  elsif File.file?(path) && path =~ /rb$/
+    dir = File.basename(File.dirname(path))
     name = File.basename(path, ".*")
     script = SCParse::Script.new(name, path)
     script.set_execution_block do |cmd,args|
@@ -51,13 +62,26 @@ Find.find(ANTFARM_ROOT + "/lib/scripts/") do |path|
       ARGV.concat(args)
       load cmd.path
     end
-    app.add_command(script)
+    if dir == 'scripts'
+      app.add_command(script)
+    else
+      sub_commands[dir].add_command(script)
+    end
   end
 end
 
+sub_commands.clear
 if defined? USER_DIR
   Find.find("#{USER_DIR}/scripts") do |path|
-    if File.file?(path) && path =~ /rb$/
+    if File.directory?(path)
+      base_name = File.basename(path)
+      unless base_name == 'scripts'
+        command = SCParse::Command.new(File.basename(path))
+        app.add_command(command)
+        sub_commands[base_name] = command
+      end
+    elsif File.file?(path) && path =~ /rb$/
+      dir = File.basename(File.dirname(path))
       name = File.basename(path, ".*")
       script = SCParse::Script.new(name, path)
       script.set_execution_block do |cmd,args|
@@ -65,7 +89,11 @@ if defined? USER_DIR
         ARGV.concat(args)
         load cmd.path
       end
-      app.add_command(script)
+      if dir == 'scripts'
+        app.add_command(script)
+      else
+        sub_commands[dir].add_command(script)
+      end
     end
   end
 end
