@@ -8,7 +8,7 @@ spec = Gem::Specification.new do |s|
 # s.homepage = "http://antfarm.rubyforge.org"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
-  s.files = FileList["{bin,config,db,lib,log,rails}/**/*"].to_a
+  s.files = FileList["{bin,config,db,lib,log,rails}/**/*"].exclude("lib/misc").to_a
   s.executables << 'antfarm'
   s.has_rdoc = true
   s.extra_rdoc_files = ["README"]
