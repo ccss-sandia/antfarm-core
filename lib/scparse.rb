@@ -122,7 +122,7 @@ module SCParse
     #######
 
     def list_commands(command = self, level = 1)
-      puts "Available commands:" if level == 1
+      puts "Available commands: (type 'help <command>' for command-specific help)" if level == 1
       command.commands.sort.each do |name,cmd|
         puts "  " * level + name
         list_commands(cmd, level + 1) if cmd.has_commands?
