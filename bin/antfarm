@@ -42,6 +42,11 @@ rails.set_execution_block do |cmd,args|
 end
 app.add_command(rails)
 
+# TODO: Take into account situation where a directory
+# in the user's script directory might have the same
+# name as a directory in the application's script
+# directory.  What if actual scripts have the same name... ??
+#
 # Scripts can be categorized using directories.  If directories
 # exist in the scripts directory, turn them into a command.
 sub_commands = Hash.new
@@ -49,7 +54,7 @@ Find.find(ANTFARM_ROOT + "/lib/scripts/") do |path|
   if File.directory?(path)
     base_name = File.basename(path)
     unless base_name == 'scripts'
-      command = SCParse::Command.new(File.basename(path))
+      command = SCParse::Command.new(base_name)
       app.add_command(command)
       sub_commands[base_name] = command
     end
@@ -76,7 +81,7 @@ if defined? USER_DIR
     if File.directory?(path)
       base_name = File.basename(path)
       unless base_name == 'scripts'
-        command = SCParse::Command.new(File.basename(path))
+        command = SCParse::Command.new(base_name)
         app.add_command(command)
         sub_commands[base_name] = command
       end

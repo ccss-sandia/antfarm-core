@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(:version => 9) do
   create_table "nodes", :force => true do |t|
     t.float  "certainty_factor", :null => false
     t.string "name"
-    t.string "type"
+    t.string "device_type"
   end
 
   create_table "private_networks", :force => true do |t|
@@ -55,7 +55,6 @@ ActiveRecord::Schema.define(:version => 9) do
 
   create_table "traffic", :force => true do |t|
     t.string  "description"
-    t.string  "type"
     t.integer "port",                       :default => 0, :null => false
     t.string  "timestamp"
     t.integer "source_layer3_interface_id",                :null => false

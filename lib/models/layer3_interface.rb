@@ -16,7 +16,7 @@ class Layer3Interface < ActiveRecord::Base
   # Added to make it possible to specify what to set for the media type and
   # either the node object or the node type for the Layer2Interface and the
   # protocol for the Layer3Network that will be associated with this interface.
-  attr_writer :layer3_network_protocol, :layer2_interface_media_type, :node, :node_name, :node_type
+  attr_writer :layer3_network_protocol, :layer2_interface_media_type, :node, :node_name, :node_device_type
 
   validates_presence_of :certainty_factor
 
@@ -76,7 +76,7 @@ class Layer3Interface < ActiveRecord::Base
       layer2_interface.media_type = @layer2_interface_media_type if @layer2_interface_media_type
       layer2_interface.node = @node if @node
       layer2_interface.node_name = @node_name if @node_name
-      layer2_interface.node_type = @node_type if @node_type
+      layer2_interface.node_device_type = @node_device_type if @node_device_type
       if layer2_interface.save
         logger.info("Layer3Interface: Created Layer 2 Interface")
 #       puts "Layer3Interface: Created Layer 2 Interface"

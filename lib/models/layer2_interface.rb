@@ -13,7 +13,7 @@ class Layer2Interface < ActiveRecord::Base
   # Added to make it possible to specify what to set for
   # the node type when the node is created automatically
   # by this interface.
-  attr_writer :node_name, :node_type
+  attr_writer :node_name, :node_device_type
 
   validates_presence_of :certainty_factor
 
@@ -46,7 +46,7 @@ class Layer2Interface < ActiveRecord::Base
     unless self.node
       node = Node.new :certainty_factor => 0.75
       node.name = @node_name if @node_name
-      node.type = @node_type if @node_type
+      node.device_type = @node_device_type if @node_device_type
       if node.save
         logger.info("Layer2Interface: Created Node")
 #       puts "Layer2Interface: Created Node"

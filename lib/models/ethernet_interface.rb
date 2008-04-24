@@ -10,7 +10,7 @@ class EthernetInterface < ActiveRecord::Base
   # Added to make it possible to specify what to set for the media type and 
   # either the node object or the node type for the Layer2Interface that
   # will be associated with this interface.
-  attr_writer :layer2_interface_media_type, :node, :node_name, :node_type
+  attr_writer :layer2_interface_media_type, :node, :node_name, :node_device_type
 
   # This ensures that the MAC address entered is of the right format.  It is called
   # *before* the before_create method below is called, which keeps the Layer2Interface
@@ -36,7 +36,7 @@ class EthernetInterface < ActiveRecord::Base
       layer2_interface.media_type = @layer2_interface_media_type if @layer2_interface_media_type
       layer2_interface.node = @node if @node
       layer2_interface.node_name = @node_name if @node_name
-      layer2_interface.node_type = @node_type if @node_type
+      layer2_interface.node_device_type = @node_device_type if @node_device_type
       if layer2_interface.save
         logger.info("EthernetInterface: Create Layer 2 Interface")
 #       puts "EthernetInterface: Create Layer 2 Interface"

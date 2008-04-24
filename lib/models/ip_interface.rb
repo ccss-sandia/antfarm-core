@@ -14,7 +14,7 @@ class IpInterface < ActiveRecord::Base
               :layer3_interface_protocol,
               :ethernet_address,
               :layer2_interface, :layer2_interface_media_type,
-              :node, :node_name, :node_type
+              :node, :node_name, :node_device_type
 
   # Overriding the address setter in order to create an instance variable for an
   # Antfarm::IPAddrExt object ip_addr.  This way the rest of the methods in this
@@ -107,7 +107,7 @@ class IpInterface < ActiveRecord::Base
         layer3_interface.layer2_interface_media_type = @layer2_interface_media_type if @layer2_interface_media_type
         layer3_interface.node = @node if @node
         layer3_interface.node_name = @node_name if @node_name
-        layer3_interface.node_type = @node_type if @node_type
+        layer3_interface.node_device_type = @node_device_type if @node_device_type
       end
 
       if layer3_interface.save

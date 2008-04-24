@@ -7,11 +7,6 @@ class Traffic < ActiveRecord::Base
   belongs_to :source_layer3_interface, :class_name => "Layer3Interface", :foreign_key => "source_layer3_interface_id"
   belongs_to :target_layer3_interface, :class_name => "Layer3Interface", :foreign_key => "target_layer3_interface_id"
  
-  # This is necessary because the default column name for use with
-  # single table inheritance is "type", but we use the column name
-  # "type" to describe the type of traffic this is.
-  set_inheritance_column :table_type
-
   def self.add(from_layer3_interface, to_layer3_interface, port = nil, description = nil)
     port = 0 if port.nil?
     conn = self.connection_exists?(from_layer3_interface, to_layer3_interface, port)

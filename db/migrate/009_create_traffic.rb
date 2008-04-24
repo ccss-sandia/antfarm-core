@@ -5,7 +5,6 @@ class CreateTraffic < ActiveRecord::Migration
   def self.up
     create_table :traffic do |t|
       t.string  :description
-      t.string  :type
       t.integer :port, :null => false, :default => 0
       t.string  :timestamp
       t.integer :source_layer3_interface_id, :null => false

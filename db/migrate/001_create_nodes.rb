@@ -6,7 +6,7 @@ class CreateNodes < ActiveRecord::Migration
     create_table :nodes do |t|
       t.float :certainty_factor, :null => false
       t.string :name
-      t.string :type
+      t.string :device_type
     end
   end
 

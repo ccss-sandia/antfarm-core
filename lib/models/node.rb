@@ -6,11 +6,6 @@ class Node < ActiveRecord::Base
   has_many :layer2_interfaces
   has_many :layer3_interfaces, :through => :layer2_interfaces
 
-  # This is necessary because the default column name for use with
-  # single table inheritance is "type", but we use the column name
-  # "type" to describe the type of node this is.
-  set_inheritance_column :table_type
-
   before_save :clamp_certainty_factor
 
   validates_presence_of :certainty_factor
@@ -34,20 +29,20 @@ class Node < ActiveRecord::Base
     end
   end
 
-  def self.nodes_of_type(type)
-    unless type
+  def self.nodes_of_device_type(device_type)
+    unless device_type
       raise(ArgumentError, "nil argument supplied", caller)
     end
 
-    nodes = self.find(:all, :conditions => [ "type = ?", type ])
+    nodes = self.find(:all, :conditions => [ "device_type = ?", device_type ])
 
     case nodes.length
     when 0
-      logger.warn("Node: did not find any existing nodes of given type.")
+      logger.warn("Node: did not find any existing nodes of given device type.")
 #     puts "Node: did not find any existing nodes of given type."
       return nil
     else
-      logger.info("Node: found existing nodes of given type.")
+      logger.info("Node: found existing nodes of given device type.")
 #     puts "Node: found existing nodes of given type."
       return nodes
     end
