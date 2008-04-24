@@ -30,7 +30,6 @@ def render
       # create this node unless it's already been created
       # (a node could have more than one layer 3 interface...)
       unless created_node
-        puts node.device_type
         node_map[node] = Antfarm::Graph::SpringObject.new('green')
         graph.add :node => node_map[node]
         created_node = true

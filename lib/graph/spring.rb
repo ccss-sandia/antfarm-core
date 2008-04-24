@@ -51,7 +51,7 @@ module Antfarm
 
   #     @canvas.update
 
-        (1..50).each do
+        (1..100).each do
   #       sleep 0.25
           relax
   #       @canvas.update
