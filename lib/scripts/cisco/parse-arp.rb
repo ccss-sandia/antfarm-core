@@ -2,6 +2,13 @@
 
 def print_help
   puts "Usage: antfarm [options] cisco [options] parse-arp [directories ...] [files ...]"
+  puts
+  puts "This script parses an ARP dump from a Cisco network device and creates the"
+  puts "appropriate IP and ethernet interfaces.  This script assumes the ARP dump"
+  puts "file(s) are in the following format:"
+  puts
+  puts "<other junk> ip_address ethernet_address"
+  puts
 end
 
 def parse(file)

@@ -5,6 +5,13 @@
 
 def print_help
   puts "Usage: antfarm [options] viz [options] dump-graphml <output file>"
+  puts
+  puts "This script dumps the ANTFARM database to a GraphML format suitable"
+  puts "for import into many graphing tools, such as Prefuse.  This is an"
+  puts "all-inclusive script that dumps everything in the database.  For a"
+  puts "less detailed graph, please use this script as an example for writing"
+  puts "your own custom GraphML script."
+  puts
 end
 
 def dump(file)

@@ -103,8 +103,8 @@ module SCParse
     end
 
     def show_help
-      puts "#{@name}"
-      puts
+#     puts "#{@name}"
+#     puts
       puts usage
       puts
       if has_commands?
@@ -153,8 +153,8 @@ module SCParse
     end
 
     def show_help
-      puts "#{@name}"
-      puts
+#     puts "#{@name}"
+#     puts
 
       ARGV.clear
       ARGV << '--help'

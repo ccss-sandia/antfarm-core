@@ -1,7 +1,18 @@
-# Copyright 2008 Sandia National Laboratories
-# Original Author: Bryan T. Richardson <btricha@sandia.gov>
-# Derived From: code written by Michael Berg <mjberg@sandia.gov>
+# Layer 2 Interface model for layer2_interfaces table.
+#
+# Copyright::       Copyright (c) 2008 Sandia National Laboratories
+# Original Author:: Bryan T. Richardson <btricha@sandia.gov>
+# Derived From::    code written by Michael Berg <mjberg@sandia.gov>
 
+# Layer2Interface class that wraps the layer2_interfaces table
+# in the ANTFARM database.
+#
+# * has many layer 3 interfaces
+# * has one ethernet interface
+# * belongs to a node
+#
+# The node_name and node_device_type attributes are only applicable
+# when an existing node is not specified.
 class Layer2Interface < ActiveRecord::Base
   has_many   :layer3_interfaces
   has_one    :ethernet_interface, :foreign_key => "id"
@@ -10,13 +21,18 @@ class Layer2Interface < ActiveRecord::Base
   before_create :create_node
   before_save :clamp_certainty_factor
 
-  # Added to make it possible to specify what to set for
-  # the node type when the node is created automatically
-  # by this interface.
-  attr_writer :node_name, :node_device_type
+  # Name of the node automatically created for this
+  # layer 2 interface.
+  attr_writer :node_name
+
+  # Device type of the node automatically created for
+  # this layer 2 interface.
+  attr_writer :node_device_type
 
   validates_presence_of :certainty_factor
 
+  # Find and return the layer 2 interface with the
+  # given ethernet address.
   def self.interface_addressed(mac_addr_str)
     unless mac_addr_str
       raise(ArgumentError, "nil argument supplied", caller)
@@ -33,7 +49,7 @@ class Layer2Interface < ActiveRecord::Base
   end
 
   # This is for ActiveScaffold
-  def to_label
+  def to_label #:nodoc:
     return "#{id} -- #{ethernet_interface.address}" if ethernet_interface
     return "#{id} -- Generic Layer2 Interface"
   end
@@ -49,13 +65,10 @@ class Layer2Interface < ActiveRecord::Base
       node.device_type = @node_device_type if @node_device_type
       if node.save
         logger.info("Layer2Interface: Created Node")
-#       puts "Layer2Interface: Created Node"
       else
         logger.warn("Layer2Interface: Errors occured while creating Node")
-#       puts "Layer2Interface: Errors occured while creating Node"
         node.errors.each_full do |msg|
           logger.warn(msg)
-#         puts msg
         end
       end
 

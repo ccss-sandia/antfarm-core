@@ -5,6 +5,13 @@
 
 def print_help
   puts "Usage: antfarm [options] cisco [options] parse-routes [directories ...] [files ...]"
+  puts
+  puts "This script parses routes from Cisco layer 3 network devices and creates Traffic"
+  puts "data for them.  For each configuration file parsed, the script uses the host name"
+  puts "to get the source node of the route and uses the IP address from the route to get"
+  puts "the target for the route.  The source and target must already exist for the route"
+  puts "to be created (run parse-ip-ifaces before running this script)."
+  puts
 end
 
 def parse(file)

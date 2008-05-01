@@ -49,17 +49,17 @@ module Antfarm
 
         init
 
-  #     @canvas.update
+        @canvas.update
 
         (1..100).each do
-  #       sleep 0.25
+          sleep 0.25
           relax
-  #       @canvas.update
+          @canvas.update
         end
 
         puts "Okay, it's done! :)"
 
-        @canvas.update
+#       @canvas.update
       end
 
       # randomly assign the coordinates

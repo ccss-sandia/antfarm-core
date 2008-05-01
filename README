@@ -2,11 +2,34 @@
 
 ANTFARM is a passive network mapping application that utilizes
 output from existing network examination tools to populate its
-database and form a picture of the network.
+OSI-modeled database.  This data can then be used to form a
+'picture' of the network being analyzed.
 
 == Getting Started
 
-Add stuff here...
+As of now, the ANTFARM application is a command-line tool written
+to be used in a Linux environment (hopefully someone will want to
+make a Windows verson... :).  The following can be done to get up
+and running with ANTFARM.
+
+=== Installation
+
+ANTFARM is packaged as a Ruby Gem, so the easiest way to install
+it is to run 'gem install ANTFARM' from the command line.
+
+=== Initialization
+
+ANTFARM can be ran purely from within the Gem environment, but users
+will not have the ability to (easily) save copies of the database and
+use custom input/output scripts.  However, if the user executes
+
+'antfarm db --initialize'
+
+from the command-line, a .antfarm directory will be created in the user's
+home directory.  Within this directory there will exist a db, log, and
+scripts directory.  The databases and log files created by ANTFARM will
+reside here, and any custom scripts written by the user can be placed here
+to be made available to the application.
 
 == Description of Contents
 
