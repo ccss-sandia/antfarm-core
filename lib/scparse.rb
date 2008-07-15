@@ -1,5 +1,6 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
+# Modeled after an open-source Ruby project, CommandParse
 
 require 'optparse'
 
@@ -23,6 +24,7 @@ module SCParse
 
   class CommandHash < Hash
 
+    # Find first key that begins with the name passed
     def [](name)
       possible = keys.select {|key| key =~ /^#{name}.*/}
       fetch(possible[0]) if possible.length == 1
@@ -30,6 +32,9 @@ module SCParse
 
   end
 
+  # A command is a block of code that should have its options
+  # parsed before being executed.  A command can also be a
+  # parent to subcommands.
   class Command
 
     attr_reader :name
@@ -48,12 +53,15 @@ module SCParse
       command.parent = self
     end
 
+    # Return the uber-parent, which is a ScriptCommandParser object.
     def scparser
       cmd = parent
       cmd = cmd.parent while !cmd.nil? && !cmd.is_a?(ScriptCommandParser)
       return cmd
     end
 
+    # Return an array of parents for this command, up to but not
+    # including the uber-parent ScriptCommandParser object.
     def parents
       cmd = self
       parents = [cmd]
@@ -64,31 +72,42 @@ module SCParse
       return parents
     end
 
+    # Does this command have any subcommands it's a parent to?
     def has_commands?
       return @commands.nil? ? false : true
     end
 
+    # Set the block of code to run as a prerequisite to executing
+    # the command (such as bootstrapping code).
     def set_prerequisites_block(&block)
       @prerequisites_block = block
     end
 
+    # Run the prerequisite block of code
     def prerequisites
       @prerequisites_block.call(self) if @prerequisites_block
     end
 
+    # Is this command supposed to run its prerequisiste block of
+    # code before executing (as defined in the constructor)?
     def execute_prerequisites?
       return @execute_prerequisites
     end
 
+    # Set the main block of code for this command.
     def set_execution_block(&block)
       @execution_block = block
     end
 
+    # Run the main block of code for this command, first running
+    # the prerequisite block of code if supposed to do so.
     def execute(args)
       parents.reverse_each {|parent| parent.prerequisites} if execute_prerequisites?
       @execution_block.call(self, args) if @execution_block
     end
 
+    # Define the usage of this command, using the name of the command and
+    # the uber-parent ScriptCommandParser.
     def usage
       usage = "Usage: #{scparser.name}"
       usage << " [options] "
@@ -102,9 +121,9 @@ module SCParse
       return usage
     end
 
+    # Along with showing the usage for the command, this also displays
+    # any and all the child subcommands that belong to this command.
     def show_help
-#     puts "#{@name}"
-#     puts
       puts usage
       puts
       if has_commands?
@@ -131,6 +150,9 @@ module SCParse
 
   end
 
+  # A script does not execute a block of code.  Rather it loads
+  # an existing Ruby script to be executed.  Any arguments passed
+  # to the script command are passed on to the script being loaded.
   class Script < Command
 
     attr_reader :path
@@ -152,10 +174,10 @@ module SCParse
       raise TakesNoOptionsError
     end
 
+    # Clears out any original arguments passed for the script
+    # and instead passes '--help' to the script.  Hopefully the
+    # script knows how to respond to that (hint hint)!
     def show_help
-#     puts "#{@name}"
-#     puts
-
       ARGV.clear
       ARGV << '--help'
       load @path
@@ -163,6 +185,7 @@ module SCParse
 
   end
 
+  # Special custom command for displaying help messages.
   class HelpCommand < Command
     
     def initialize
@@ -208,39 +231,54 @@ module SCParse
 
   end
 
+  # Super-duper uber-parent class for all commands.
   class ScriptCommandParser
 
     attr_reader :main
     attr_reader :name
 
+    # Creates a new command object with the name 'main'
+    # and sets itself as the parent of the command.
     def initialize(name = $0)
       @main = Command.new('main')
       @main.parent = self
       @name = name
     end
 
+    # Adds a subcommand to the main command object.
     def add_command(command)
       @main.add_command(command)
     end
 
+    # Returns any options in the main command object.
     def options
       @main.options
     end
 
+    # Sets the options for the main command object.
     def options=(options)
       @main.options = options
     end
 
+    # Sets the prerequisites block for the main command
+    # object.
     def set_prerequisites_block(&block)
       @main.set_prerequisites_block(&block)
     end
 
+    # Runs the main command object using the given arguments
+    # (which by default is ARGV).
     def parse!(argv = ARGV)
       cmd = @main
       opts = Array.new
       args = Array.new(argv)
 
+      # The cmd variable is set to nil once we've reached the
+      # last child command and it's executed.
       while !cmd.nil?
+        # If the command has subcommands, then it should not
+        # be executed on.  Rather, look to see if a subcommand
+        # is specified or if options have been passed.
         if cmd.has_commands?
           arg = args.shift
           
@@ -256,6 +294,8 @@ module SCParse
             raise RuntimeError
           end
         else
+          # This command has no subcommands, which means it
+          # is the command to execute on.
           cmd.options.parse!(args) unless cmd.options.nil? || cmd.is_a?(Script)
           cmd.execute(args)
           cmd = nil
@@ -263,6 +303,8 @@ module SCParse
       end
 
     rescue RuntimeError, OptionParser::ParseError => error
+      # OptionParser will raise an exception of an option is passed
+      # that isn't recognized.  Thus, show the help screen!
       @main.commands['help'].execute([]) if @main.commands['help']
       exit
     end
@@ -270,4 +312,3 @@ module SCParse
   end
 
 end
-

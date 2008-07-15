@@ -4,6 +4,11 @@ require 'pcap'
 
 def print_help
   puts "Usage: antfarm [options] pcap [options] parse-pcap-file <pcap file>"
+  puts
+  puts "This script parses a libPcap file containing traffic capture data,"
+  puts "creating an IP interface for each endpoint and a traffic object"
+  puts "for the traffic between them.  Node device types are set to 'PCAP',"
+  puts "as well as traffic descriptions."
 end
 
 def parse(file)

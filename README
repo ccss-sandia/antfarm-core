@@ -35,6 +35,12 @@ to be made available to the application.
 
 Add stuff here...
 
+== Description of Defaults
+
+Currently, the ANTFARM application is hard-coded to use an sqlite3 database.  
+The name given for the ANTFARM environment (which defaults to 'antfarm') is 
+the name used for the database file and the log file.
+
 == Brought To You By
 
 Add stuff here...

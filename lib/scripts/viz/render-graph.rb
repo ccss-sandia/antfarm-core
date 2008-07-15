@@ -7,6 +7,10 @@ require 'graph/spring'
 
 def print_help
   puts "Usage: antfarm [options] render-graph"
+  puts
+  puts "This script starts up the built-in network graph"
+  puts "renderer, which at this point is DEFINATELY not"
+  puts "reliable..."
 end
 
 def render

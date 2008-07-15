@@ -5,6 +5,9 @@
 
 def print_help
   puts "Usage: antfarm [options] cisco [options] parse-network-objects [directories ...] [files ...]"
+  puts
+  puts "This script parses a Cisco IOS configuration file, creating a new IP Interface for each"
+  puts "network object host specified."
 end
 
 def parse(file)

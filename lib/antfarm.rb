@@ -36,6 +36,10 @@ module Antfarm
     return Time.now.utc.xmlschema
   end
 
+  # The following are helpers that determine what files and directories
+  # to use based on whether or not a custom user directory is being used
+  # vs the default ANTFARM directories.
+
   def self.db_file_to_use
     if defined? USER_DIR
       return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
@@ -201,4 +205,3 @@ module Antfarm
   end
 
 end
-

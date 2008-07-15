@@ -7,6 +7,8 @@ def print_help
   puts "network addresses, one per line."
 end
 
+# Parses the given file, creating an IP Interface for
+# each IP address.
 def parse(file)
   begin
     list = File.open(file)

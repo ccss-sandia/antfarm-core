@@ -5,6 +5,10 @@
 
 def print_help
   puts "Usage: antfarm [options] cisco [options] parse-ip-ifaces [directories ...] [files ...]"
+  puts
+  puts "This script parses one or more Cisco PIX firewall configuration files and creates"
+  puts "an IP Interface object for each interface using the IP address configured.  Currently,"
+  puts "only versions 7.6 and 7.7 of the PIX IOS are supported."
 end
 
 def parse(file)

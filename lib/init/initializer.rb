@@ -1,5 +1,6 @@
 # Copyright 2008 Sandia National Laboratories
 # Original Author: Bryan T. Richardson <btricha@sandia.gov>
+# Modeled after the Rails initializer class
 
 require 'rubygems'
 require 'active_record'
@@ -11,6 +12,9 @@ module Antfarm
   class Initializer
     attr_reader :configuration
 
+    # Run the initializer, first making the configuration object available
+    # to the user, then creating a new initializer object, then running the
+    # given command.
     def self.run(command = :process, configuration = Configuration.new)
       yield configuration if block_given?
       initializer = new configuration
@@ -37,6 +41,13 @@ module Antfarm
     private
     #######
 
+    def load_requirements
+      require 'antfarm'
+      require 'models'
+    end
+
+    # Currently, sqlite3 databases are the only ones supported. The name of the ANTFARM environment
+    # (which defaults to 'antfarm') is the name used for the database file and the log file.
     def initialize_database
       config = { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm.db_file_to_use } }
       ActiveRecord::Base.configurations = config
@@ -47,11 +58,6 @@ module Antfarm
       logger = Logger.new(Antfarm.log_file_to_use)
       logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
       ActiveRecord::Base.logger = logger
-    end
-
-    def load_requirements
-      require 'antfarm'
-      require 'models'
     end
   end
 

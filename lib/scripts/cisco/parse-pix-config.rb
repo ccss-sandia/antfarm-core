@@ -5,6 +5,12 @@
 
 def print_help
   puts "Usage: antfarm [options] cisco [options] parse-pix-config [options] [directories ...] [files ...]"
+  puts
+  puts "This script is a more generalized Cisco PIX IOS configuration file parser that creates a node"
+  puts "object to represent the firewall and creates IP interfaces for each firewall interface.  Tunnels"
+  puts "can also be parsed, but similar to the 'parse-ip-ifaces' script, tunnels can only be parsed for"
+  puts "IOS versions 7.6 and 7.7."
+  puts
   puts "Options:"
   puts "  -t            Parse and create VPN tunnels only (this should only be ran after running this script normally)"
 end

@@ -5,8 +5,10 @@ require 'fileutils'
 
 module Antfarm
 
+  # Extends SCParse::Command so it can be considered as a command.
   class DBManager < SCParse::Command
     def initialize
+      # set the command name to 'db'
       super('db')
 
       @opts = OpenStruct.new
@@ -51,17 +53,20 @@ module Antfarm
     private
     #######
 
+    # Initializes a suitable directory structure for the user
     def init
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/db")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/log")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/scripts")
     end
 
+    # Removes the database based on the ANTFARM environment given
     def db_remove
       `rm #{Antfarm.log_file_to_use}` if File.exists?(Antfarm.log_file_to_use)
       `rm #{Antfarm.db_file_to_use}` if File.exists?(Antfarm.db_file_to_use)
     end
 
+    # Removes any database, schema, and log files found
     def db_clean
       Find.find(Antfarm.db_dir_to_use) do |path|
         if File.basename(path) == 'migrate'
@@ -76,6 +81,9 @@ module Antfarm
       end
     end
 
+    # Creates a new database and schema file.  The location of the newly created
+    # database file is set in the initializer class via the ActiveRecord 
+    # configuration hash, and is based on the current ANTFARM environment.
     def db_migrate
       if File.exists?(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
         load(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
@@ -103,4 +111,3 @@ module Antfarm
   end
 
 end
-
