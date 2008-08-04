@@ -1,6 +1,8 @@
+# 
 # Copyright 2008 Sandia National Laboratories
-# Original Author: Bryan T. Richardson <btricha@sandia.gov>
+# Original Author:: Bryan T. Richardson <btricha@sandia.gov>
 # Modeled after the Rails boot script
+#
 
 ANTFARM_ROOT = (ENV['ANTFARM_ROOT'] || File.dirname(__FILE__) + "/..").dup unless defined? ANTFARM_ROOT
 USER_DIR = (ENV['HOME'] + "/.antfarm").dup unless (!File.exist?(ENV['HOME'] + "/.antfarm") || defined? USER_DIR)

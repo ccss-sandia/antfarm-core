@@ -1,4 +1,5 @@
-require 'graph/graph'
+#require 'graph/graph'
+require 'graph'
 require 'tk/canvas'
 
 class TkcOval
@@ -51,10 +52,11 @@ module Antfarm
 
         @canvas.update
 
-        (1..100).each do
+#       (1..10000).each do
+        while(true) do
           sleep 0.25
           relax
-          @canvas.update
+          break unless @canvas.update
         end
 
         puts "Okay, it's done! :)"
@@ -98,6 +100,8 @@ module Antfarm
           dx = f * vx
           dy = f * vy
 
+          puts "dx: #{dx}, dy: #{dy}"
+
           source.delta[0] += -dx
           source.delta[1] += -dy
           target.delta[0] += dx
@@ -135,17 +139,23 @@ module Antfarm
           end
         end
 
+        continue = true
+
         @graph.all_nodes.each do |node|
           oval = @tk_objects[node]
 
           dx = [-5, [5, oval.delta[0]].min].max
           dy = [-5, [5, oval.delta[1]].min].max
+          
+          continue = dx.abs > 5 && dy.abs > 5
 
           move(node, dx, dy)
 
           oval.delta[0] /= 2
           oval.delta[1] /= 2
         end
+
+        return continue
       end
 
       # When moving a node, the end of any edges connected
@@ -166,7 +176,7 @@ module Antfarm
         end
 
         if oval.center[1] < 5
-          dy = 5 - oval.center[0]
+          dy = 5 - oval.center[1]
           oval.move(0, dy)
         elsif oval.center[1] > (@size[1] - 5)
           dy = (@size[1] - 5) - oval.center[1]
@@ -187,18 +197,18 @@ module Antfarm
 
 end
 
-# graph = Sandia::Graph.new
-# graph.add :nodes => Array.new(25) { |i| Object.new }
+  graph = Antfarm::Graph::Graph.new
+  graph.add :nodes => Array.new(25) { |i| Object.new }
 
-# (1..30).each do
-#   source = graph.all_nodes[rand(25)]
-#   begin
-#     target = graph.all_nodes[rand(25)]
-#   end while target == source
-#   graph.add :edge => Object.new, :endpoints => [source, target]
-# end
+  (1..30).each do
+    source = graph.all_nodes[rand(25)]
+    begin
+      target = graph.all_nodes[rand(25)]
+    end while target == source
+    graph.add :edge => Object.new, :endpoints => [source, target]
+  end
 
-# root = TkRoot.new { title 'Spring Layout' }
-# Sandia::SpringLayout.new(graph)
-# Tk.mainloop
+  root = TkRoot.new { title 'Spring Layout' }
+  Antfarm::Graph::SpringLayout.new(graph)
+  Tk.mainloop
 

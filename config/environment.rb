@@ -1,6 +1,8 @@
+#
 # Copyright 2008 Sandia National Laboratories
-# Original Author: Bryan T. Richardson <btricha@sandia.gov>
+# Original Author:: Bryan T. Richardson <btricha@sandia.gov>
 # Modeled after the Rails environment configuration script
+#
 
 ANTFARM_ENV = (ENV['ANTFARM_ENV'] || 'antfarm').dup unless defined? ANTFARM_ENV
 
