@@ -26,17 +26,19 @@ spec = Gem::Specification.new do |s|
   s.author = "Michael Berg & Bryan Richardson"
   s.email = "btricha@sandia.gov & mjberg@sandia.gov"
   s.homepage = "http://antfarm.rubyforge.org"
+  s.rubyforge_project = "antfarm"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
-  s.files = FileList["{bin,config,db,lib,log,rails}/**/*"].exclude("lib/misc", "db/migrate").to_a
+  s.files = FileList["{bin,config,db,lib,log,rails}/**/*", "lgpl.txt"].exclude(".git/", "lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb", "db/migrate").to_a
   s.executables << 'antfarm'
   s.has_rdoc = true
   s.extra_rdoc_files = ["README"]
   s.add_dependency("rails", ">= 2.0.2")
-  s.add_dependency("sqlite3-ruby", ">= 1.2.1")
+  s.add_dependency("sqlite3-ruby", ">= 1.2.2")
   s.requirements << 'libsqlite3-dev'
 end
  
 Rake::GemPackageTask.new(spec) do |pkg| 
   pkg.need_tar = true 
+  pkg.need_zip = true 
 end 
