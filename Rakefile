@@ -1,11 +1,31 @@
+# Copyright (2008) Sandia Corporation.
+# Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
+# the U.S. Government retains certain rights in this software.
+#
+# Original Author: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at
+# your option) any later version.
+#
+# This library is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+
 require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s| 
   s.name = "ANTFARM"
   s.version = "0.2.0"
   s.author = "Michael Berg & Bryan Richardson"
-  s.email = "mjberg@sandia.gov & btricha@sandia.gov"
-# s.homepage = "http://antfarm.rubyforge.org"
+  s.email = "btricha@sandia.gov & mjberg@sandia.gov"
+  s.homepage = "http://antfarm.rubyforge.org"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
   s.files = FileList["{bin,config,db,lib,log,rails}/**/*"].exclude("lib/misc", "db/migrate").to_a
