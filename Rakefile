@@ -21,7 +21,7 @@
 require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s| 
-  s.name = "ANTFARM"
+  s.name = "ANTFARM-RailsGUI"
   s.version = "0.2.0"
   s.author = "Michael Berg & Bryan Richardson"
   s.email = "btricha@sandia.gov & mjberg@sandia.gov"
