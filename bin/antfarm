@@ -52,6 +52,7 @@ app.add_command(Antfarm::DBManager.new)
 rails = SCParse::Script.new('rails', 'script/server')
 rails.set_execution_block do |cmd,args|
   ARGV.clear
+  ARGV << "webrick"
   ARGV << "-e"
   ARGV << @opts.environment
   ARGV.concat(args)

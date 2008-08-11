@@ -1,6 +1,3 @@
-require 'layer2_interface'
-require 'node'
-
 class NodesController < ApplicationController
   active_scaffold :node do |config|
     config.columns[:certainty_factor].label = 'Certainty Factor'
