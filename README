@@ -25,11 +25,11 @@ use custom input/output scripts.  However, if the user executes
 
 'antfarm db --initialize'
 
-from the command-line, a .antfarm directory will be created in the user's
-home directory.  Within this directory there will exist a db, log, and
-scripts directory.  The databases and log files created by ANTFARM will
-reside here, and any custom scripts written by the user can be placed here
-to be made available to the application.
+from the command-line, a <tt>.antfarm</tt> directory will be created in the 
+user's home directory.  Within this directory there will exist a <tt>db</tt>, 
+<tt>log</tt>, and <tt>scripts</tt> directory.  The databases and log files 
+created by ANTFARM will reside here, and any custom scripts written by the 
+user can be placed here to be made available to the application.
 
 == Description of Contents
 
@@ -40,6 +40,45 @@ Add stuff here...
 Currently, the ANTFARM application is hard-coded to use an sqlite3 database.  
 The name given for the ANTFARM environment (which defaults to 'antfarm') is 
 the name used for the database file and the log file.
+
+== Example Usage
+
+Scripts are used to input data into the ANTFARM database.  Multiple scripts already
+exist in the tool for parsing configuration files, traffic sniffs, etc.  To see
+the scripts that currently exist, type
+
+'antfarm help'
+
+Below is a __very__ simple example of a script to read in network segments.  The 
+script assumes it's parsing a file with one network defined per line.
+
+  begin
+    list = File.open(file)
+  rescue Errno::ENOENT
+    puts "The file '#{file}' does not exist"
+    exit
+  end
+
+  list.each do |network|
+    IpNetwork.create :address => network.strip
+  end
+
+The above code is acutally what's present in the <tt>load-network</tt> script.  To
+run this script, you would type
+
+'antfarm load-network <data_file>'
+
+Most built-in scripts have help text associated with them, so typing
+
+'antfarm <script_name> --help'
+
+will display some useful information.
+
+Feel free to read the source code for the built-in scripts, which are located in the
+<tt>ANTFARM_ROOT/lib/scripts/</tt> directory.  These will most likely be good examples
+for learning how to create custom scripts.  You may add custom scripts to
+<tt>HOME_DIR/.antfarm/scripts/</tt> directory and they will be available in the
+ANTFARM application.
 
 == Brought To You By
 
@@ -69,4 +108,4 @@ details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
