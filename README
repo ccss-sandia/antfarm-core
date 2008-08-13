@@ -5,6 +5,25 @@ output from existing network examination tools to populate its
 OSI-modeled database.  This data can then be used to form a
 'picture' of the network being analyzed.
 
+== More About ANTFARM
+
+ANTFARM is a data fusion tool that does not directly interact
+with the network.  The analyst can use a variety of passive or
+active data gathering techniques, the outputs of which are
+loaded into ANTFARM and incorporated into the network map.  Data
+gathering can be limited to completely passive techniques
+when minimizing the risk of disrupting the operational network
+is a concern.
+
+== Disclaimer
+
+While the ANTFARM tool itself is completely passive (it does not
+have any built-in means of gathering data directly from devices
+or networks), network admin tools that users of ANTFARM may choose
+to gather data with may or may not be passive.  The authors of
+ANTFARM hold no responsibility in how users decide to gather data
+they wish to feed into ANTFARM.
+
 == Getting Started
 
 As of now, the ANTFARM application is a command-line tool written
@@ -23,7 +42,7 @@ ANTFARM can be ran purely from within the Gem environment, but users
 will not have the ability to (easily) save copies of the database and
 use custom input/output scripts.  However, if the user executes
 
-'antfarm db --initialize'
+  antfarm db --initialize
 
 from the command-line, a <tt>.antfarm</tt> directory will be created in the 
 user's home directory.  Within this directory there will exist a <tt>config</tt>, 
@@ -33,7 +52,7 @@ written by the user can be placed here to be made available to the application.
 
 Last, you need to create an actual database to store the data in.
 
-'antfarm db --migrate'
+  antfarm db --migrate
 
 Now you're ready to start parsing files and filling the database!
 
@@ -61,7 +80,14 @@ Scripts are used to input data into the ANTFARM database.  Multiple scripts alre
 exist in the tool for parsing configuration files, traffic sniffs, etc.  To see
 the scripts that currently exist, type
 
-'antfarm help'
+  antfarm help
+
+Every command within ANTFARM also has some help information associated with it, so
+typing something along the lines of
+
+  antfarm help <command>
+
+should be useful.
 
 Below is a __very__ simple example of a script to read in network segments.  The 
 script assumes it's parsing a file with one network defined per line.
@@ -80,11 +106,11 @@ script assumes it's parsing a file with one network defined per line.
 The above code is acutally what's present in the <tt>load-network</tt> script.  To
 run this script, you would type
 
-'antfarm load-network <data_file>'
+  antfarm load-network <data_file>
 
 Most built-in scripts have help text associated with them, so typing
 
-'antfarm <script_name> --help'
+  antfarm help <script_name>
 
 will display some useful information.
 
@@ -103,7 +129,7 @@ the sqlite3 application.  However, for your convenience, a Rails application has
 included that utilizes the ActiveScaffold plugin (http://www.activescaffold.com) to allow
 you to easily view and edit the database manually.  Simply type the following command:
 
-'antfarm rails'
+  antfarm rails
 
 and browse to http://localhost:3000/ using your favorite internet browser.
 
@@ -116,7 +142,7 @@ ANTFARM.  In order to use this application, the Java 6 Runtime Environment must 
 on your computer.  A script has been provided to utilize this application.  It can be ran
 by executing the following command:
 
-'antfarm viz display-networks'
+  antfarm viz display-networks
 
 This command will dump the data in the database to a temporary file (in the <tt>tmp</tt>
 directory in your user space) then provide this file to the viz application.  Run it... it

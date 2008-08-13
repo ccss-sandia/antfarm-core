@@ -1,0 +1,20 @@
+ANTFARM CHANGELOG
+
+VERSION 0.3.0
+ * Added Prefuse-based vizualization application and script to execute it with
+ * Added defaults file so users can specify default environment and log level
+ * Froze Rails to release 2.1.0
+ * Updated ActiveScaffold plugin so it would work with Rails 2.1.0
+ * Updated README documentation to be more specific on how to:
+  * initialize the application
+  * create a database
+  * execute scripts
+  * display the data
+  * manually manipulate the data
+  * set defaults
+  * etc.
+ * Updated README document with some disclaimers on ANTFARM being 'passive'
+ * Created this CHANGELOG
+
+VERSION 0.2.0
+ * Initial version of project when open sourced.

@@ -23,14 +23,14 @@ require 'rake/rdoctask'
 
 spec = Gem::Specification.new do |s| 
   s.name = "antfarm"
-  s.version = "0.2.1"
+  s.version = "0.3.0"
   s.author = "Michael Berg & Bryan Richardson"
   s.email = "btricha@sandia.gov & mjberg@sandia.gov"
   s.homepage = "http://antfarm.rubyforge.org"
   s.rubyforge_project = "antfarm"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
-  s.files = FileList["{bin,config,db,lib,log,rails,templates,tmp}/**/*", "lgpl.txt"].exclude("lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb").to_a
+  s.files = FileList["{bin,config,db,lib,log,rails,templates,tmp}/**/*", "CHANGELOG", "LICENSE"].exclude("lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb").to_a
   s.executables << 'antfarm'
   s.has_rdoc = true
   s.extra_rdoc_files = ["README"]
