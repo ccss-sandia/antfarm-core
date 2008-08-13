@@ -78,8 +78,8 @@ module Antfarm
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/log")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/scripts")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/tmp")
-      `cp #{ANTFARM_ROOT}/templates/defaults_template_file.yml #{ENV['HOME']}/.antfarm/config`
-      `cp #{ANTFARM_ROOT}/templates/colors_template_file.xml #{ENV['HOME']}/.antfarm/config`
+      `cp #{ANTFARM_ROOT}/templates/defaults_template_file.yml #{ENV['HOME']}/.antfarm/config/defaults.yml`
+      `cp #{ANTFARM_ROOT}/templates/colors_template_file.xml #{ENV['HOME']}/.antfarm/config/colors.xml`
     end
 
     # Removes the database based on the ANTFARM environment given

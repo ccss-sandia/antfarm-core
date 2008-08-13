@@ -31,6 +31,7 @@ require 'yaml'
 if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
   defaults = YAML::load(IO.read("#{USER_DIR}/config/defaults.yml"))
 end
+defaults ||= Hash.new
 
 @opts = OpenStruct.new
 @opts.environment = defaults['environment'] || 'antfarm'
