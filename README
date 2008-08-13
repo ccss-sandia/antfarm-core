@@ -26,10 +26,16 @@ use custom input/output scripts.  However, if the user executes
 'antfarm db --initialize'
 
 from the command-line, a <tt>.antfarm</tt> directory will be created in the 
-user's home directory.  Within this directory there will exist a <tt>db</tt>, 
-<tt>log</tt>, and <tt>scripts</tt> directory.  The databases and log files 
-created by ANTFARM will reside here, and any custom scripts written by the 
-user can be placed here to be made available to the application.
+user's home directory.  Within this directory there will exist a <tt>config</tt>, 
+<tt>db</tt>, <tt>log</tt>, and <tt>scripts</tt> directory.  The databases
+and log files created by ANTFARM will reside here, and any custom scripts
+written by the user can be placed here to be made available to the application.
+
+Last, you need to create an actual database to store the data in.
+
+'antfarm db --migrate'
+
+Now you're ready to start parsing files and filling the database!
 
 == Description of Contents
 
@@ -40,6 +46,14 @@ Add stuff here...
 Currently, the ANTFARM application is hard-coded to use an sqlite3 database.  
 The name given for the ANTFARM environment (which defaults to 'antfarm') is 
 the name used for the database file and the log file.
+
+As of now, the application defaults to the __antfarm__ environment and to a
+log level of __warn__.  These can be changed on a per-execution basis by passing
+a <tt>-e</tt> and/or a <tt>-l</tt> option to the antfarm command.  These can
+also be changed in the <tt>HOME_DIR/.antfarm/config/defaults.yml</tt> file so
+you do not have to specify it on the command line every time.  This is probably
+also the __safer__ way to go... if you forget one time to pass the <tt>-e</tt>
+argument when using the non-default environment you could corrupt some data!
 
 == Example Usage
 
@@ -79,6 +93,38 @@ Feel free to read the source code for the built-in scripts, which are located in
 for learning how to create custom scripts.  You may add custom scripts to
 <tt>HOME_DIR/.antfarm/scripts/</tt> directory and they will be available in the
 ANTFARM application.
+
+== Database Management
+
+Obviously, there will be some times when you might need to manually edit some of the data
+in the ANTFARM database.  You are more than welcome to access the database you are using
+(which will be in <tt>HOME_DIR/.antfarm/db</tt> if you initialized your environment) with
+the sqlite3 application.  However, for your convenience, a Rails application has been
+included that utilizes the ActiveScaffold plugin (http://www.activescaffold.com) to allow
+you to easily view and edit the database manually.  Simply type the following command:
+
+'antfarm rails'
+
+and browse to http://localhost:3000/ using your favorite internet browser.
+
+== Displaying Results
+
+Currently, ANTFARM does not have any built-in ways of graphically viewing a network
+(good spot for volunteers! :).  However, a Java application utilizing the open source 
+Java Prefuse package (http://prefuse.sourceforge.net) has been created and included with
+ANTFARM.  In order to use this application, the Java 6 Runtime Environment must be installed
+on your computer.  A script has been provided to utilize this application.  It can be ran
+by executing the following command:
+
+'antfarm viz display-networks'
+
+This command will dump the data in the database to a temporary file (in the <tt>tmp</tt>
+directory in your user space) then provide this file to the viz application.  Run it... it
+looks cool! :)
+
+If you look at <tt>HOME_DIR/.antfarm/config/colors.xml</tt>, you'll see the default file
+this application uses to decide what colors to use for nodes and edges.  Modify this file
+to get the colors you want.
 
 == Brought To You By
 

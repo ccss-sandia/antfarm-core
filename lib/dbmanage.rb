@@ -70,11 +70,16 @@ module Antfarm
     private
     #######
 
-    # Initializes a suitable directory structure for the user
+    # Initializes a suitable directory structure for the user and
+    # copies a default colors.xml file to the user's config directory
     def init
+      FileUtils.makedirs("#{ENV['HOME']}/.antfarm/config")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/db")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/log")
       FileUtils.makedirs("#{ENV['HOME']}/.antfarm/scripts")
+      FileUtils.makedirs("#{ENV['HOME']}/.antfarm/tmp")
+      `cp #{ANTFARM_ROOT}/templates/defaults_template_file.yml #{ENV['HOME']}/.antfarm/config`
+      `cp #{ANTFARM_ROOT}/templates/colors_template_file.xml #{ENV['HOME']}/.antfarm/config`
     end
 
     # Removes the database based on the ANTFARM environment given

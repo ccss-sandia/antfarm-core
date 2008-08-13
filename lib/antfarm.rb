@@ -21,6 +21,16 @@
 
 require 'ipaddr'
 
+require 'antfarm/ethernet_interface'
+require 'antfarm/ip_interface'
+require 'antfarm/ip_network'
+require 'antfarm/layer2_interface'
+require 'antfarm/layer3_interface'
+require 'antfarm/layer3_network'
+require 'antfarm/node'
+require 'antfarm/private_network'
+require 'antfarm/traffic'
+
 module Antfarm
 
   # Symbolic marker points on the fuzzy logic certainty factor scale.
@@ -86,6 +96,14 @@ module Antfarm
       return File.expand_path("#{USER_DIR}/log")
     else
       return File.expand_path("#{ANTFARM_ROOT}/log")
+    end
+  end
+
+  def self.tmp_dir_to_use
+    if defined? USER_DIR
+      return File.expand_path("#{USER_DIR}/tmp")
+    else
+      return File.expand_path("#{ANTFARM_ROOT}/tmp")
     end
   end
 

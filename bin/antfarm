@@ -26,10 +26,15 @@ require 'find'
 require 'ostruct'
 require 'scparse'
 require 'dbmanage'
+require 'yaml'
+
+if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
+  defaults = YAML::load(IO.read("#{USER_DIR}/config/defaults.yml"))
+end
 
 @opts = OpenStruct.new
-@opts.environment = 'antfarm'
-@opts.log_level = 'warn'
+@opts.environment = defaults['environment'] || 'antfarm'
+@opts.log_level = defaults['log_level'] || 'warn'
 
 app = SCParse::ScriptCommandParser.new('antfarm')
 app.options = OptionParser.new do |opts|

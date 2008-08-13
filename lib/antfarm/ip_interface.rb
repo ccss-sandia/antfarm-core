@@ -175,4 +175,3 @@ class IpInterface < ActiveRecord::Base
     end
   end
 end
-

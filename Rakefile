@@ -19,6 +19,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 require 'rake/gempackagetask'
+require 'rake/rdoctask'
 
 spec = Gem::Specification.new do |s| 
   s.name = "antfarm"
@@ -29,7 +30,7 @@ spec = Gem::Specification.new do |s|
   s.rubyforge_project = "antfarm"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
-  s.files = FileList["{bin,config,db,lib,log,rails}/**/*", "lgpl.txt"].exclude("lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb").to_a
+  s.files = FileList["{bin,config,db,lib,log,rails,templates,tmp}/**/*", "lgpl.txt"].exclude("lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb").to_a
   s.executables << 'antfarm'
   s.has_rdoc = true
   s.extra_rdoc_files = ["README"]
@@ -42,3 +43,13 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.need_tar = true 
   pkg.need_zip = true 
 end 
+
+namespace :doc do
+  Rake::RDocTask.new("antfarm") do |rdoc|
+    rdoc.rdoc_dir = 'doc/antfarm'
+    rdoc.title = 'ANTFARM Application Documentation'
+    rdoc.rdoc_files.include('README')
+    rdoc.rdoc_files.include('lib/**/*.rb')
+    rdoc.rdoc_files.exclude('lib/graph', 'lib/misc', 'lib/scripts')
+  end
+end
