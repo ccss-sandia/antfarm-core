@@ -61,7 +61,6 @@ module Antfarm
 
     def load_requirements
       require 'antfarm'
-      require 'models'
     end
 
     # Currently, sqlite3 databases are the only ones supported. The name of the ANTFARM environment
@@ -96,6 +95,7 @@ module Antfarm
       paths = Array.new
 
       paths << File.expand_path(ANTFARM_ROOT + "/lib")
+      paths << File.expand_path(ANTFARM_ROOT + "/lib/models")
       paths << File.expand_path(ANTFARM_ROOT + "/lib/scripts")
       paths << File.expand_path(ANTFARM_ROOT + "/rails")
 

@@ -21,15 +21,15 @@
 require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s| 
-  s.name = "ANTFARM-RailsGUI"
-  s.version = "0.2.0"
+  s.name = "antfarm"
+  s.version = "0.2.1"
   s.author = "Michael Berg & Bryan Richardson"
   s.email = "btricha@sandia.gov & mjberg@sandia.gov"
   s.homepage = "http://antfarm.rubyforge.org"
   s.rubyforge_project = "antfarm"
   s.platform = Gem::Platform::RUBY
   s.summary = "Passive network mapping tool"
-  s.files = FileList["{bin,config,db,lib,log,rails}/**/*", "lgpl.txt"].exclude(".git/", "lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb", "db/migrate").to_a
+  s.files = FileList["{bin,config,db,lib,log,rails}/**/*", "lgpl.txt"].exclude("lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb").to_a
   s.executables << 'antfarm'
   s.has_rdoc = true
   s.extra_rdoc_files = ["README"]
