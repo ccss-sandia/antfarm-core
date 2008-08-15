@@ -3,7 +3,8 @@
 ANTFARM is a passive network mapping application that utilizes
 output from existing network examination tools to populate its
 OSI-modeled database.  This data can then be used to form a
-'picture' of the network being analyzed.
+'picture' of the network being analyzed.  This documentation is
+consistent with version 0.3.0 of the ANTFARM software.
 
 == More About ANTFARM
 

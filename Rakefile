@@ -47,7 +47,7 @@ end
 namespace :doc do
   Rake::RDocTask.new("antfarm") do |rdoc|
     rdoc.rdoc_dir = 'doc/antfarm'
-    rdoc.title = 'ANTFARM Application Documentation'
+    rdoc.title = 'ANTFARM Application Documentation, Version 0.3.0'
     rdoc.rdoc_files.include('README')
     rdoc.rdoc_files.include('lib/**/*.rb')
     rdoc.rdoc_files.exclude('lib/graph', 'lib/misc', 'lib/scripts')
