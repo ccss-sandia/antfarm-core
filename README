@@ -153,15 +153,20 @@ If you look at <tt>HOME_DIR/.antfarm/config/colors.xml</tt>, you'll see the defa
 this application uses to decide what colors to use for nodes and edges.  Modify this file
 to get the colors you want.
 
-== Brought To You By
+== Homepage
 
-Original Project Author: Michael Berg, Sandia National Laboratories <mjberg@sandia.gov>
-
-Contributing Author: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
+http://antfarm.rubyforge.org
 
 == RubyForge Project
 
 http://rubyforge.org/projects/antfarm
+
+== GitHub Project
+
+http://github.com/btrichardson/antfarm
+
+All code development will take place from GitHub.  The latest source code for each
+ANTFARM release will be mirrored at the RubyForge project SCM as well.
 
 == Legal Stuff
 
