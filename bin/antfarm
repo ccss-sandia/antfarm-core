@@ -66,6 +66,14 @@ rails.set_execution_block do |cmd,args|
 end
 app.add_command(rails)
 
+console = SCParse::Script.new('console', 'console.rb', false)
+console.set_execution_block do |cmd,args|
+  ARGV.clear
+  ARGV << @opts.environment
+  load cmd.path
+end
+app.add_command(console)
+
 # TODO: Take into account situation where a directory
 # in the user's script directory might have the same
 # name as a directory in the application's script

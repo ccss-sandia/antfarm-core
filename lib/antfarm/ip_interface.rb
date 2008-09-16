@@ -87,7 +87,8 @@ class IpInterface < ActiveRecord::Base
     super(@ip_addr.to_s)
   end
 
-  validates_presence_of :address
+  validates_presence_of   :address
+# validates_uniqueness_of :address, :unless => :private_address?
 
   # Validate data for requirements before saving interface to the database.
   #
@@ -95,8 +96,19 @@ class IpInterface < ActiveRecord::Base
   # on anything saved to the database at any time, including a create and an update.
   def validate #:nodoc:
     # Don't save the interface if it's a loopback address.
-    unless !@ip_addr.loopback_address?
+    if @ip_addr.loopback_address?
       errors.add(:address, "loopback address not allowed")
+    end
+
+    # If the address is public and it already exists in the database, don't create
+    # a new one but still create a new IP Network just in case the data given for
+    # this address includes more detailed information about its network.
+    unless @ip_addr.private_address?
+      interfaces = IpInterface.find :all, :conditions => { :address => address }
+      if interfaces && interfaces.length > 0
+        create_ip_network
+        errors.add(:address, 'address already exists, but a new IP Network was created')
+      end
     end
   end
 
@@ -108,6 +120,10 @@ class IpInterface < ActiveRecord::Base
   #######
   private
   #######
+
+  def private_address?
+    return @ip_addr.private_address?
+  end
 
   def create_layer3_interface
     # If we get to this point, then we know an interface does not
@@ -122,30 +138,7 @@ class IpInterface < ActiveRecord::Base
       if @layer3_network
         layer3_interface.layer3_network = @layer3_network
       else
-        # Check to see if a network exists that contains this address.
-        # If not, create a small one that does.
-        layer3_network = Layer3Network.network_containing(@ip_addr.to_cidr_string)
-        unless layer3_network
-          network = @ip_addr.clone
-          if network == network.network
-            network.netmask = network.netmask << 3
-          end
-
-          ip_network = IpNetwork.new :address => network.to_cidr_string
-          ip_network.layer3_network_protocol = @layer3_network_protocol if @layer3_network_protocol
-          if ip_network.save
-            logger.info("IpInterface: Created IP Network")
-          else
-            logger.warn("IpInterface: Errors occured while creating IP Network")
-            ip_network.errors.each_full do |msg|
-              logger.warn(msg)
-            end
-          end
-
-          layer3_network = ip_network.layer3_network
-        end
-
-        layer3_interface.layer3_network = layer3_network
+        layer3_interface.layer3_network = create_ip_network
       end
 
       if @layer2_interface
@@ -173,5 +166,29 @@ class IpInterface < ActiveRecord::Base
 
       self.layer3_interface = layer3_interface
     end
+  end
+
+  def create_ip_network
+    # Check to see if a network exists that contains this address.
+    # If not, create a small one that does.
+    layer3_network = Layer3Network.network_containing(@ip_addr.to_cidr_string)
+    unless layer3_network
+      network = @ip_addr.clone
+      if network == network.network
+        network.netmask = network.netmask << 3
+      end
+      ip_network = IpNetwork.new :address => network.to_cidr_string
+      ip_network.layer3_network_protocol = @layer3_network_protocol if @layer3_network_protocol
+      if ip_network.save
+        logger.info("IpInterface: Created IP Network")
+      else
+        logger.warn("IpInterface: Errors occured while creating IP Network")
+        ip_network.errors.each_full do |msg|
+          logger.warn(msg)
+        end
+      end
+      layer3_network = ip_network.layer3_network
+    end
+    return layer3_network
   end
 end

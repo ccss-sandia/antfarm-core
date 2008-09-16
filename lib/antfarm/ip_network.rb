@@ -75,6 +75,7 @@ class IpNetwork < ActiveRecord::Base
   def set_private_address
     self.private = @ip_net.private_address?
     # TODO: Create private network objects.
+    return # if we don't do this, then a false is returned and the save fails
   end
 
   def create_layer3_network

@@ -24,8 +24,8 @@ require 'rake/rdoctask'
 spec = Gem::Specification.new do |s| 
   s.name = "antfarm"
   s.version = "0.3.0"
-  s.author = "Michael Berg & Bryan Richardson"
-  s.email = "btricha@sandia.gov & mjberg@sandia.gov"
+  s.author = "Michael Berg and Bryan Richardson"
+  s.email = "btricha@sandia.gov and mjberg@sandia.gov"
   s.homepage = "http://antfarm.rubyforge.org"
   s.rubyforge_project = "antfarm"
   s.platform = Gem::Platform::RUBY
