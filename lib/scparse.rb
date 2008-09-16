@@ -326,7 +326,6 @@ module SCParse
       end
 
     rescue RuntimeError, OptionParser::ParseError => error
-      puts error
       # OptionParser will raise an exception of an option is passed
       # that isn't recognized.  Thus, show the help screen!
       @main.commands['help'].execute([]) if @main.commands['help']
