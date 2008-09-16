@@ -93,6 +93,7 @@ module Antfarm
       paths = Array.new
 
       paths << File.expand_path(ANTFARM_ROOT + "/lib")
+      paths << File.expand_path(ANTFARM_ROOT + "/lib/graph")
       paths << File.expand_path(ANTFARM_ROOT + "/lib/scripts")
       paths << File.expand_path(ANTFARM_ROOT + "/rails")
 

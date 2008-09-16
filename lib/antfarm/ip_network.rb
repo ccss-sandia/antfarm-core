@@ -28,9 +28,9 @@ class IpNetwork < ActiveRecord::Base
   belongs_to :layer3_network, :foreign_key => "id"
   belongs_to :private_network
 
-  before_validation :set_private_address
   before_create :create_layer3_network
-  after_create :merge_layer3_networks
+  before_create :set_private_address
+  after_create  :merge_layer3_networks
 
   # Protocol of the layer 3 network automatically
   # created for this IP network.
@@ -75,7 +75,6 @@ class IpNetwork < ActiveRecord::Base
   def set_private_address
     self.private = @ip_net.private_address?
     # TODO: Create private network objects.
-    return true
   end
 
   def create_layer3_network

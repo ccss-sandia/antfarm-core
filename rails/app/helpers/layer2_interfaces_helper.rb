@@ -1,2 +1,0 @@
-module Layer2InterfacesHelper
-end

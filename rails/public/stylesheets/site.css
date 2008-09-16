@@ -1,0 +1,11 @@
+div#management-nav a {
+  color:#665;
+  font-weight:bold;
+  text-decoration:none;
+  font-size:small;
+}
+
+div#management-nav a:hover {
+  color:#665;
+  background-color:#fff;
+}

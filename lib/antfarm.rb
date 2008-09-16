@@ -30,6 +30,10 @@ require 'antfarm/layer3_network'
 require 'antfarm/node'
 require 'antfarm/private_network'
 require 'antfarm/traffic'
+require 'antfarm/dns_entry'
+require 'antfarm/action'
+require 'antfarm/service'
+require 'antfarm/operating_system'
 
 module Antfarm
 

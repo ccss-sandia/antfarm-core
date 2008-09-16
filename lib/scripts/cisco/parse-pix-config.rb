@@ -97,20 +97,13 @@ def parse(file)
 #      end
 #    end
   end
-
   list.close
-
-  node = Node.create(:certainty_factor => 0.75, :name => hostname, :device_type => "FW") if hostname
 
   fw_if_ips.uniq!
   fw_if_ips.each do |address|
     ip_if = IpInterface.new :address => address
-    if node
-      ip_if.node = node
-    else
-      ip_if.node_device_type = "FW"
-    end
-    
+    ip_if.node_name = hostname
+    ip_if.node_device_type = 'FW'
     unless ip_if.save
       ip_if.errors.each_full do |msg|
         puts msg
@@ -121,8 +114,7 @@ def parse(file)
   net_obj_ips.uniq!
   net_obj_ips.each do |address|
     ip_if = IpInterface.new :address => address
-    ip_if.node_device_type = "FWGRP"
-    
+    ip_if.node_device_type = 'FW NW OBJECT'
     unless ip_if.save
       ip_if.errors.each_full do |msg|
         puts msg
@@ -133,7 +125,6 @@ def parse(file)
   net_obj_networks.uniq!
   net_obj_networks.each do |network|
     ip_net = IpNetwork.new :address => network
-    
     unless ip_net.save
       ip_net.errors.each_full do |msg|
         puts msg
@@ -223,14 +214,14 @@ def parse_tunnels(file)
         target_ip_if = IpInterface.find_by_address(addr)
 
         if target_ip_if
-          Traffic.create(:source_layer3_interface => source_ip_if.layer3_interface, :target_layer3_interface => target_ip_if.layer3_interface, :type => "Tunnel")
+          Traffic.create(:source_layer3_interface => source_ip_if.layer3_interface, :target_layer3_interface => target_ip_if.layer3_interface, :description => 'TUNNEL')
         end
       end
     end
   end
 end
 
-if ARGV[0] == '--help'
+if ['-h', '--help'].include?(ARGV[0])
   print_help
 else
   if ARGV.include?('-t')

@@ -26,6 +26,8 @@
 class Node < ActiveRecord::Base
   has_many :layer2_interfaces
   has_many :layer3_interfaces, :through => :layer2_interfaces
+  has_many :services
+  has_one  :operating_system
 
   before_save :clamp_certainty_factor
 
@@ -65,6 +67,10 @@ class Node < ActiveRecord::Base
       logger.info("Node: found existing nodes of given device type.")
       return nodes
     end
+  end
+
+  def to_label
+    return self
   end
 
   #######

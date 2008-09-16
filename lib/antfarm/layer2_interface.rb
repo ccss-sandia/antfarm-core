@@ -75,9 +75,22 @@ class Layer2Interface < ActiveRecord::Base
 
   def create_node
     unless self.node
-      node = Node.new :certainty_factor => 0.75
-      node.name = @node_name if @node_name
-      node.device_type = @node_device_type if @node_device_type
+      if @node_name
+        nodes = Node.find(:all, :conditions => { :name => @node_name })
+        case nodes.length
+        when 0
+          node = Node.new :certainty_factor => 0.75
+          node.name = @node_name
+        when 1
+          node = nodes.first
+        else
+          node = nodes.first
+          #TODO: do something here with certainty factor?
+        end
+      else
+        node = Node.new :certainty_factor => 0.75
+      end
+      node.device_type = @node_device_type
       if node.save
         logger.info("Layer2Interface: Created Node")
       else

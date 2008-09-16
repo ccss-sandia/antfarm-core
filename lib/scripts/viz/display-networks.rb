@@ -76,7 +76,7 @@ def display
       output.puts "    </node>"
     end
     output.puts "    <edge source=\"node_#{source_node.id}\" target=\"node_#{target_node.id}\">"
-    output.puts "      <data key=\"line\">PCAP</data>"
+    output.puts "      <data key=\"line\">#{traffic.description}</data>"
     output.puts "    </edge>"
   end
   output.puts "  </graph>"

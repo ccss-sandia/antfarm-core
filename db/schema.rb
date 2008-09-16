@@ -1,25 +1,5 @@
-# Copyright (2008) Sandia Corporation.
-# Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
-# the U.S. Government retains certain rights in this software.
-#
-# Original Author: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
-#
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at
-# your option) any later version.
-#
-# This library is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with this library; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-
 # This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of ActiveRecord to incrementally modify your database, and
+# please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
 # Note that this schema.rb definition is the authoritative source for your database schema. If you need
@@ -29,7 +9,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 9) do
+ActiveRecord::Schema.define(:version => 13) do
+
+  create_table "actions", :force => true do |t|
+    t.string "tool"
+    t.string "description"
+    t.string "start"
+    t.string "end"
+  end
+
+  create_table "dns_entries", :force => true do |t|
+    t.string "address"
+    t.string "hostname"
+  end
 
   create_table "ethernet_interfaces", :force => true do |t|
     t.string "address", :null => false
@@ -69,8 +61,24 @@ ActiveRecord::Schema.define(:version => 9) do
     t.string "device_type"
   end
 
+  create_table "operating_systems", :force => true do |t|
+    t.float   "certainty_factor", :null => false
+    t.integer "node_id"
+    t.integer "action_id"
+    t.text    "fingerprint"
+  end
+
   create_table "private_networks", :force => true do |t|
     t.string "description"
+  end
+
+  create_table "services", :force => true do |t|
+    t.float   "certainty_factor", :null => false
+    t.integer "node_id"
+    t.integer "action_id"
+    t.string  "protocol"
+    t.integer "port"
+    t.string  "name"
   end
 
   create_table "traffic", :force => true do |t|

@@ -217,11 +217,16 @@ module SCParse
         cmd = scparser.main
         arg = args.shift
 
+        puts "cmd: #{cmd.name}, arg: #{arg}"
+
         while !arg.nil? && cmd.commands[arg]
           cmd = cmd.commands[arg]
           arg = args.shift
+          puts "cmd: #{cmd.name}, arg: #{arg}"
         end
         
+        puts "cmd: #{cmd.name}, arg: #{arg}"
+
         if arg.nil?
           cmd.show_help
         else
@@ -321,6 +326,7 @@ module SCParse
       end
 
     rescue RuntimeError, OptionParser::ParseError => error
+      puts error
       # OptionParser will raise an exception of an option is passed
       # that isn't recognized.  Thus, show the help screen!
       @main.commands['help'].execute([]) if @main.commands['help']

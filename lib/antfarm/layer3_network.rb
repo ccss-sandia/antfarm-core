@@ -47,13 +47,13 @@ class Layer3Network < ActiveRecord::Base
 
         merge_certainty_factor = Antfarm.clamp(merge_certainty_factor)
 
-        l3_ifs = network.layer3_interfaces
-        l3_ifs << sub_network.layer3_interfaces
-        l3_ifs.flatten!
+        network.layer3_interfaces << sub_network.layer3_interfaces
+        network.layer3_interfaces.flatten!
+        network.layer3_interfaces.uniq!
 
         # TODO: update network's certainty factor using sub_network's certainty factor.
         
-        network.update_attributes :layer3_interfaces => l3_ifs
+        network.save false
 
         # Because of :dependent => :destroy above, calling destroy
         # here will also cause destroy to be called on ip_network
