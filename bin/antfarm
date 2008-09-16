@@ -138,7 +138,7 @@ end
 def bootstrap
   ENV['ANTFARM_ENV'] = @opts.environment
   ENV['ANTFARM_LOG_LEVEL'] = @opts.log_level
-  require ANTFARM_ROOT + "/config/environment"
+  require "#{ANTFARM_ROOT}/config/environment"
 end
 
 app.parse!
