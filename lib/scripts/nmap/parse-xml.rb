@@ -97,7 +97,7 @@ def parse(file)
         end
 
         # Handle extra ports that are "scanned but not listed" if state is open
-        if host.elements['ports/extraports'].attributes['state'] == 'open'
+        if host.elements['ports/extraports'] && host.elements['ports/extraports'].attributes['state'] == 'open'
           host_scanned_ports.each do |protocol,number|
             service = Service.new
             service.node             = interface.layer3_interface.layer2_interface.node
@@ -109,12 +109,14 @@ def parse(file)
           end 
         end
 
-        os = OperatingSystem.new
-        os.node             = interface.layer3_interface.layer2_interface.node
-        os.action           = action
-        os.fingerprint      = host.elements['os/osfingerprint'].attributes['fingerprint']
-        os.certainty_factor = 0.9
-        os.save false
+        if host.elements['os/osfingerprint']
+          os = OperatingSystem.new
+          os.node             = interface.layer3_interface.layer2_interface.node
+          os.action           = action
+          os.fingerprint      = host.elements['os/osfingerprint'].attributes['fingerprint']
+          os.certainty_factor = 0.9
+          os.save false
+        end
 
         host.elements.each('trace/hop') do |hop|
           IpInterface.create :address => hop.attributes['ipaddr']

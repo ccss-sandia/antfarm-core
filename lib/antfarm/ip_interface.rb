@@ -88,7 +88,6 @@ class IpInterface < ActiveRecord::Base
   end
 
   validates_presence_of   :address
-# validates_uniqueness_of :address, :unless => :private_address?
 
   # Validate data for requirements before saving interface to the database.
   #
@@ -120,10 +119,6 @@ class IpInterface < ActiveRecord::Base
   #######
   private
   #######
-
-  def private_address?
-    return @ip_addr.private_address?
-  end
 
   def create_layer3_interface
     # If we get to this point, then we know an interface does not

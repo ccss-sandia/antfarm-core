@@ -27,9 +27,12 @@ def print_help
   puts "This script utilizes the provided Prefuse-based Java application"
   puts "to display the networks contained in the current database."
   puts
+  puts "Script Options:"
+  puts "  --active    Rendered graph will be 'active' -- it will expand,"
+  puts "              move around, etc."
 end
 
-def display
+def display(options = [])
   output = File.open("#{Antfarm.tmp_dir_to_use}/network.gml", "w")
   output.puts "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
   output.puts "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">"
@@ -59,39 +62,50 @@ def display
       output.puts "    <edge source=\"node_#{node.id}\" target=\"network_#{l3_if.layer3_network.id}\" />"
     end
   end
-  node_list = Array.new
+  traffic_list = Array.new
   Traffic.find(:all).each do |traffic|
     source_node = traffic.source_layer3_interface.layer2_interface.node
     target_node = traffic.target_layer3_interface.layer2_interface.node
-    unless node_list.include?(source_node)
-      output.puts "    <node id=\"node_#{source_node.id}\">"
-      output.puts "      <data key=\"name\">#{source_node.name.nil? ? source_node.device_type : source_node.name}</data>"
-      output.puts "      <data key=\"type\">#{source_node.device_type}</data>"
-      output.puts "    </node>"
+#   unless node_list.include?(source_node)
+#     output.puts "    <node id=\"node_#{source_node.id}\">"
+#     output.puts "      <data key=\"name\">#{source_node.name.nil? ? source_node.device_type : source_node.name}</data>"
+#     output.puts "      <data key=\"type\">#{source_node.device_type}</data>"
+#     output.puts "    </node>"
+#   end
+#   unless node_list.include?(target_node)
+#     output.puts "    <node id=\"node_#{target_node.id}\">"
+#     output.puts "      <data key=\"name\">#{target_node.name.nil? ? target_node.device_type : target_node.name}</data>"
+#     output.puts "      <data key=\"type\">#{target_node.device_type}</data>"
+#     output.puts "    </node>"
+#   end
+    unless traffic_list.include?([source_node.id, target_node.id])
+      output.puts "    <edge source=\"node_#{source_node.id}\" target=\"node_#{target_node.id}\">"
+      output.puts "      <data key=\"line\">#{traffic.description}</data>"
+      output.puts "    </edge>"
+      traffic_list << [source_node.id, target_node.id]
     end
-    unless node_list.include?(target_node)
-      output.puts "    <node id=\"node_#{target_node.id}\">"
-      output.puts "      <data key=\"name\">#{target_node.name.nil? ? target_node.device_type : target_node.name}</data>"
-      output.puts "      <data key=\"type\">#{target_node.device_type}</data>"
-      output.puts "    </node>"
-    end
-    output.puts "    <edge source=\"node_#{source_node.id}\" target=\"node_#{target_node.id}\">"
-    output.puts "      <data key=\"line\">#{traffic.description}</data>"
-    output.puts "    </edge>"
   end
   output.puts "  </graph>"
   output.puts "</graphml>"
   output.close
 
   if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/colors.xml")
-    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -active -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
+    if options.include?('--active')
+      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -active -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
+    else
+      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
+    end
   else
-    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -active #{Antfarm.tmp_dir_to_use}/network.gml`
+    if options.include?('--active')
+      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -active #{Antfarm.tmp_dir_to_use}/network.gml`
+    else
+      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar #{Antfarm.tmp_dir_to_use}/network.gml`
+    end
   end
 end
 
-if ARGV.length > 0
+if ['-h', '--help'].include?(ARGV[0])
   print_help
 else
-  display
+  display(ARGV)
 end
