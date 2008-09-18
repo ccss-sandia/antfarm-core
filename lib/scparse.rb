@@ -66,7 +66,7 @@ module SCParse
     end
 
     def add_command(command)
-      @commands = CommandHash.new unless @commands
+      @commands ||= CommandHash.new
       @commands[command.name] = command
       command.parent = self
     end
@@ -88,6 +88,12 @@ module SCParse
         parents << cmd
       end until cmd.parent.is_a?(ScriptCommandParser)
       return parents
+    end
+
+    # Does this command have a given subcommand?
+    # Note: returns the command or nil, not true/false.
+    def has_command?(command)
+      return @commands[command]
     end
 
     # Does this command have any subcommands it's a parent to?
@@ -266,6 +272,13 @@ module SCParse
     # Adds a subcommand to the main command object.
     def add_command(command)
       @main.add_command(command)
+    end
+
+    # Does this application have a command with
+    # the given name?
+    # Note: returns command or nil, not true/false.
+    def has_command?(command)
+      @main.has_command?(command)
     end
 
     # Returns any options in the main command object.

@@ -113,8 +113,16 @@ if defined? USER_DIR
     if File.directory?(path)
       base_name = File.basename(path)
       unless base_name == 'scripts'
+        # Checks to see if the 'custom' command already
+        # exists, and if not, creates one.
+        # Not doing this up front so a custom command
+        # will only be created if custom scripts exist.
+        if (custom = app.has_command?('custom')) == nil
+          custom = SCParse::Command.new('custom')
+          app.add_command(custom)
+        end
         command = SCParse::Command.new(base_name)
-        app.add_command(command)
+        custom.add_command(command)
         sub_commands[base_name] = command
       end
     elsif File.file?(path) && path =~ /rb$/
@@ -127,7 +135,16 @@ if defined? USER_DIR
         load cmd.path
       end
       if dir == 'scripts'
-        app.add_command(script)
+        # Checks to see if the 'custom' command already
+        # exists, and if not, creates one. Not doing this
+        # up front so a custom command will only be created
+        # if custom scripts exist.
+        if (custom = app.has_command?('custom')) == nil
+          custom = SCParse::Command.new('custom')
+          app.add_command(custom)
+          sub_commands['custom'] = custom
+        end
+        custom.add_command(script)
       else
         sub_commands[dir].add_command(script)
       end
