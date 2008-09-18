@@ -62,29 +62,6 @@ def display(options = [])
       output.puts "    <edge source=\"node_#{node.id}\" target=\"network_#{l3_if.layer3_network.id}\" />"
     end
   end
-  traffic_list = Array.new
-  Traffic.find(:all).each do |traffic|
-    source_node = traffic.source_layer3_interface.layer2_interface.node
-    target_node = traffic.target_layer3_interface.layer2_interface.node
-#   unless node_list.include?(source_node)
-#     output.puts "    <node id=\"node_#{source_node.id}\">"
-#     output.puts "      <data key=\"name\">#{source_node.name.nil? ? source_node.device_type : source_node.name}</data>"
-#     output.puts "      <data key=\"type\">#{source_node.device_type}</data>"
-#     output.puts "    </node>"
-#   end
-#   unless node_list.include?(target_node)
-#     output.puts "    <node id=\"node_#{target_node.id}\">"
-#     output.puts "      <data key=\"name\">#{target_node.name.nil? ? target_node.device_type : target_node.name}</data>"
-#     output.puts "      <data key=\"type\">#{target_node.device_type}</data>"
-#     output.puts "    </node>"
-#   end
-    unless traffic_list.include?([source_node.id, target_node.id])
-      output.puts "    <edge source=\"node_#{source_node.id}\" target=\"node_#{target_node.id}\">"
-      output.puts "      <data key=\"line\">#{traffic.description}</data>"
-      output.puts "    </edge>"
-      traffic_list << [source_node.id, target_node.id]
-    end
-  end
   output.puts "  </graph>"
   output.puts "</graphml>"
   output.close

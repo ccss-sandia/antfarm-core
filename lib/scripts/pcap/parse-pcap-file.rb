@@ -37,32 +37,82 @@ def print_help
 end
 
 def parse(file, options = [])
-  cap = Pcap::Capture.open_offline(ARGV[0])
+  cap = Pcap::Capture.open_offline(file)
   cap.each do |pkt|
     if pkt.ip?
       source_addr = pkt.src.to_num_s
       target_addr = pkt.dst.to_num_s
       if options.include?('--create-new-networks')
-        source_iface = IpInterface.find_or_create_by_address(source_addr)
-        target_iface = IpInterface.find_or_create_by_address(target_addr)
-        traffic = Traffic.new :source_layer3_interface => source_iface.layer3_interface, \
-                              :target_layer3_interface => target_iface.layer3_interface, \
-                              :description => "PCAP"
-        traffic.port = pkt.dport if pkt.tcp? || pkt.udp?
-        traffic.save false
-        puts "Added traffic -- #{source_addr} ==> #{target_addr}"
+        source_iface = IpInterface.find_or_initialize_by_address(source_addr)
+        if source_iface.new_record?
+          source_iface.node_name = source_addr
+          source_iface.node_device_type = 'PCAP'
+          source_iface.save false
+        end
+        target_iface = IpInterface.find_or_initialize_by_address(target_addr)
+        if target_iface.new_record?
+          target_iface.node_name = target_addr
+          target_iface.node_device_type = 'PCAP'
+          target_iface.save false
+        end
+        if pkt.tcp? || pkt.udp?
+          traffic = Traffic.first(:conditions => { :source_layer3_interface_id => source_iface.layer3_interface.id,
+                                                   :target_layer3_interface_id => target_iface.layer3_interface.id,
+                                                   :port => pkt.dport})
+        else
+          traffic = Traffic.first(:conditions => { :source_layer3_interface_id => source_iface.layer3_interface.id,
+                                                   :target_layer3_interface_id => target_iface.layer3_interface.id })
+        end
+        unless traffic
+          if pkt.tcp? || pkt.udp?
+            traffic = Traffic.create :source_layer3_interface => source_iface.layer3_interface,
+                                     :target_layer3_interface => target_iface.layer3_interface,
+                                     :port => pkt.dport,
+                                     :description => "PCAP"
+          else
+            traffic = Traffic.create :source_layer3_interface => source_iface.layer3_interface,
+                                     :target_layer3_interface => target_iface.layer3_interface,
+                                     :description => "PCAP"
+          end
+          puts "Added traffic -- #{source_addr} ==> #{target_addr}"
+        end
       else
         source_net = Layer3Network.network_containing(source_addr)
         target_net = Layer3Network.network_containing(target_addr)
         if source_net && target_net
-          source_iface = IpInterface.find_or_create_by_address(source_addr)
-          target_iface = IpInterface.find_or_create_by_address(target_addr)
-          traffic = Traffic.new :source_layer3_interface => source_iface.layer3_interface, \
-                                :target_layer3_interface => target_iface.layer3_interface, \
-                                :description => "PCAP"
-          traffic.port = pkt.dport if pkt.tcp? || pkt.udp?
-          traffic.save false
-          puts "Added traffic -- #{source_addr} ==> #{target_addr}"
+          source_iface = IpInterface.find_or_initialize_by_address(source_addr)
+          if source_iface.new_record?
+            source_iface.node_name = source_addr
+            source_iface.node_device_type = 'PCAP'
+            source_iface.save false
+          end
+          target_iface = IpInterface.find_or_initialize_by_address(target_addr)
+          if target_iface.new_record?
+            target_iface.node_name = target_addr
+            target_iface.node_device_type = 'PCAP'
+            target_iface.save false
+          end
+          if pkt.tcp? || pkt.udp?
+            traffic = Traffic.first(:conditions => { :source_layer3_interface_id => source_iface.layer3_interface.id,
+                                                     :target_layer3_interface_id => target_iface.layer3_interface.id,
+                                                     :port => pkt.dport})
+          else
+            traffic = Traffic.first(:conditions => { :source_layer3_interface_id => source_iface.layer3_interface.id,
+                                                     :target_layer3_interface_id => target_iface.layer3_interface.id })
+          end
+          unless traffic
+            if pkt.tcp? || pkt.udp?
+              traffic = Traffic.create :source_layer3_interface => source_iface.layer3_interface,
+                                       :target_layer3_interface => target_iface.layer3_interface,
+                                       :port => pkt.dport,
+                                       :description => "PCAP"
+            else
+              traffic = Traffic.create :source_layer3_interface => source_iface.layer3_interface,
+                                       :target_layer3_interface => target_iface.layer3_interface,
+                                       :description => "PCAP"
+            end
+            puts "Added traffic -- #{source_addr} ==> #{target_addr}"
+          end
         end
       end
     end

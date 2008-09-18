@@ -217,16 +217,11 @@ module SCParse
         cmd = scparser.main
         arg = args.shift
 
-        puts "cmd: #{cmd.name}, arg: #{arg}"
-
         while !arg.nil? && cmd.commands[arg]
           cmd = cmd.commands[arg]
           arg = args.shift
-          puts "cmd: #{cmd.name}, arg: #{arg}"
         end
         
-        puts "cmd: #{cmd.name}, arg: #{arg}"
-
         if arg.nil?
           cmd.show_help
         else

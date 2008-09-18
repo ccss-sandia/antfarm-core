@@ -34,6 +34,7 @@ module Antfarm
       @opts.migrate = false
       @opts.remove = false
       @opts.reset = false
+      @opts.console = false
 
       @options = OptionParser.new do |opts|
         opts.on('--initialize', "Initialize user's environment") do
@@ -47,6 +48,7 @@ module Antfarm
           @opts.migrate = true
         end
         opts.on('--reset', "Reset tables in database and clear the log file for the given environment") { @opts.reset = true }
+        opts.on('--console', "Start up an SQLite3 console using the database for the given environment") { @opts.console = true }
       end
     end
 
@@ -63,6 +65,8 @@ module Antfarm
         db_migrate
       elsif @opts.reset
         db_reset
+      elsif @opts.console
+        db_console
       end
     end
 
@@ -101,6 +105,10 @@ module Antfarm
       Find.find(Antfarm.log_dir_to_use) do |path|
         `rm #{path}` unless File.basename(path) == 'log'
       end
+
+      Find.find(Antfarm.tmp_dir_to_use) do |path|
+        `rm #{path}` unless File.basename(path) == 'tmp'
+      end
     end
 
     # Creates a new database and schema file.  The location of the newly created
@@ -121,6 +129,11 @@ module Antfarm
     def db_reset
       db_remove
       db_migrate
+    end
+
+    def db_console
+      puts "Loading #{ANTFARM_ENV} environment"
+      exec "sqlite3 #{Antfarm.db_file_to_use}"
     end
 
     def db_schema_dump
