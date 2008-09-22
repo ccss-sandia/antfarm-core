@@ -28,8 +28,8 @@ def print_help
   puts "to display traffic contained in the current database."
   puts
   puts "Script Options:"
-  puts "  --active    Rendered graph will be 'active' -- it will expand,"
-  puts "              move around, etc."
+  puts "  --collapse-ports    Only include one node for each port number"
+  puts "                      discovered."
 end
 
 def display(options = [])
@@ -61,33 +61,36 @@ def display(options = [])
       nodes << target_node
     end
     if port.zero?
-#     output.puts "    <edge source=\"node_#{source_node.id}\" target=\"node_#{target_node.id}\">"
-#     output.puts "      <data key=\"line\">#{traffic.description}-PORTLESS</data>"
-#     output.puts "    </edge>"
+      output.puts "    <edge source=\"node_#{source_node.id}\" target=\"node_#{target_node.id}\">"
+      output.puts "      <data key=\"line\">#{traffic.description}-PORTLESS</data>"
+      output.puts "    </edge>"
     else
-#     output.puts "    <node id=\"port_#{source_node.id}_#{target_node.id}_#{port}\">"
-#     output.puts "      <data key=\"name\">#{port}</data>"
-#     output.puts "      <data key=\"type\">PORT</data>"
-#     output.puts "    </node>"
-      unless ports.include?(port)
-        output.puts "    <node id=\"port_#{port}\">"
+      if options.include?('--collapse-ports')
+        unless ports.include?(port)
+          output.puts "    <node id=\"port_#{port}\">"
+          output.puts "      <data key=\"name\">#{port}</data>"
+          output.puts "      <data key=\"type\">PORT</data>"
+          output.puts "    </node>"
+          ports << port
+        end
+        output.puts "    <edge source=\"node_#{source_node.id}\" target=\"port_#{port}\">"
+        output.puts "      <data key=\"line\">#{traffic.description}</data>"
+        output.puts "    </edge>"
+        output.puts "    <edge source=\"port_#{port}\" target=\"node_#{target_node.id}\">"
+        output.puts "      <data key=\"line\">#{traffic.description}</data>"
+        output.puts "    </edge>"
+      else
+        output.puts "    <node id=\"port_#{source_node.id}_#{target_node.id}_#{port}\">"
         output.puts "      <data key=\"name\">#{port}</data>"
         output.puts "      <data key=\"type\">PORT</data>"
         output.puts "    </node>"
-        ports << port
+        output.puts "    <edge source=\"node_#{source_node.id}\" target=\"port_#{source_node.id}_#{target_node.id}_#{port}\">"
+        output.puts "      <data key=\"line\">#{traffic.description}</data>"
+        output.puts "    </edge>"
+        output.puts "    <edge source=\"port_#{source_node.id}_#{target_node.id}_#{port}\" target=\"node_#{target_node.id}\">"
+        output.puts "      <data key=\"line\">#{traffic.description}</data>"
+        output.puts "    </edge>"
       end
-#     output.puts "    <edge source=\"node_#{source_node.id}\" target=\"port_#{source_node.id}_#{target_node.id}_#{port}\">"
-#     output.puts "      <data key=\"line\">#{traffic.description}</data>"
-#     output.puts "    </edge>"
-#     output.puts "    <edge source=\"port_#{source_node.id}_#{target_node.id}_#{port}\" target=\"node_#{target_node.id}\">"
-#     output.puts "      <data key=\"line\">#{traffic.description}</data>"
-#     output.puts "    </edge>"
-      output.puts "    <edge source=\"node_#{source_node.id}\" target=\"port_#{port}\">"
-      output.puts "      <data key=\"line\">#{traffic.description}</data>"
-      output.puts "    </edge>"
-      output.puts "    <edge source=\"port_#{port}\" target=\"node_#{target_node.id}\">"
-      output.puts "      <data key=\"line\">#{traffic.description}</data>"
-      output.puts "    </edge>"
     end
   end
   output.puts "  </graph>"
@@ -95,17 +98,9 @@ def display(options = [])
   output.close
 
   if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/colors.xml")
-    if options.include?('--active')
-      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -active -tree -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
-    else
-      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
-    end
+    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
   else
-    if options.include?('--active')
-      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -active -tree #{Antfarm.tmp_dir_to_use}/network.gml`
-    else
-      `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree #{Antfarm.tmp_dir_to_use}/network.gml`
-    end
+    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree #{Antfarm.tmp_dir_to_use}/network.gml`
   end
 end
 
