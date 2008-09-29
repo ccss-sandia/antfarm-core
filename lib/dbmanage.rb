@@ -116,13 +116,22 @@ module Antfarm
     # configuration hash, and is based on the current ANTFARM environment.
     def db_migrate
       if File.exists?(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
-        load(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
+        begin
+          load(File.expand_path("#{ANTFARM_ROOT}/db/schema.rb"))
+        rescue PGError
+          puts "Looks like you are using the PostgreSQL database and you haven't yet created a database for this environment."
+          puts "Please execute 'psql #{ANTFARM_ENV}' to create the database, then try running 'antfarm db --migrate' again."
+        end
       else
         puts "A schema file did not exist. Running migrations instead."
-
-        ActiveRecord::Migration.verbose = true
-        ActiveRecord::Migrator.migrate(ANTFARM_ROOT + "/db/migrate/", nil)
-        db_schema_dump if ActiveRecord::Base.schema_format == :ruby
+        begin
+          ActiveRecord::Migration.verbose = true
+          ActiveRecord::Migrator.migrate(ANTFARM_ROOT + "/db/migrate/", nil)
+          db_schema_dump if ActiveRecord::Base.schema_format == :ruby
+        rescue PGError
+          puts "Looks like you are using the PostgreSQL database and you haven't yet created a database for this environment."
+          puts "Please execute 'psql #{ANTFARM_ENV}' to create the database, then try running 'antfarm db --migrate' again."
+        end
       end
     end
 
@@ -132,8 +141,15 @@ module Antfarm
     end
 
     def db_console
+      if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
+        config = YAML::load(IO.read("#{USER_DIR}/config/defaults.yml"))
+      end
       puts "Loading #{ANTFARM_ENV} environment"
-      exec "sqlite3 #{Antfarm.db_file_to_use}"
+      if config && config[ANTFARM_ENV] && config[ANTFARM_ENV]['adapter'] == 'postgresql'
+        exec "psql #{ANTFARM_ENV}"
+      else
+        exec "sqlite3 #{Antfarm.db_file_to_use}"
+      end
     end
 
     def db_schema_dump

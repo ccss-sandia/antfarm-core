@@ -20,6 +20,7 @@
 #
 # This script is modeled after the Rails initializer class.
 
+require 'yaml'
 require 'rubygems'
 require 'active_record'
 
@@ -61,10 +62,31 @@ module Antfarm
       require 'antfarm'
     end
 
-    # Currently, sqlite3 databases are the only ones supported. The name of the ANTFARM environment
-    # (which defaults to 'antfarm') is the name used for the database file and the log file.
+    # Currently, SQLite3 and PostgreSQL databases are the only ones supported.
+    # The name of the ANTFARM environment (which defaults to 'antfarm') is the
+    # name used for the database file and the log file.
     def initialize_database
-      config = { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm.db_file_to_use } }
+      if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
+        config = YAML::load(IO.read("#{USER_DIR}/config/defaults.yml"))
+      end
+      # Database setup based on adapter specified
+      if config && config[ANTFARM_ENV] && config[ANTFARM_ENV].has_key?('adapter')
+        if config[ANTFARM_ENV]['adapter'] == 'sqlite3'
+          config[ANTFARM_ENV]['database'] = Antfarm.db_file_to_use
+        elsif config[ANTFARM_ENV]['adapter'] == 'postgresql'
+          config[ANTFARM_ENV]['database'] = ANTFARM_ENV
+        else
+          # If adapter specified isn't one of sqlite3 or postgresql,
+          # default to SQLite3 database configuration.
+          config = nil
+        end
+      else
+        # If the current environment configuration doesn't specify a
+        # database adapter, default to SQLite3 database configuration.
+        config = nil
+      end
+      # Default to SQLite3 database configuration
+      config ||= { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm.db_file_to_use } }
       ActiveRecord::Base.configurations = config
       ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
     end

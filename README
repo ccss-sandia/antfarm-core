@@ -37,6 +37,12 @@ and running with ANTFARM.
 ANTFARM is packaged as a Ruby Gem, so the easiest way to install
 it is to run 'gem install ANTFARM' from the command line.
 
+The default database for ANTFARM is SQLite3, so at a minimum you will
+need libsqlite3-dev installed.  The PostgreSQL database is also
+supported (good for concurrent access), which requires the development
+files for the PostgreSQL server to be installed, as well as the server
+and client software and the postgres Ruby Gem.
+
 === Initialization
 
 ANTFARM can be ran purely from within the Gem environment, but users
@@ -54,6 +60,15 @@ written by the user can be placed here to be made available to the application.
 Last, you need to create an actual database to store the data in.
 
   antfarm db --migrate
+
+The above command will work out of the box if the SQLite3 database is used.
+If you intend to use the PostgreSQL database, you must first create a database
+in PostgreSQL.  The name of the database should match the name of the environment
+you wish to use it in.
+
+  su - postgres
+  createuser <username> (you will only have to do this once)
+  createdb antfarm (or whatever environment name you want)
 
 Now you're ready to start parsing files and filling the database!
 
@@ -74,6 +89,19 @@ also be changed in the <tt>HOME_DIR/.antfarm/config/defaults.yml</tt> file so
 you do not have to specify it on the command line every time.  This is probably
 also the __safer__ way to go... if you forget one time to pass the <tt>-e</tt>
 argument when using the non-default environment you could corrupt some data!
+
+You can also tell the ANTFARM application to use the PostgreSQL database for
+a particular environment by adding something similar to the following to your
+defaults.yml file:
+
+ <env name>:
+   adapter: postgresql
+
+For example, the following will tell ANTFARM to use the PostgreSQL database for
+the default 'antfarm' environment:
+
+ antfarm:
+   adapter: postgresql
 
 == Example Usage
 
