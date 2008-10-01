@@ -26,6 +26,7 @@ require 'find'
 require 'ostruct'
 require 'scparse'
 require 'dbmanage'
+require 'cpscript'
 require 'yaml'
 
 if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
@@ -54,6 +55,7 @@ end
 
 app.add_command(SCParse::HelpCommand.new)
 app.add_command(Antfarm::DBManager.new)
+app.add_command(Antfarm::CPScript.new)
 
 rails = SCParse::Script.new('rails', 'script/server')
 rails.set_execution_block do |cmd,args|

@@ -33,7 +33,7 @@ def print_help
 end
 
 def display(options = [])
-  output = File.open("#{Antfarm.tmp_dir_to_use}/network.gml", "w")
+  output = File.open("#{Antfarm.tmp_dir_to_use}/traffic.gml", "w")
   output.puts "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
   output.puts "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">"
   output.puts "  <graph edgedefault=\"undirected\">"
@@ -98,9 +98,9 @@ def display(options = [])
   output.close
 
   if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/colors.xml")
-    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/network.gml`
+    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree -colors #{USER_DIR}/config/colors.xml #{Antfarm.tmp_dir_to_use}/traffic.gml`
   else
-    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree #{Antfarm.tmp_dir_to_use}/network.gml`
+    `java -jar #{ANTFARM_ROOT}/lib/antfarm.jar -tree #{Antfarm.tmp_dir_to_use}/traffic.gml`
   end
 end
 
