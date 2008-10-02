@@ -57,6 +57,13 @@ app.add_command(SCParse::HelpCommand.new)
 app.add_command(Antfarm::DBManager.new)
 app.add_command(Antfarm::CPScript.new)
 
+version = SCParse::Script.new('version', 'version.rb', false)
+version.set_execution_block do |cmd,args|
+  ARGV.clear
+  load cmd.path
+end
+app.add_command(version)
+
 rails = SCParse::Script.new('rails', 'script/server')
 rails.set_execution_block do |cmd,args|
   ARGV.clear

@@ -1,9 +1,10 @@
 ANTFARM CHANGELOG
 
-VERSION 0.3.1
+VERSION 0.4.0
  * Added support for PostgreSQL database
  * Added ANTFARM console command, which initializes an IRB console with the ANTFARM environment
  * Added ANTFARM db --console option, which determines the database adapter being used and executes the appropriate database console command
+ * Added ANTFARM cp-script command, which takes an existing ANTFARM core script and copies it to the user's custom script directory for use as a template
  * Updated Nmap XML parser script
  * Added visualization file for the traffic table
  * Modified the visualization file for networks to leave out traffic data

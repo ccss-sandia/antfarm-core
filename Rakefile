@@ -23,7 +23,7 @@ require 'rake/rdoctask'
 
 spec = Gem::Specification.new do |s| 
   s.name = "antfarm"
-  s.version = "0.3.1"
+  s.version = "0.4.0"
   s.author = "Michael Berg and Bryan Richardson"
   s.email = "btricha@sandia.gov and mjberg@sandia.gov"
   s.homepage = "http://antfarm.rubyforge.org"
@@ -47,7 +47,7 @@ end
 namespace :doc do
   Rake::RDocTask.new("antfarm") do |rdoc|
     rdoc.rdoc_dir = 'doc/antfarm'
-    rdoc.title = 'ANTFARM Application Documentation, Version 0.3.1'
+    rdoc.title = 'ANTFARM Application Documentation, Version 0.4.0'
     rdoc.rdoc_files.include('README')
     rdoc.rdoc_files.include('lib/**/*.rb')
     rdoc.rdoc_files.exclude('lib/graph', 'lib/misc', 'lib/scripts')
