@@ -33,7 +33,7 @@ spec = Gem::Specification.new do |s|
   s.files = FileList["{bin,config,db,lib,log,rails,templates,tmp}/**/*", "CHANGELOG", "LICENSE"].exclude("lib/misc", "lib/graph", "lib/scripts/viz/render-graph.rb").to_a
   s.executables << 'antfarm'
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README"]
+  s.extra_rdoc_files = ["README.rdoc"]
   s.add_dependency("activerecord", ">= 2.0.2")
   s.add_dependency("sqlite3-ruby", ">= 1.2.2")
   s.requirements << 'libsqlite3-dev'
@@ -48,7 +48,7 @@ namespace :doc do
   Rake::RDocTask.new("antfarm") do |rdoc|
     rdoc.rdoc_dir = 'doc/antfarm'
     rdoc.title = 'ANTFARM Application Documentation, Version 0.4.0'
-    rdoc.rdoc_files.include('README')
+    rdoc.rdoc_files.include('README.rdoc')
     rdoc.rdoc_files.include('lib/**/*.rb')
     rdoc.rdoc_files.exclude('lib/graph', 'lib/misc', 'lib/scripts')
   end
