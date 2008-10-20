@@ -4,8 +4,7 @@
 # Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
 # the U.S. Government retains certain rights in this software.
 #
-# Original Author: Michael Berg, Sandia National Laboratories <mjberg@sandia.gov>
-# Modified By: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
+# Author: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by
