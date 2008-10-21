@@ -1,5 +1,10 @@
 ANTFARM CHANGELOG
 
+VERSION 0.5.0 (not released yet)
+ * Added 'custom' string column to each table in database to be used however a developer of scripts needs to use it.
+ * Added 'virtual' boolean column to ip_interface table to denote whether or not an IP interface is virtual (defaults to false)
+ * Changed 'address' field in DNS table to 'ip_address' and added 'ethernet_address' field (this is why the minor version number had to change...)
+
 VERSION 0.4.0
  * Added support for PostgreSQL database
  * Added ANTFARM console command, which initializes an IRB console with the ANTFARM environment

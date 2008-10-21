@@ -21,10 +21,11 @@
 class CreateLayer3Interfaces < ActiveRecord::Migration
   def self.up
     create_table :layer3_interfaces do |t|
-      t.float :certainty_factor, :null => false
-      t.string :protocol
       t.references :layer2_interface, :null => false
-      t.references :layer3_network, :null => false
+      t.references :layer3_network,   :null => false
+      t.float      :certainty_factor, :null => false
+      t.string     :protocol
+      t.string     :custom
     end
   end
 

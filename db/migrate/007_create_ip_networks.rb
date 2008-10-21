@@ -21,9 +21,10 @@
 class CreateIpNetworks < ActiveRecord::Migration
   def self.up
     create_table :ip_networks do |t|
-      t.string :address, :null => false
-      t.boolean :private, :null => false, :default => false
       t.references :private_network
+      t.string     :address, :null => false
+      t.boolean    :private, :null => false, :default => false
+      t.string     :custom
     end
   end
 

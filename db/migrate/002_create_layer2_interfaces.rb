@@ -21,9 +21,10 @@
 class CreateLayer2Interfaces < ActiveRecord::Migration
   def self.up
     create_table :layer2_interfaces do |t|
-      t.float :certainty_factor, :null => false
-      t.string :media_type
-      t.references :node, :null => false
+      t.references :node,             :null => false
+      t.float      :certainty_factor, :null => false
+      t.string     :media_type
+      t.string     :custom
     end
   end
 

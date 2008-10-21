@@ -21,9 +21,10 @@
 class CreateNodes < ActiveRecord::Migration
   def self.up
     create_table :nodes do |t|
-      t.float :certainty_factor, :null => false
+      t.float  :certainty_factor, :null => false
       t.string :name
       t.string :device_type
+      t.string :custom
     end
   end
 

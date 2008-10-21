@@ -87,7 +87,7 @@ class IpInterface < ActiveRecord::Base
     super(@ip_addr.to_s)
   end
 
-  validates_presence_of   :address
+  validates_presence_of :address
 
   # Validate data for requirements before saving interface to the database.
   #
@@ -103,10 +103,10 @@ class IpInterface < ActiveRecord::Base
     # a new one but still create a new IP Network just in case the data given for
     # this address includes more detailed information about its network.
     unless @ip_addr.private_address?
-      interfaces = IpInterface.find :all, :conditions => { :address => address }
-      if interfaces && interfaces.length > 0
+      interface = IpInterface.find_by_address(address)
+      if interface
         create_ip_network
-        errors.add(:address, 'address already exists, but a new IP Network was created')
+        errors.add(:address, "#{address} already exists, but a new IP Network was created")
       end
     end
   end
@@ -143,7 +143,6 @@ class IpInterface < ActiveRecord::Base
           ethernet_interface = EthernetInterface.create :address => @ethernet_address
           layer3_interface.layer2_interface = ethernet_interface.layer2_interface
         end
-
         layer3_interface.layer2_interface_media_type = @layer2_interface_media_type if @layer2_interface_media_type
         layer3_interface.node = @node if @node
         layer3_interface.node_name = @node_name if @node_name

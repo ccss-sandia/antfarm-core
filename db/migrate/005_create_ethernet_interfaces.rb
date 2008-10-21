@@ -22,6 +22,7 @@ class CreateEthernetInterfaces < ActiveRecord::Migration
   def self.up
     create_table :ethernet_interfaces do |t|
       t.string :address, :null => false
+      t.string :custom
     end
   end
 

@@ -25,6 +25,7 @@ class CreateActions < ActiveRecord::Migration
       t.string :description
       t.string :start
       t.string :end
+      t.string :custom
     end
   end
 

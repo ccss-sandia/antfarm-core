@@ -21,8 +21,10 @@
 class CreateDnsEntries < ActiveRecord::Migration
   def self.up
     create_table :dns_entries do |t|
-      t.string :address
+      t.string :ip_address
+      t.string :ethernet_address
       t.string :hostname
+      t.string :custom
     end
   end
 

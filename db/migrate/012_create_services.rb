@@ -21,12 +21,13 @@
 class CreateServices < ActiveRecord::Migration
   def self.up
     create_table :services do |t|
-      t.float      :certainty_factor, :null => false
       t.references :node
       t.references :action
+      t.float      :certainty_factor, :null => false
       t.string     :protocol
       t.integer    :port
       t.string     :name
+      t.string     :custom
     end
   end
 

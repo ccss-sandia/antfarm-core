@@ -21,8 +21,9 @@
 class CreateLayer3Networks < ActiveRecord::Migration
   def self.up
     create_table :layer3_networks do |t|
-      t.float :certainty_factor, :null => false
+      t.float  :certainty_factor, :null => false
       t.string :protocol
+      t.string :custom
     end
   end
 

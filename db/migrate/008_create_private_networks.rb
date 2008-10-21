@@ -22,6 +22,7 @@ class CreatePrivateNetworks < ActiveRecord::Migration
   def self.up
     create_table :private_networks do |t|
       t.string :description
+      t.string :custom
     end
   end
 

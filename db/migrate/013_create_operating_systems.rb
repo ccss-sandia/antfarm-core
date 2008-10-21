@@ -21,10 +21,11 @@
 class CreateOperatingSystems < ActiveRecord::Migration
   def self.up
     create_table :operating_systems do |t|
-      t.float      :certainty_factor, :null => false
       t.references :node
       t.references :action
+      t.float      :certainty_factor, :null => false
       t.text       :fingerprint
+      t.string     :custom
     end
   end
 

@@ -21,7 +21,9 @@
 class CreateIpInterfaces < ActiveRecord::Migration
   def self.up
     create_table :ip_interfaces do |t|
-      t.string :address, :null => false
+      t.string  :address, :null => false
+      t.boolean :virtual, :null => false, :default => false
+      t.string  :custom
     end
   end
 
