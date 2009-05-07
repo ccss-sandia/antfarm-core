@@ -125,7 +125,7 @@ module Antfarm
     
     def initialize
       self.load_paths = default_load_paths
-      self.log_level = default_log_level
+      self.log_level  = default_log_level
     end
 
     #######
@@ -133,7 +133,7 @@ module Antfarm
     #######
 
     def default_load_paths
-      paths = Array.new
+      paths  = Array.new
       paths << File.expand_path(ANTFARM_ROOT + "/lib")
       return paths
     end

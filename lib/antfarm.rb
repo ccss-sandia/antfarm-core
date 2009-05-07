@@ -87,7 +87,6 @@ module Antfarm
           mask_len -= res.round
         end
       end
-
       return mask_len
     end
 
@@ -96,8 +95,7 @@ module Antfarm
     end
 
     def to_cidr_string
-      str = sprintf("%s/%s", self.network.to_string, self.netmask_length.to_s)
-      return str
+      return sprintf("%s/%s", self.network.to_string, self.netmask_length.to_s)
     end
 
     def broadcast
@@ -106,10 +104,8 @@ module Antfarm
    
     # TODO: track down the IPv6 private use ranges and include them
     def private_address?
-      private_addr_list = [
-        '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
-        'fe80::/10', 'fec0::/10'
-      ]
+      private_addr_list = [ '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16',
+                            'fe80::/10', 'fec0::/10' ]
       return self.in_address_list?(private_addr_list)
     end
 
@@ -133,7 +129,6 @@ module Antfarm
           return true
         end
       end
-
       return false    
     end
 

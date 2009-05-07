@@ -12,4 +12,8 @@ end
 
 puts plugins.sort
 
+Antfarm::Plugin.load('viz/display_networks') do |plugin|
+  puts plugin.name
+end
+
 DataMapper.auto_migrate!
