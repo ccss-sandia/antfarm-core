@@ -1,15 +1,31 @@
+require 'antfarm/ui'
 require 'find'
 
 module Antfarm
   class PluginInheritanceError < RuntimeError; end
+  class PluginOptionsError < RuntimeError; end
 
   class Plugin
     attr_accessor :name
 
-    PLUGIN_ROOTS = ["#{ANTFARM_ROOT}/plugins"]
+    PLUGIN_ROOTS  = ["#{ANTFARM_ROOT}/plugins"]
     PLUGIN_ROOTS << Antfarm::Helpers.user_plugins_dir
 
-    def self.load(plugin)
+    # perform a quick discovery of plugins that exist
+    def self.discover
+      PLUGIN_ROOTS.each do |root|
+        Find.find("#{root}/") do |path|
+          unless File.directory?(path)
+            if File.file?(path) && path =~ /rb$/
+              path.sub! /.rb/, ''
+              yield path.sub /^.*#{root}\//, ''
+            end
+          end
+        end
+      end
+    end
+
+    def self.load(plugin = :all)
       if plugin == :all
         PLUGIN_ROOTS.each do |root|
           # dive into the root directory to look for plugins
@@ -56,76 +72,45 @@ module Antfarm
       end
     end
 
-    def initialize
-      @info             = Hash.new
-      @options          = Hash.new
-      @data_store       = Hash.new
-      @required_options = Array.new
-    end
+    ALLOWED_INFO    = [:name, :author, :desc ]
+    ALLOWED_OPTIONS = [:name, :desc, :long, :short, :type, :default, :required]
 
-    def register_info(info)
-      info.each do |key,value|
-        @info[key] = value
+    attr_reader :options
+
+    def initialize(info = nil, options = nil)
+      @info    = info
+      @options = [options].flatten
+
+      if @info
+        @info.reject! { |k,v| !ALLOWED_INFO.include?(k) }
       end
-    end
 
-    def register_options(*opts)
-      opts.each do |options|
-        option              = options.delete(:name)
-        @options[option]    = options
-        @required_options << option if options[:required] == true
-        @data_store[option] = options[:default] if options.has_key?(:default)
+      if @options
+        for option in @options
+          raise Antfarm::PluginOptionsError, 'Each option must specify a name' unless option[:name]
+          raise Antfarm::PluginOptionsError, 'Each option must specify a description' unless option[:desc]
+          option.reject! { |k,v| !ALLOWED_OPTIONS.include?(k) }
+        end
       end
-      @required_options.uniq!
-    end
-
-    def description
-      return @info[:description]
     end
 
     def show_info
-      header = Array.new
-      data   = Array.new
-      @info.each do |key,value|
-        header << key.to_s.capitalize
-        data << value
-      end
       table        = Antfarm::UI::Console::Table.new
-      table.header = header
-      table.add_row(data)
+      table.header = ['Plugin Info', '']
+      for key in ALLOWED_INFO
+        table.add_row([key.to_s.capitalize, @info[key].to_s])
+      end
       table.print
     end
 
     def show_options
       table        = Antfarm::UI::Console::Table.new
-      table.header = ['Name', 'Required', 'Current Setting', 'Description']
-      @options.each do |name,info|
-        current_setting = @data_store.has_key?(name) ? @data_store[name].to_s : 'N/A'
-        table.add_row([name, info[:required].to_s, current_setting, info[:description]])
+      table.header = ALLOWED_OPTIONS.map { |key| key.to_s.capitalize }
+      for option in @options
+        row = ALLOWED_OPTIONS.map { |key| option[key].to_s }
+        table.add_row(row)
       end
       table.print
-    end
-
-    def set_option(option,value)
-      return nil unless @options.has_key?(option)
-      @data_store[option] = value
-    end
-
-    def unset_option(option)
-      return @data_store.delete(option)
-    end
-
-    def check_required_options
-      required_options_not_set = Array.new
-      @required_options.each do |option|
-        required_options_not_set << option unless @data_store.has_key?(option)
-      end
-      unless required_options_not_set.empty?
-        puts 'Required options for this plugin have not yet been set'
-        show_options
-        return false
-      end
-      return true
     end
   end
 end

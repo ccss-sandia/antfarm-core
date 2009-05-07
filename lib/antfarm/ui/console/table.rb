@@ -3,14 +3,12 @@ module Antfarm
     module Console
       class Table
         attr_writer :header
-        attr_writer :margin
-        attr_writer :separator
 
-        def initialize
+        def initialize(margin = 5, separator = '=')
           @header    = Array.new
           @rows      = Array.new
-          @margin    = 5
-          @separator = '='
+          @margin    = margin
+          @separator = separator
         end
 
         def add_header_column(string)
@@ -24,11 +22,15 @@ module Antfarm
         def print
           formatter  = build_formatter
           separators = build_separators
+          header     = formatter % @header
+          separator  = formatter % separators
+          term_width = `stty -a | tr -s ';' '\n' | grep "column" | sed s/'[^[:digit:]]'//g`.to_i # yuk!
           puts
-          puts formatter % @header
-          puts formatter % separators
+          puts header.length > term_width ? header[0,term_width] : header
+          puts separator.length > term_width ? separator[0,term_width] : separator
           @rows.each do |row|
-            puts formatter % row
+            row = formatter % row
+            puts row.length > term_width ? row[0,term_width] : row
           end
           puts
         end
@@ -38,6 +40,10 @@ module Antfarm
         #######
 
         def build_formatter
+          if @header.empty?
+            @header = Array.new(@rows[0].length, '') # yuk again!
+          end
+
           columns = @header.length
           formatter = String.new
           (0...(columns - 1)).each do |column|
@@ -61,7 +67,7 @@ module Antfarm
           @header.each_index do |i|
             max = @header[i].length
             @rows.each do |row|
-              length = row[i].length
+              length = row[i].nil? ? 0 : row[i].length
               max    = length > max ? length : max
             end
             @widths << max + @margin

@@ -25,9 +25,10 @@
 # * belongs to a layer 3 interface (defined as target_layer3_interface)
 module Antfarm
   module Database
-    # TODO: figure out how to set table name
-    class Traffic < Sequel::Model(:traffic)
+    class Traffic
       include DataMapper::Resource
+
+      storage_names[:default] = 'traffic'
 
       property :id,          Serial
       property :source_id,   Integer, :null => false
@@ -37,8 +38,8 @@ module Antfarm
       property :timestamp,   String
       property :custom,      String
 
-      belongs_to :source, :class => "Layer3Interface", :key => "source_id"
-      belongs_to :target, :class => "Layer3Interface", :key => "target_id"
+      belongs_to :source, :class_name => "Layer3Interface", :child_key => [:source_id]
+      belongs_to :target, :class_name => "Layer3Interface", :child_key => [:target_id]
     end
   end
 end

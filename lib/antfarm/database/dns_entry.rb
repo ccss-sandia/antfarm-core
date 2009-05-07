@@ -24,6 +24,8 @@ module Antfarm
     class DnsEntry
       include DataMapper::Resource
 
+      storage_names[:default] = 'dns_entries'
+
       property :id,               Serial
       property :ip_address,       String
       property :ethernet_address, String

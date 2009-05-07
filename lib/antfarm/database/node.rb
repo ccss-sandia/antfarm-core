@@ -28,6 +28,8 @@ module Antfarm
     class Node
       include DataMapper::Resource
 
+      storage_names[:default] = 'nodes'
+
       property :id,               Serial
       property :certainty_factor, Float, :null => false
       property :name,             String
@@ -41,7 +43,7 @@ module Antfarm
 
       before :save, :clamp_certainty_factor
 
-      validates_presence_of :certainty_factor
+      validates_present :certainty_factor
 
       # Find and return the first node found with the given name.
       def self.node_named(name)

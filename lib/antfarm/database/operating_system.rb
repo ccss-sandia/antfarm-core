@@ -24,6 +24,8 @@ module Antfarm
     class OperatingSystem
       include DataMapper::Resource
 
+      storage_names[:default] = 'operating_systems'
+
       property :id,               Serial
       property :node_id,          Integer
       property :action_id,        Integer

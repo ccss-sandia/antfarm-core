@@ -24,6 +24,8 @@ module Antfarm
     class Service
       include DataMapper::Resource
 
+      storage_names[:default] = 'services'
+
       property :id,               Serial
       property :node_id,          Integer
       property :action_id,        Integer

@@ -37,6 +37,8 @@ module Antfarm
     class IpInterface
       include DataMapper::Resource
 
+      storage_names[:default] = 'ip_interfaces'
+
       property :id,      Serial
       property :address, String,  :null => false
       property :virtual, Boolean, :null => false, :default => false
@@ -96,7 +98,7 @@ module Antfarm
         super(@ip_addr.to_s)
       end
 
-      validates_presence_of :address
+      validates_present :address
 
       # Validate data for requirements before saving interface to the database.
       #

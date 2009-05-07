@@ -24,6 +24,8 @@ module Antfarm
     class Action
       include DataMapper::Resource
 
+      storage_names[:default] = 'actions'
+
       property :id,          Serial
       property :tool,        String
       property :description, String

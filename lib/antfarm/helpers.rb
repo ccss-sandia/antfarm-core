@@ -69,17 +69,30 @@ module Antfarm
       return File.expand_path("#{@user_dir}/plugins")
     end
 
+    USER_DIRECTORIES = ['config', 'db', 'log', 'plugins']
+
     # Initializes a suitable directory structure for the user
     def self.create_user_directory
-      # Just to be safe... don't want to wipe out existing user data!
-      unless File.exists?(ENV['HOME'] + '/.antfarm')
-        FileUtils.makedirs("#{ENV['HOME']}/.antfarm/config")
-        FileUtils.makedirs("#{ENV['HOME']}/.antfarm/db")
-        FileUtils.makedirs("#{ENV['HOME']}/.antfarm/log")
-        FileUtils.makedirs("#{ENV['HOME']}/.antfarm/plugins")
-        FileUtils.copy("#{File.dirname(__FILE__)}/../../templates/defaults_template_file.yml", "#{ENV['HOME']}/.antfarm/config/defaults.yml")
-        Antfarm::Helpers.log :warn, "Application directory created at #{ENV['HOME'] + '/.antfarm'}"
+      USER_DIRECTORIES.each do |directory|
+        path = "#{ENV['HOME']}/.antfarm/#{directory}"
+        # Just to be safe... don't want to wipe out existing user data!
+        unless File.exists?(path)
+          FileUtils.makedirs(path)
+          Antfarm::Helpers.log :warn, "User '#{directory}' directory created in #{ENV['HOME'] + '/.antfarm'}"
+        end
       end
+
+      defaults_file = "#{ENV['HOME']}/.antfarm/config/defaults.yml"
+      # Just to be safe... don't want to wipe out existing user data!
+      unless File.exists?(defaults_file)
+        File.open(defaults_file, 'w') do |file|
+          file.puts '---'
+          file.puts 'environment: antfarm'
+          file.puts 'log_level: warn'
+        end
+        Antfarm::Helpers.log :warn, "Default config file created at #{ENV['HOME'] + '/.antfarm/config/defaults.yml'}"
+      end
+
       @user_dir = (ENV['HOME'] + '/.antfarm').dup
     end
   end

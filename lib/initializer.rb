@@ -20,11 +20,12 @@
 #
 # This script is modeled after the Rails initializer class.
 
-require 'logger'
+# require 'logger'
 require 'yaml'
 
 require 'rubygems'
-require 'sequel'
+require 'dm-core'
+# require 'sequel'
 
 module Antfarm
   class Initializer
@@ -96,15 +97,17 @@ module Antfarm
       end
       # Default to SQLite3 database configuration
       config ||= { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm::Helpers.db_file(ANTFARM_ENV) } }
-      Sequel.connect("sqlite://#{config[ANTFARM_ENV]['database']}")
+      DataMapper.setup(:default, "sqlite3://#{config[ANTFARM_ENV]['database']}")
+#     Sequel.connect("sqlite://#{config[ANTFARM_ENV]['database']}")
 #     ActiveRecord::Base.configurations = config
 #     ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
     end
 
     def initialize_logger
-      @logger = Logger.new(Antfarm::Helpers.log_file(ANTFARM_ENV))
-      @logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
-      Sequel::DATABASES.first.logger = @logger
+#     @logger = Logger.new(Antfarm::Helpers.log_file(ANTFARM_ENV))
+#     @logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
+      @logger = DataMapper::Logger.new(Antfarm::Helpers.log_file(ANTFARM_ENV), configuration.log_level)
+#     Sequel::DATABASES.first.logger = @logger
 #     ActiveRecord::Base.logger = @logger
       Antfarm::Helpers.logger_callback = lambda do |severity,msg|
         @logger.send(severity,msg)

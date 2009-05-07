@@ -29,6 +29,8 @@ module Antfarm
     class IpNetwork
       include DataMapper::Resource
 
+      storage_names[:default] = 'ip_networks'
+
       property :id,                 Serial
       property :private_network_id, Integer
       property :address,            String,  :null => false
@@ -50,7 +52,7 @@ module Antfarm
       # created for this IP network if it's private.
       attr_writer :private_network_description
 
-      validates_presence_of :address
+      validates_present :address
 
       # Overriding the address setter in order to create an instance variable for an
       # Antfarm::IPAddrExt object ip_net.  This way the rest of the methods in this

@@ -34,6 +34,8 @@ module Antfarm
     class EthernetInterface
       include DataMapper::Resource
 
+      storage_names[:default] = 'ethernet_interfaces'
+
       property :id,      Serial
       property :address, String, :null => false
       property :custom,  String
@@ -61,11 +63,11 @@ module Antfarm
       # This ensures that the MAC address entered is of the right format.  It is called
       # *before* the before_create method below is called, which keeps the Layer2Interface
       # from being created if the address format is not valid.
-      validates_format_of :address, :with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i,
-                                    :on => :save,
-                                    :message => "invalid MAC address format"
+      validates_format :address, :with => /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/i,
+                                 :on => :save,
+                                 :message => "invalid MAC address format"
 
-      validates_presence_of :address
+      validates_present :address
 
       #######
       private

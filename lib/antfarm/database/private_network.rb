@@ -28,6 +28,8 @@ module Antfarm
     class PrivateNetwork
       include DataMapper::Resource
 
+      storage_names[:default] = 'private_networks'
+
       property :id,          Serial
       property :description, String
       property :custom,      String

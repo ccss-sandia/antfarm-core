@@ -41,6 +41,8 @@ module Antfarm
     class Layer3Interface
       include DataMapper::Resource
 
+      storage_names[:default] = 'layer3_interfaces'
+
       property :id,                  Serial
       property :layer2_interface_id, Integer, :null => false
       property :layer3_network_id,   Integer, :null => false
@@ -48,8 +50,8 @@ module Antfarm
       property :protocol,            String
       property :custom,              String
 
-      has n,     :outbound_traffic, :class => "Traffic", :key => "source_id"
-      has n,     :inbound_traffic,  :class => "Traffic", :key => "target_id"
+      has n,     :outbound_traffic, :class_name => "Traffic", :child_key => [:source_id]
+      has n,     :inbound_traffic,  :class_name => "Traffic", :child_key => [:target_id]
       has n,     :ip_interfaces,    :one_to_one => true, :key => "id"
       belongs_to :layer2_interface
       belongs_to :layer3_network
@@ -78,7 +80,7 @@ module Antfarm
       # layer 2 interface created for this layer 3 interface.
       attr_writer :node_device_type
 
-      validates_presence_of :certainty_factor
+      validates_present :certainty_factor
 
       # Find and return the layer 3 interface
       # with the given IP address.

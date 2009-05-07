@@ -29,6 +29,8 @@ module Antfarm
     class Layer3Network
       include DataMapper::Resource
 
+      storage_names[:default] = 'layer3_networks'
+
       property :id,               Serial
       property :certainty_factor, Float, :null => false
       property :protocol,         String
@@ -39,7 +41,7 @@ module Antfarm
 
       before :save, :clamp_certainty_factor
 
-      validates_presence_of :certainty_factor
+      validates_present :certainty_factor
 
       # Take the given network and merge with it
       # any sub_networks of the given network.

@@ -33,6 +33,8 @@ module Antfarm
     class Layer2Interface
       include DataMapper::Resource
 
+      storage_names[:default] = 'layer2_interfaces'
+
       property :id,               Serial
       property :node_id,          Integer, :null => false
       property :certainty_factor, Float,   :null => false
@@ -54,7 +56,7 @@ module Antfarm
       # this layer 2 interface.
       attr_writer :node_device_type
 
-      validates_presence_of :certainty_factor
+      validates_present :certainty_factor
 
       # Find and return the layer 2 interface with the
       # given ethernet address.
