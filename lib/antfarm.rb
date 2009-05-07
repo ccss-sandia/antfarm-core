@@ -21,96 +21,13 @@
 
 require 'ipaddr'
 
-require 'antfarm/ethernet_interface'
-require 'antfarm/ip_interface'
-require 'antfarm/ip_network'
-require 'antfarm/layer2_interface'
-require 'antfarm/layer3_interface'
-require 'antfarm/layer3_network'
-require 'antfarm/node'
-require 'antfarm/private_network'
-require 'antfarm/traffic'
-require 'antfarm/dns_entry'
-require 'antfarm/action'
-require 'antfarm/service'
-require 'antfarm/operating_system'
+require 'antfarm/database'
+require 'antfarm/helpers'
+
+# Ensure that an application directory for the current user exists
+Antfarm::Helpers.create_user_directory
 
 module Antfarm
-
-  # Symbolic marker points on the fuzzy logic certainty factor scale.
-  # Certainty Factors (CF)
-  CF_PROVEN_TRUE   =  1.0000
-  CF_LIKELY_TRUE   =  0.5000
-  CF_LACK_OF_PROOF =  0.0000
-  CF_LIKELY_FALSE  = -0.5000
-  CF_PROVEN_FALSE  = -1.0000
-
-  # Amount by which a value can differ and still be considered the same.
-  # Mainly used as a buffer against floating point round-off errors.
-  CF_VARIANCE      =  0.0001
-
-  def self.clamp(x, low = CF_PROVEN_FALSE, high = CF_PROVEN_TRUE)
-    if x < low
-      return low
-    elsif x > high
-      return high
-    else
-      return x
-    end
-  end
-
-  def self.simplify_interfaces
-    #TODO
-  end
-
-  def self.timestamp
-    return Time.now.utc.xmlschema
-  end
-
-  # The following are helpers that determine what files and directories
-  # to use based on whether or not a custom user directory is being used
-  # vs the default ANTFARM directories.
-
-  def self.db_file_to_use
-    if defined? USER_DIR
-      return File.expand_path("#{USER_DIR}/db/#{ANTFARM_ENV}.db")
-    else
-      return File.expand_path("#{ANTFARM_ROOT}/db/#{ANTFARM_ENV}.db")
-    end
-  end
-
-  def self.db_dir_to_use
-    if defined? USER_DIR
-      return File.expand_path("#{USER_DIR}/db")
-    else
-      return File.expand_path("#{ANTFARM_ROOT}/db")
-    end
-  end
-
-  def self.log_file_to_use
-    if defined? USER_DIR
-      return File.expand_path("#{USER_DIR}/log/#{ANTFARM_ENV}.log")
-    else
-      return File.expand_path("#{ANTFARM_ROOT}/log/#{ANTFARM_ENV}.log")
-    end
-  end
-
-  def self.log_dir_to_use
-    if defined? USER_DIR
-      return File.expand_path("#{USER_DIR}/log")
-    else
-      return File.expand_path("#{ANTFARM_ROOT}/log")
-    end
-  end
-
-  def self.tmp_dir_to_use
-    if defined? USER_DIR
-      return File.expand_path("#{USER_DIR}/tmp")
-    else
-      return File.expand_path("#{ANTFARM_ROOT}/tmp")
-    end
-  end
-
   # Some explanation to having @netmask and such:
   #   If you create a new IPAddr object and you include
   #   the network information for the IP address, IPAddr
@@ -242,5 +159,4 @@ module Antfarm
       return true
     end
   end
-
 end
