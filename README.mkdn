@@ -1,0 +1,7 @@
+== TODO (in no specific order...)
+
+ - Get available plugins sorted alphabetically
+ - Read in defaults from user configs
+ - Convert all the plugins for gosh sakes!
+ - Implement DataMapper tagging
+ - Lots of other TODO's I'm sure...
