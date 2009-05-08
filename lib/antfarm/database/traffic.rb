@@ -28,7 +28,7 @@ module Antfarm
     class Traffic
       include DataMapper::Resource
 
-      storage_names[:default] = 'traffic'
+      set_table_name :traffic
 
       property :id,          Serial
       property :source_id,   Integer, :null => false
