@@ -1,6 +1,5 @@
 module Antfarm
   class LoadHost < Antfarm::Plugin
-#   include Antfarm::Database
 
     def initialize
       super({ :name   => 'Load Host',
@@ -8,19 +7,21 @@ module Antfarm
               :author => 'Bryan T. Richardson <btricha>' },
             { :name     => :input_file,
               :desc     => 'File with IP addresses in it',
+              :type     => String,
               :required => true })
     end
 
-    # TODO: provide run command with hash containing options
-    def run
+    def run(options)
       begin
-        File.open(@data_store['INPUT_FILE'].to_s) do |file|
+        File.open(options[:input_file]) do |file|
           file.each do |line|
-            IpInterface.create :address => line.strip
+            unless Antfarm::Models::IpInterface.find_by_address line.strip
+              Antfarm::Models::IpInterface.create :address => line.strip
+            end
           end
         end
       rescue Errno::ENOENT
-        puts "The file '#{@data_store['INPUT_FILE']}' doesn't exist"
+        puts "The file '#{options[:input_file]}' doesn't exist"
       rescue Exception => e
         puts e
         puts e.backtrace.join("\n")

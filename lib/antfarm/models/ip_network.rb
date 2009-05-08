@@ -60,8 +60,8 @@ module Antfarm
       #
       # the method address= is called by the constructor of this class.
       def address=(ip_addr) #:nodoc:
-        @ip_net = Antfarm::IPAddrExt.new(ip_addr)
-        super(@ip_net.to_cidr_string)
+        @ip_net  = Antfarm::IPAddrExt.new(ip_addr)
+        @address = @ip_net.to_cidr_string
       end
 
       # Validate data for requirements before saving network to the database.

@@ -1,3 +1,4 @@
+require 'dm-ar-finders'
 # all the database models use validation
 require 'dm-validations'
 

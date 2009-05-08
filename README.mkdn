@@ -4,4 +4,6 @@
  - Read in defaults from user configs
  - Convert all the plugins for gosh sakes!
  - Implement DataMapper tagging
+ - Test DataMapper validations
+ - Fix address functions in ip_interface and ip_network models
  - Lots of other TODO's I'm sure...

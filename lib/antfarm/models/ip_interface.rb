@@ -95,7 +95,7 @@ module Antfarm
       # the method address= is called by the constructor of this class.
       def address=(ip_addr) #:nodoc:
         @ip_addr = Antfarm::IPAddrExt.new(ip_addr)
-        super(@ip_addr.to_s)
+        @address = @ip_addr.to_s
       end
 
       validates_present :address
