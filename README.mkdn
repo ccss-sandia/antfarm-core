@@ -6,4 +6,5 @@
  - Implement DataMapper tagging
  - Test DataMapper validations
  - Fix address functions in ip_interface and ip_network models
+ - Modify framework class to avoid loading all plugins if not necessary
  - Lots of other TODO's I'm sure...
