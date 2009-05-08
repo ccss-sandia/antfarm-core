@@ -19,24 +19,22 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+# PrivateNetwork class that wraps the private_networks
+# table in the ANTFARM database.
+#
+# * has many IP networks
 module Antfarm
-  module Database
-    class Service
+  module Models
+    class PrivateNetwork
       include DataMapper::Resource
 
-      storage_names[:default] = 'services'
+      storage_names[:default] = 'private_networks'
 
-      property :id,               Serial
-      property :node_id,          Integer
-      property :action_id,        Integer
-      property :certainty_factor, Float, :null => false
-      property :protocol,         String
-      property :port,             Integer
-      property :name,             String
-      property :custom,           String
+      property :id,          Serial
+      property :description, String
+      property :custom,      String
 
-      belongs_to :action
-      belongs_to :node
+      has n, :ip_networks
     end
   end
 end

@@ -25,7 +25,7 @@
 # * has many layer 3 interfaces
 # * has one IP network
 module Antfarm
-  module Database
+  module Models
     class Layer3Network
       include DataMapper::Resource
 

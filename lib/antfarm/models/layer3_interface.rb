@@ -37,7 +37,7 @@
 # The layer3_network_protocol attribute is only applicable when
 # an existing layer 3 network is not specified.
 module Antfarm
-  module Database
+  module Models
     class Layer3Interface
       include DataMapper::Resource
 

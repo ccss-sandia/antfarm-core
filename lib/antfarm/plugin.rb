@@ -103,9 +103,11 @@ module Antfarm
       end
     end
 
-    ALLOWED_INFO    = [:name, :author, :desc ]
-    ALLOWED_OPTIONS = [:name, :desc, :long, :short, :type, :default, :required]
+    ALLOWED_INFO      = [:name, :author, :desc ]
+    ALLOWED_OPTIONS   = [:name, :desc, :long, :short, :type, :default, :required]
+    DISPLAYED_OPTIONS = [:name, :desc, :type, :default, :required]
 
+    attr_reader :info
     attr_reader :options
 
     def initialize(info = nil, options = nil)
@@ -136,11 +138,12 @@ module Antfarm
 
     def show_options
       table        = Antfarm::UI::Console::Table.new
-      table.header = ALLOWED_OPTIONS.map { |key| key.to_s.capitalize }
+      table.header = DISPLAYED_OPTIONS.map { |key| key.to_s.capitalize }
       for option in @options
-        row = ALLOWED_OPTIONS.map { |key| option[key].to_s }
+        row = DISPLAYED_OPTIONS.map { |key| key == :name ? "--#{option[key].to_s.gsub(/_/,'-')}" : option[key].to_s }
         table.add_row(row)
       end
+      puts 'Plugin Options:'
       table.print
     end
   end

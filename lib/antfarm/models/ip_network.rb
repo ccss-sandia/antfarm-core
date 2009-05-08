@@ -25,7 +25,7 @@
 # * belongs to a layer 3 network
 # * belongs to a private network
 module Antfarm
-  module Database
+  module Models
     class IpNetwork
       include DataMapper::Resource
 

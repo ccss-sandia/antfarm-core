@@ -1,19 +1,88 @@
 #! /usr/bin/ruby
 
-# require File.dirname(__FILE__) + '/../config/boot'
+SUB_COMMANDS = ['help', 'db', 'show']
+
+def parse_options(args = ARGV)
+  sub_commands = SUB_COMMANDS.collect { |s| "  #{s}" }
+  plugins      = Array.new
+  # TODO <scrapcoder>: figure out how to order these alphabetically...
+  Antfarm::Plugin.discover { |p| plugins << "  #{p}" }
+
+  return Trollop::options(args) do
+    version 'ANTFARM 0.4.0 (c) Sandia National Laboratories'
+    banner  <<-EOS
+
+Available Subcommands:
+#{sub_commands.join("\n")}
+
+Available Plugins:
+#{plugins.join("\n")}
+
+Global Options:
+    EOS
+    opt     :env,       'Antfarm environment to use', :default => 'antfarm'
+    opt     :log_level, 'Antfarm log level to use',   :default => 'warn'
+    # TODO <scrapcoder>: ugh... this is ugly
+    stop_on sub_commands.collect { |s| s.strip } + plugins.collect { |p| p.strip }
+  end
+end
+
+require File.dirname(__FILE__) + '/../config/boot'
+
+require 'rubygems'
+require 'trollop'
+
+require 'antfarm/framework'
+
+options = parse_options
+
+ENV['ANTFARM_ENV']       = options[:env]
+ENV['ANTFARM_LOG_LEVEL'] = options[:log_level]
+
 require File.dirname(__FILE__) + '/../config/environment'
 
-require 'antfarm/plugin'
+framework = Antfarm::Framework.new
 
-plugins = Array.new
-Antfarm::Plugin.discover do |plugin|
-  plugins << plugin
+begin
+  arg = ARGV.shift
+  case arg
+  when 'help'
+    if ARGV.empty?
+      parse_options ['-h']
+    elsif ARGV.first == 'db'
+      framework.db ['-h']
+    else
+      framework.use ARGV.shift
+      framework.plugin.show_info
+      framework.plugin.show_options
+    end
+  when 'db'
+    framework.db ARGV
+  when 'show'
+    framework.show
+  when nil
+    parse_options ['-h']
+  else
+    framework.use arg
+    options = Trollop::options do
+      banner <<-EOS
+
+Plugin - #{framework.plugin.info[:name]} (#{framework.plugin.name})
+#{framework.plugin.info[:author]}
+
+#{framework.plugin.info[:desc]}
+
+Options:
+      EOS
+      framework.plugin.options.each do |option|
+        name = option.delete(:name)
+        desc = option.delete(:desc)
+        opt name, desc, option
+      end
+    end
+    framework.run options
+  end
+rescue => err
+  puts err
+  parse_options ['-h']
 end
-
-puts plugins.sort
-
-Antfarm::Plugin.load('viz/display_networks') do |plugin|
-  puts plugin.name
-end
-
-DataMapper.auto_migrate!

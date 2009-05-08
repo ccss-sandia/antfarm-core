@@ -30,7 +30,7 @@
 # The node and layer2_interface_media_type attributes are only
 # applicable when an existing layer 2 interface is not specified.
 module Antfarm
-  module Database
+  module Models
     class EthernetInterface
       include DataMapper::Resource
 

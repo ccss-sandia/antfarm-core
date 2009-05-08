@@ -21,7 +21,7 @@
 
 require 'ipaddr'
 
-require 'antfarm/database'
+require 'antfarm/models'
 require 'antfarm/helpers'
 
 # Ensure that an application directory for the current user exists

@@ -29,7 +29,7 @@
 # The node_name and node_device_type attributes are only applicable
 # when an existing node is not specified.
 module Antfarm
-  module Database
+  module Models
     class Layer2Interface
       include DataMapper::Resource
 

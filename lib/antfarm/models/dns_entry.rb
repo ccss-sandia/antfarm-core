@@ -20,7 +20,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 module Antfarm
-  module Database
+  module Models
     class DnsEntry
       include DataMapper::Resource
 

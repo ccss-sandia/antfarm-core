@@ -3,7 +3,6 @@
 # the U.S. Government retains certain rights in this software.
 #
 # Original Author: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
-# Derived From: code written by Michael Berg <mjberg@sandia.gov>
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by
@@ -19,22 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
+# Traffic class that wraps the traffic table
+# in the ANTFARM database.
+#
+# * belongs to a layer 3 interface (defined as source_layer3_interface)
+# * belongs to a layer 3 interface (defined as target_layer3_interface)
 module Antfarm
-  module Database
-    class OperatingSystem
+  module Models
+    class Traffic
       include DataMapper::Resource
 
-      storage_names[:default] = 'operating_systems'
+      set_table_name :traffic
 
-      property :id,               Serial
-      property :node_id,          Integer
-      property :action_id,        Integer
-      property :certainty_factor, Float, :null => false
-      property :fingerprint,      Text
-      property :custom,           String
+      property :id,          Serial
+      property :source_id,   Integer, :null => false
+      property :target_id,   Integer, :null => false
+      property :description, String
+      property :port,        Integer, :null => false, :default => 0
+      property :timestamp,   String
+      property :custom,      String
 
-      belongs_to :action
-      belongs_to :node
+      belongs_to :source, :class_name => "Layer3Interface", :child_key => [:source_id]
+      belongs_to :target, :class_name => "Layer3Interface", :child_key => [:target_id]
     end
   end
 end

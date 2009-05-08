@@ -24,7 +24,7 @@
 # * has many layer 2 interfaces
 # * has many layer 3 interfaces through layer 2 interfaces
 module Antfarm
-  module Database
+  module Models
     class Node
       include DataMapper::Resource
 

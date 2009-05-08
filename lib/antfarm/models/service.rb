@@ -20,21 +20,23 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
 module Antfarm
-  module Database
-    class Action
+  module Models
+    class Service
       include DataMapper::Resource
 
-      storage_names[:default] = 'actions'
+      storage_names[:default] = 'services'
 
-      property :id,          Serial
-      property :tool,        String
-      property :description, String
-      property :start,       String
-      property :end,         String
-      property :custom,      String
+      property :id,               Serial
+      property :node_id,          Integer
+      property :action_id,        Integer
+      property :certainty_factor, Float, :null => false
+      property :protocol,         String
+      property :port,             Integer
+      property :name,             String
+      property :custom,           String
 
-      has n, :operating_systems
-      has n, :services
+      belongs_to :action
+      belongs_to :node
     end
   end
 end
