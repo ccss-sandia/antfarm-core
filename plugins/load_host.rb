@@ -15,6 +15,7 @@ module Antfarm
       begin
         File.open(options[:input_file]) do |file|
           file.each do |line|
+            puts "Loading address #{line.strip}"
             unless Antfarm::Models::IpInterface.find_by_address line.strip
               Antfarm::Models::IpInterface.create :address => line.strip
             end

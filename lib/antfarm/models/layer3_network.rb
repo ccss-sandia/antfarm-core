@@ -37,7 +37,7 @@ module Antfarm
       property :custom,           String
 
       has n, :layer3_interfaces
-      has 1, :ip_network, :child_key => ["id"]
+      has 1, :ip_network, :class_name => 'IpNetwork', :child_key => [:id]
 
       before :save, :clamp_certainty_factor
 
@@ -92,10 +92,9 @@ module Antfarm
         network = Antfarm::IPAddrExt.new(ip_net_str)
 
         ip_nets = IpNetwork.all
-#       ip_nets = IpNetwork.find(:all)
         for ip_net in ip_nets
           if Antfarm::IPAddrExt.new(ip_net.address).network_in_network?(network)
-            return Layer3Network.find(ip_net.id)
+            return ip_net.layer3_network
           end
         end
 
@@ -113,9 +112,9 @@ module Antfarm
         network = Antfarm::IPAddrExt.new(ip_net_str)
         sub_networks = Array.new
 
-        ip_nets = IpNetwork.find(:all)
+        ip_nets = IpNetwork.all
         for ip_net in ip_nets
-          sub_networks << Layer3Network.find(ip_net.id) if network.network_in_network?(ip_net.address)
+          sub_networks << ip_net.layer3_network if network.network_in_network?(ip_net.address)
         end
 
         return sub_networks

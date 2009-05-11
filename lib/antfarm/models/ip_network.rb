@@ -37,7 +37,7 @@ module Antfarm
       property :private,            Boolean, :null => false, :default => false
       property :custom,             String
 
-      belongs_to :layer3_network, :key => "id"
+      belongs_to :layer3_network, :class_name => 'Layer3Network', :child_key => [:id]
       belongs_to :private_network
 
       before :create, :create_layer3_network
@@ -61,7 +61,7 @@ module Antfarm
       # the method address= is called by the constructor of this class.
       def address=(ip_addr) #:nodoc:
         @ip_net  = Antfarm::IPAddrExt.new(ip_addr)
-        @address = @ip_net.to_cidr_string
+        attribute_set :address, @ip_net.to_cidr_string
       end
 
       # Validate data for requirements before saving network to the database.
@@ -93,17 +93,15 @@ module Antfarm
         # unless it was specified by the user.
         unless self.layer3_network
           self.layer3_network = Layer3Network.new :certainty_factor => 0.75
-          layer3_network.protocol = @layer3_network_protocol if @layer3_network_protocol
-          if layer3_network.save
+          self.layer3_network.protocol = @layer3_network_protocol if @layer3_network_protocol
+          if self.layer3_network.save
             Antfarm::Helpers.log :info, "IpNetwork: Created Layer 3 Network"
           else
             Antfarm::Helpers.log :warn, "IpNetwork: Errors occured while creating Layer 3 Network"
-            layer3_network.errors.each_full do |msg|
+            self.layer3_network.errors.each_full do |msg|
               Antfarm::Helpers.log :warn, msg
             end
           end
-
-#         self.layer3_network = layer3_network
         end
       end
 

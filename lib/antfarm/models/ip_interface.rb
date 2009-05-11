@@ -44,7 +44,7 @@ module Antfarm
       property :virtual, Boolean, :null => false, :default => false
       property :custom,  String
 
-      belongs_to :layer3_interface, :key => "id"
+      belongs_to :layer3_interface, :child_key => [:id]
 
       before :create, :create_layer3_interface
 
@@ -95,7 +95,7 @@ module Antfarm
       # the method address= is called by the constructor of this class.
       def address=(ip_addr) #:nodoc:
         @ip_addr = Antfarm::IPAddrExt.new(ip_addr)
-        @address = @ip_addr.to_s
+        attribute_set :address, @ip_addr.to_s
       end
 
       validates_present :address
