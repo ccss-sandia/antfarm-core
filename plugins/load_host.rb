@@ -3,12 +3,16 @@ module Antfarm
 
     def initialize
       super({ :name   => 'Load Host',
-              :desc   => 'Given a file with one IP address per line, put each one in the DB',
+              :desc   => 'Given a file with one IP address per line, create a new IP Interface in the DB',
               :author => 'Bryan T. Richardson <btricha>' },
             { :name     => :input_file,
               :desc     => 'File with IP addresses in it',
               :type     => String,
-              :required => true })
+              :required => true },
+            { :name     => :tags,
+              :desc     => 'Comma-separated list of tags for each interface',
+              :type     => String,
+              :required => false })
     end
 
     def run(options)

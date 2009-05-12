@@ -15,4 +15,6 @@
    - has_tags_on :tags
    - attribute accessor for generic 'tags' context
  - Create gemspec (don't forget about all the dm-* gem requirements!!!)
+ - Make sure ANTFARM and user-specified plugins don't clash
+ - Convert underscores in plugin names to hyphens for command line usage
  - Lots of other TODO's I'm sure...
