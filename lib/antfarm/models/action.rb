@@ -35,6 +35,8 @@ module Antfarm
 
       has n, :operating_systems
       has n, :services
+
+      has_tags_on :tags
     end
   end
 end

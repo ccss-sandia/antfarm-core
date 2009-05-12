@@ -31,6 +31,8 @@ module Antfarm
       property :ethernet_address, String
       property :hostname,         String
       property :custom,           String
+
+      has_tags_on :tags
     end
   end
 end

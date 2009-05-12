@@ -42,8 +42,10 @@ module Antfarm
       property :custom,           String
 
       has n,     :layer3_interfaces
-      has 1,     :ethernet_interfaces, :key => "id"
+      has 1,     :ethernet_interfaces, :child_key => [:id]
       belongs_to :node
+
+      has_tags_on :tags
 
       before :create, :create_node
       before :save,   :clamp_certainty_factor

@@ -37,8 +37,10 @@ module Antfarm
       property :private,            Boolean, :null => false, :default => false
       property :custom,             String
 
-      belongs_to :layer3_network, :class_name => 'Layer3Network', :child_key => [:id]
+      belongs_to :layer3_network, :child_key => [:id]
       belongs_to :private_network
+
+      has_tags_on :tags
 
       before :create, :create_layer3_network
       before :create, :set_private_address

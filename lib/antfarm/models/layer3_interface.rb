@@ -52,9 +52,11 @@ module Antfarm
 
       has n,     :outbound_traffic, :class_name => "Traffic", :child_key => [:source_id]
       has n,     :inbound_traffic,  :class_name => "Traffic", :child_key => [:target_id]
-      has n,     :ip_interfaces,    :one_to_one => true, :key => "id"
+      has 1,     :ip_interfaces,                              :child_key => [:id]
       belongs_to :layer2_interface
       belongs_to :layer3_network
+
+      has_tags_on :tags
 
       before :create, :create_layer3_network
       before :create, :create_layer2_interface

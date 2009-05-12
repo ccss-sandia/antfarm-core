@@ -35,6 +35,8 @@ module Antfarm
 
       belongs_to :action
       belongs_to :node
+
+      has_tags_on :tags
     end
   end
 end

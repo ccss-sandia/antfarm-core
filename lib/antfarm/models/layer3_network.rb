@@ -37,7 +37,9 @@ module Antfarm
       property :custom,           String
 
       has n, :layer3_interfaces
-      has 1, :ip_network, :class_name => 'IpNetwork', :child_key => [:id]
+      has 1, :ip_network, :child_key => [:id]
+
+      has_tags_on :tags
 
       before :save, :clamp_certainty_factor
 

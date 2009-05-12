@@ -7,21 +7,12 @@
  - Test DataMapper validations
  - Fix address functions in ip_interface and ip_network models
  - Modify framework class to avoid loading all plugins if not necessary
+ - Decide on tagging contexts for individual model (each model currently only has a generic 'tags' context)
+ - Add attribute accessors for each tag context in models
+ - See if a parent model class can be created to roll up the following:
+   - storage_names[:default] = <model name>
+   - property :id, Serial
+   - has_tags_on :tags
+   - attribute accessor for generic 'tags' context
+ - Create gemspec (don't forget about all the dm-* gem requirements!!!)
  - Lots of other TODO's I'm sure...
-
-## Anatomy of an IP Interface Creation:
-
- - IpInterface.create :address => '10.0.0.1'
-   - create_layer3_interface
-     - Layer3Interface.new
-     - create_ip_network
-       - Layer3Network.network_containing('10.0.0.1')
-       - exists:
-         - return
-       - else:
-         - IpNetwork.new :address => '10.0.0.0/29'
-         - save
-         - return
-     - set layer 2 interface and node info
-     - save
-     - set IP Interface's Layer 3 Interface to this

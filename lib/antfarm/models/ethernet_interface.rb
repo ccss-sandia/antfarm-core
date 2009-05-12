@@ -42,6 +42,8 @@ module Antfarm
 
       belongs_to :layer2_interface, :key => "id"
 
+      has_tags_on :tags
+
       before :create, :create_layer2_interface
 
       # Media type of the layer 2 interface automatically

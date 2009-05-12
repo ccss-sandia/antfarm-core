@@ -39,7 +39,9 @@ module Antfarm
       has n, :layer2_interfaces
       has n, :layer3_interfaces, :through => :layer2_interfaces
       has n, :services
-      has n, :operating_systems, :one_to_one => true, :key => 'id'
+      has 1, :operating_systems
+
+      has_tags_on :tags
 
       before :save, :clamp_certainty_factor
 

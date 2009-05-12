@@ -35,6 +35,8 @@ module Antfarm
       property :custom,      String
 
       has n, :ip_networks
+
+      has_tags_on :tags
     end
   end
 end

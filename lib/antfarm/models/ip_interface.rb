@@ -46,6 +46,8 @@ module Antfarm
 
       belongs_to :layer3_interface, :child_key => [:id]
 
+      has_tags_on :tags
+
       before :create, :create_layer3_interface
 
       # Existing layer 3 network the layer 3 interface
