@@ -1,11 +1,11 @@
 ## TODO (in no specific order...)
 
  - Get available plugins sorted alphabetically
- - Read in defaults from user configs
+ - Read in defaults from user configs - DONE by scrapcoder, 5/13/09
  - Convert all the plugins for gosh sakes!
- - Implement DataMapper tagging
- - Test DataMapper validations
- - Fix address functions in ip_interface and ip_network models
+ - Implement DataMapper tagging - DONE by scrapcoder, 5/11/09
+ - Test DataMapper validations - DONE by scrapcoder, 5/13/09
+ - Fix address functions in ip_interface and ip_network models - DONE by scrapcoder, 5/11/09
  - Modify framework class to avoid loading all plugins if not necessary
  - Decide on tagging contexts for individual model (each model currently only has a generic 'tags' context)
  - Add attribute accessors for each tag context in models

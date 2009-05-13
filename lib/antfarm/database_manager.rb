@@ -21,6 +21,8 @@ module Antfarm
     #######
 
     def parse_options(args)
+      args << '-h' if args.empty?
+
       return Trollop::options(args) do
         banner <<-EOS
 

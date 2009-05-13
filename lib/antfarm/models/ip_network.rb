@@ -60,7 +60,7 @@ module Antfarm
 
       # Don't save the network if it's a loopback network.
       validates_with_block :address do
-        if @ip_addr.loopback_address?
+        if @ip_net.loopback_address?
           [ false, 'loopback address not allowed' ]
         else
           true
@@ -73,7 +73,7 @@ module Antfarm
       #
       # the method address= is called by the constructor of this class.
       def address=(ip_addr) #:nodoc:
-        @ip_net  = Antfarm::IPAddrExt.new(ip_addr)
+        @ip_net = Antfarm::IPAddrExt.new(ip_addr)
         attribute_set :address, @ip_net.to_cidr_string
       end
 

@@ -2,7 +2,7 @@
 
 SUB_COMMANDS = ['help', 'db', 'show']
 
-def parse_options(args = ARGV)
+def parse_options(defaults = {}, args = ARGV)
   sub_commands = SUB_COMMANDS.collect { |s| "  #{s}" }
   plugins      = Array.new
   # TODO <scrapcoder>: figure out how to order these alphabetically...
@@ -20,8 +20,8 @@ Available Plugins:
 
 Global Options:
     EOS
-    opt     :env,       'Antfarm environment to use', :default => 'antfarm'
-    opt     :log_level, 'Antfarm log level to use',   :default => 'warn'
+    opt     :env,       'Antfarm environment to use', :default => defaults['environment'] || 'antfarm'
+    opt     :log_level, 'Antfarm log level to use',   :default => defaults['log_level'] || 'warn'
     # TODO <scrapcoder>: ugh... this is ugly
     stop_on sub_commands.collect { |s| s.strip } + plugins.collect { |p| p.strip }
   end
@@ -29,12 +29,16 @@ end
 
 require File.dirname(__FILE__) + '/../config/boot'
 
+require 'yaml'
+
 require 'rubygems'
 require 'trollop'
 
 require 'antfarm/framework'
 
-options = parse_options
+defaults = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
+
+options = parse_options(defaults)
 
 ENV['ANTFARM_ENV']       = options[:env]
 ENV['ANTFARM_LOG_LEVEL'] = options[:log_level]
