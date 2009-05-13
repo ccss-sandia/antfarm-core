@@ -22,7 +22,7 @@ module Antfarm
           file.each do |line|
             puts "Loading address #{line.strip}"
             unless Antfarm::Models::IpInterface.find_by_address line.strip
-              Antfarm::Models::IpInterface.create :address => line.strip, :tag_list => 'hello, world'
+              Antfarm::Models::IpInterface.create :address => line.strip, :tag_list => options[:tags] || 'default'
             end
           end
         end

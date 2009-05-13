@@ -17,4 +17,5 @@
  - Create gemspec (don't forget about all the dm-* gem requirements!!!)
  - Make sure ANTFARM and user-specified plugins don't clash
  - Convert underscores in plugin names to hyphens for command line usage
+ - Figure out why :constraint => :destroy isn't working (needed for Layer3Network#merge)
  - Lots of other TODO's I'm sure...

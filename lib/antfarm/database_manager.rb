@@ -62,11 +62,9 @@ Options:
     end
 
     def db_console
-      if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
-        config = YAML::load(IO.read("#{USER_DIR}/config/defaults.yml"))
-      end
+      config = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
       puts "Loading #{ANTFARM_ENV} environment"
-      if config && config[ANTFARM_ENV] && config[ANTFARM_ENV]['adapter'] == 'postgresql'
+      if config && config[ANTFARM_ENV] && config[ANTFARM_ENV]['adapter'] == 'postgres'
         exec "psql #{ANTFARM_ENV}"
       else
         exec "sqlite3 #{Antfarm::Helpers.db_file(ANTFARM_ENV)}"

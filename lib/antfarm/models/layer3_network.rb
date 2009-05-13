@@ -37,7 +37,7 @@ module Antfarm
       property :custom,           String
 
       has n, :layer3_interfaces
-      has 1, :ip_network, :child_key => [:id]
+      has 1, :ip_network, :child_key => [:id], :constraint => :destroy
 
       has_tags_on :tags
 
@@ -60,13 +60,12 @@ module Antfarm
 
             merge_certainty_factor = Antfarm::Helpers.clamp(merge_certainty_factor)
 
-            network.layer3_interfaces << sub_network.layer3_interfaces
-            network.layer3_interfaces.flatten!
+            sub_network.layer3_interfaces.each { |interface| network.layer3_interfaces << interface }
             network.layer3_interfaces.uniq!
 
             # TODO: update network's certainty factor using sub_network's certainty factor.
             
-            network.save false
+            network.save
 
             # Because of :dependent => :destroy above, calling destroy
             # here will also cause destroy to be called on ip_network

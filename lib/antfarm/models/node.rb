@@ -37,7 +37,6 @@ module Antfarm
       property :custom,           String
 
       has n, :layer2_interfaces
-      has n, :layer3_interfaces, :through => :layer2_interfaces
       has n, :services
       has 1, :operating_systems
 

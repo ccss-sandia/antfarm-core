@@ -83,8 +83,8 @@ module Antfarm
       if config && config[ANTFARM_ENV] && config[ANTFARM_ENV].has_key?('adapter')
         if config[ANTFARM_ENV]['adapter'] == 'sqlite3'
           config[ANTFARM_ENV]['database'] = Antfarm::Helpers.db_file(ANTFARM_ENV)
-#       elsif config[ANTFARM_ENV]['adapter'] == 'postgresql'
-#         config[ANTFARM_ENV]['database'] = ANTFARM_ENV
+        elsif config[ANTFARM_ENV]['adapter'] == 'postgres'
+          config[ANTFARM_ENV]['database'] = ANTFARM_ENV
         else
           # If adapter specified isn't one of sqlite3 or postgresql,
           # default to SQLite3 database configuration.
@@ -97,7 +97,11 @@ module Antfarm
       end
       # Default to SQLite3 database configuration
       config ||= { ANTFARM_ENV => { 'adapter' => 'sqlite3', 'database' => Antfarm::Helpers.db_file(ANTFARM_ENV) } }
-      DataMapper.setup(:default, "sqlite3://#{config[ANTFARM_ENV]['database']}")
+      if config[ANTFARM_ENV]['adapter'] == 'postgres'
+        DataMapper.setup(:default, "postgres:///#{config[ANTFARM_ENV]['database']}")
+      else
+        DataMapper.setup(:default, "sqlite3://#{config[ANTFARM_ENV]['database']}")
+      end
 #     Sequel.connect("sqlite://#{config[ANTFARM_ENV]['database']}")
 #     ActiveRecord::Base.configurations = config
 #     ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
