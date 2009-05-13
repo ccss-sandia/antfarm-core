@@ -100,26 +100,31 @@ module Antfarm
         attribute_set :address, @ip_addr.to_s
       end
 
+      # Validate data for requirements before saving interface to the database.
+
       validates_present :address
 
-      # Validate data for requirements before saving interface to the database.
-      #
-      # Was using validate_on_create, but decided that restraints should occur
-      # on anything saved to the database at any time, including a create and an update.
-      def validate #:nodoc:
-        # Don't save the interface if it's a loopback address.
+      # Don't save the interface if it's a loopback address.
+      validates_with_block :address do
         if @ip_addr.loopback_address?
-          errors.add(:address, "loopback address not allowed")
+          [ false, 'loopback address not allowed' ]
+        else
+          true
         end
+      end
 
-        # If the address is public and it already exists in the database, don't create
-        # a new one but still create a new IP Network just in case the data given for
-        # this address includes more detailed information about its network.
-        unless @ip_addr.private_address?
-          interface = IpInterface.find_by_address(address)
-          if interface
+      # If the address is public and it already exists in the database, don't create
+      # a new one but still create a new IP Network just in case the data given for
+      # this address includes more detailed information about its network.
+      validates_with_block :address do
+        if @ip_addr.private_address?
+          true
+        else
+          if interface = IpInterface.find_by_address(address)
             create_ip_network
-            errors.add(:address, "#{address} already exists, but a new IP Network was created")
+            [ false, "#{address} already exists, but a new IP Network was created" ]
+          else
+            true
           end
         end
       end

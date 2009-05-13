@@ -54,7 +54,18 @@ module Antfarm
       # created for this IP network if it's private.
       attr_writer :private_network_description
 
+      # Validate data for requirements before saving network to the database.
+
       validates_present :address
+
+      # Don't save the network if it's a loopback network.
+      validates_with_block :address do
+        if @ip_addr.loopback_address?
+          [ false, 'loopback address not allowed' ]
+        else
+          true
+        end
+      end
 
       # Overriding the address setter in order to create an instance variable for an
       # Antfarm::IPAddrExt object ip_net.  This way the rest of the methods in this
@@ -64,17 +75,6 @@ module Antfarm
       def address=(ip_addr) #:nodoc:
         @ip_net  = Antfarm::IPAddrExt.new(ip_addr)
         attribute_set :address, @ip_net.to_cidr_string
-      end
-
-      # Validate data for requirements before saving network to the database.
-      #
-      # Was using validate_on_create, but decided that these restraints should occur
-      # on anything saved to the database at any time, including a create and an update.
-      def validate #:nodoc:
-        # Don't save the network if it's a loopback network.
-        unless !@ip_net.loopback_address?
-          errors.add(:address, "loopback address not allowed")
-        end
       end
 
       #######
