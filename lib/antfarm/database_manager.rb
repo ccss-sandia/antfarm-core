@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'postgres'
 
 module Antfarm
   class DatabaseManager
@@ -37,10 +36,21 @@ Options:
       end
     end
 
+    # TODO <scrapcoder>: all these 'puts' statements need to be logged rather than printed, just in case
+    # the command line interface isn't the one using the framework.
+
     # Removes the database and log files based on the ANTFARM environment given
     def db_clean
       FileUtils.rm "#{Antfarm::Helpers.log_file(ANTFARM_ENV)}" if File.exists?(Antfarm::Helpers.log_file(ANTFARM_ENV))
-      FileUtils.rm "#{Antfarm::Helpers.db_file(ANTFARM_ENV)}"  if File.exists?(Antfarm::Helpers.db_file(ANTFARM_ENV))
+      config = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
+      if config && config[ANTFARM_ENV] && config[ANTFARM_ENV]['adapter'] == 'postgres'
+        # TODO <scrapcoder>: can this stuff be done using the postgres gem instead?
+        puts "Dropping PostgreSQL #{ANTFARM_ENV} database..."
+        `dropdb #{ANTFARM_ENV}`
+        puts "Dropped PostgreSQL #{ANTFARM_ENV} database successfully."
+      else
+        FileUtils.rm "#{Antfarm::Helpers.db_file(ANTFARM_ENV)}"  if File.exists?(Antfarm::Helpers.db_file(ANTFARM_ENV))
+      end
     end
 
     # Creates a new database and schema file.  The location of the newly created
@@ -48,10 +58,15 @@ Options:
     # configuration hash, and is based on the current ANTFARM environment.
     def db_migrate
       begin
+        puts "Migrating database"
         DataMapper.auto_upgrade!
-      rescue ::PGError
-        puts "Looks like you are using the PostgreSQL database and you haven't yet created a database for this environment."
-        puts "Please execute 'psql #{ANTFARM_ENV}' to create the database, then try running 'antfarm db --migrate' again."
+        puts "Database successfully migrated."
+      rescue ::PostgresError
+        puts "No PostgreSQL database exists for the #{ANTFARM_ENV} environment. Creating PostgreSQL database..."
+        `createdb #{ANTFARM_ENV}`
+        puts "PostgreSQL database for this environment created. Continuing on with migration."
+        DataMapper.auto_upgrade!
+        puts "Database successfully migrated."
       end
     end
 

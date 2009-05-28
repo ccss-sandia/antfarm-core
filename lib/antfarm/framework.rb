@@ -1,3 +1,4 @@
+require 'antfarm/console'
 require 'antfarm/database_manager'
 require 'antfarm/plugin'
 require 'antfarm/ui'
@@ -17,6 +18,10 @@ module Antfarm
 
     def db(args)
       Antfarm::DatabaseManager.new(args)
+    end
+
+    def console(opts = [])
+      Antfarm::Console.new(opts)
     end
 
     def show

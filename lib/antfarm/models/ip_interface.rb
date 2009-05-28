@@ -166,7 +166,7 @@ module Antfarm
             Antfarm::Helpers.log :info, "IpInterface: Created Layer 3 Interface"
           else
             Antfarm::Helpers.log :warn, "IpInterface: Errors occured while creating Layer 3 Interface"
-            layer3_interface.errors.each_full do |msg|
+            layer3_interface.errors.each do |msg|
               Antfarm::Helpers.log :warn, msg
             end
           end

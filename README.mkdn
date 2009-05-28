@@ -18,5 +18,5 @@
  - Make sure ANTFARM and user-specified plugins don't clash
    - First try - when loading a plugin, check to see if it's already defined.  If so, raise an error (be specific with the error!).
  - Convert underscores in plugin names to hyphens for command line usage
- - Figure out why :constraint => :destroy isn't working (needed for Layer3Network#merge)
+ - Figure out why :constraint => :destroy isn't working (needed for Layer3Network#merge) - DONE by scrapcoder, 5/28/09
  - Lots of other TODO's I'm sure...
