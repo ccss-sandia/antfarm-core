@@ -44,9 +44,9 @@ module Antfarm
       storage_names[:default] = 'layer3_interfaces'
 
       property :id,                  Serial
-      property :layer2_interface_id, Integer, :null => false
-      property :layer3_network_id,   Integer, :null => false
-      property :certainty_factor,    Float,   :null => false
+      property :layer2_interface_id, Integer, :nullable => false
+      property :layer3_network_id,   Integer, :nullable => false
+      property :certainty_factor,    Float,   :nullable => false, :default => 0.8
       property :protocol,            String
       property :custom,              String
 

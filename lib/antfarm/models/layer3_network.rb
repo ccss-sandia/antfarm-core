@@ -32,7 +32,7 @@ module Antfarm
       storage_names[:default] = 'layer3_networks'
 
       property :id,               Serial
-      property :certainty_factor, Float, :null => false
+      property :certainty_factor, Float, :nullable => false, :default => 0.8
       property :protocol,         String
       property :custom,           String
 
