@@ -13,6 +13,9 @@ module Antfarm
     PLUGIN_ROOTS << Antfarm::Helpers.user_plugins_dir
 
     # perform a quick discovery of plugins that exist
+    # TODO <scrapcoder>: add 'custom/' to the front of
+    # plugins that don't originate in the 'root plugins'
+    # directory.
     def self.discover
       PLUGIN_ROOTS.each do |root|
         Find.find("#{root}/") do |path|
@@ -66,6 +69,10 @@ module Antfarm
       end
     end
 
+    # TODO <scrapcoder>: check to see if module is already defined.
+    # If so, raise an error, passing the name of the created plugin
+    # object so a note can be presented to the user with the name/author
+    # of the plugin already created.
     def self.load_single_plugin(path, root)
       begin
         # remove .rb from the end of the path

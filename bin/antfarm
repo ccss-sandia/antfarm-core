@@ -3,6 +3,9 @@
 SUB_COMMANDS = ['help', 'db', 'show']
 
 def parse_options(defaults = {}, args = ARGV)
+  defaults['environment'] ||= 'antfarm'
+  defaults['log_level']   ||= 'warn'
+
   sub_commands = SUB_COMMANDS.collect { |s| "  #{s}" }
   plugins      = Array.new
   # TODO <scrapcoder>: figure out how to order these alphabetically...
@@ -20,8 +23,8 @@ Available Plugins:
 
 Global Options:
     EOS
-    opt     :env,       'Antfarm environment to use', :default => defaults['environment'] || 'antfarm'
-    opt     :log_level, 'Antfarm log level to use',   :default => defaults['log_level'] || 'warn'
+    opt     :env,       'Antfarm environment to use', :default => defaults['environment']
+    opt     :log_level, 'Antfarm log level to use',   :default => defaults['log_level']
     # TODO <scrapcoder>: ugh... this is ugly
     stop_on sub_commands.collect { |s| s.strip } + plugins.collect { |p| p.strip }
   end
@@ -52,7 +55,7 @@ begin
   case arg
   when 'help'
     if ARGV.empty?
-      parse_options ['-h']
+      parse_options defaults, ['-h']
     elsif ARGV.first == 'db'
       framework.db ['-h']
     else
@@ -65,7 +68,7 @@ begin
   when 'show'
     framework.show
   when nil
-    parse_options ['-h']
+    parse_options defaults, ['-h']
   else
     framework.use arg
     options = Trollop::options do
@@ -88,5 +91,5 @@ Options:
   end
 rescue => err
   puts err
-  parse_options ['-h']
+  parse_options defaults, ['-h']
 end

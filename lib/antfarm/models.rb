@@ -1,5 +1,4 @@
 require 'dm-ar-finders'
-require 'dm-constraints'
 require 'dm-tags'
 # all the database models use validation
 require 'dm-validations'

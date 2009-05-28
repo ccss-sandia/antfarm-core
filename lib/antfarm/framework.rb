@@ -7,6 +7,9 @@ module Antfarm
     attr_reader :plugin
     attr_reader :plugins
 
+    # TODO <scrapcoder>: make it possible to only load a single plugin.
+    # See if the plugin is already in the plugins hash, and if not,
+    # load the single plugin.
     def plugins
       load_plugins if @plugins.nil?
       return @plugins
@@ -53,8 +56,10 @@ module Antfarm
     private
     #######
 
+    # TODO <scrapcoder>: make it possible to load single plugin.
     def load_plugins
       @plugins = Hash.new
+      # TODO <scrapcoder>: check for error raised when a plugin already exists.
       Antfarm::Plugin.load(:all) do |plugin|
         @plugins[plugin.name] = plugin
       end

@@ -37,11 +37,14 @@ module Antfarm
       property :custom,           String
 
       has n, :layer3_interfaces
-      has 1, :ip_network, :child_key => [:id], :constraint => :destroy
+      has 1, :ip_network, :child_key => [:id]
 
       has_tags_on :tags
 
       before :save, :clamp_certainty_factor
+      before :destroy do
+        ip_network.destroy
+      end
 
       validates_present :certainty_factor
 
