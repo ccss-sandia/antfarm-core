@@ -1,4 +1,4 @@
-#! /usr/bin/ruby
+#! /usr/bin/jruby
 
 SUB_COMMANDS = ['help', 'db', 'console', 'show']
 

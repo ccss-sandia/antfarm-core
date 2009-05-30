@@ -19,4 +19,65 @@
    - First try - when loading a plugin, check to see if it's already defined.  If so, raise an error (be specific with the error!).
  - Convert underscores in plugin names to hyphens for command line usage
  - Figure out why :constraint => :destroy isn't working (needed for Layer3Network#merge) - DONE by scrapcoder, 5/28/09
+ - Create initializer for each class that strips out junk to be used for creating classes each class belongs to.
+   - What about a centalized DataStore? Models can check it to see if anything is set that they care about. Could make it thread safe with Mutex stuff if need be.
  - Lots of other TODO's I'm sure...
+
+## Current Bugs:
+
+  - For some reason, the 'before :create' hook isn't getting ran when a new Layer 3 Interface is created.  This keeps a Layer 2 Interface from being created, which causes validations to fail.
+
+## Structure of ANTFARM Database:
+
+Note: direction of arrow identifies 'belongs to' relationship (i.e. IpInterface belongs to Layer3Interface)
+
+Layer3Network <-------- IpNetwork --------> PrivateNetwork
+
+ /\
+/__\
+ ||
+ ||
+ ||
+ ||
+ ||
+
+Layer3Interface <-------- IpInterface
+
+ ||
+ ||
+ ||
+ ||
+_||_
+\  / 
+ \/
+
+Layer2Interface <-------- EthernetInterface
+
+ ||
+ ||
+ ||
+ ||
+_||_
+\  / 
+ \/
+
+Node
+
+### Object Creation Lifecycle
+
+When *something* is created, whatever it belongs to must be created as well
+
+Also, when an IP Interface is created, an IP Network needs to be created as well
+
+This causes the following problem:
+
+  - When an IP Interface is created, it creates a Layer 3 Interface
+  - When a Layer 3 Interface is created, it creates a Layer 3 Network
+  - When an IP Interface is created, it creates an IP Network
+  - When an IP Network is created, it creates a Layer 3 Network
+
+Question: How do we make sure the Layer 3 Interface and the IP Network get associated with the same Layer 3 Network?
+
+Answer:
+Create the IP Network first, then get its corresponding Layer 3 Network. Then create the Layer 3 Interface, passing it the correct Layer 3 Network.
+Note: the same should apply *if* one happens to create an Ethernet Interface when creating the IP Interface.

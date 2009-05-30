@@ -1,179 +1,126 @@
-# Copyright (2008) Sandia Corporation.
-# Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
-# the U.S. Government retains certain rights in this software.
-#
-# Original Author: Bryan T. Richardson, Sandia National Laboratories <btricha@sandia.gov>
-# Derived From: code written by Michael Berg <mjberg@sandia.gov>
-#
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at
-# your option) any later version.
-#
-# This library is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with this library; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-
-# IpInterface class that wraps the ip_interfaces table
-# in the ANTFARM database.
-#
-# * belongs to a layer 3 interface
-#
-# The node_name and node_device_type attributes are only applicable
-# when an existing node is not specified.
-#
-# The node and layer2_interface_media_type attributes are only
-# applicable when an existing layer 2 interface is not specified.
-#
-# The layer3_network_protocol attribute is only applicable when
-# an existing layer 3 network is not specified.
+# TODO <scrapcoder>: create tests, DRY up code
 module Antfarm
   module Models
     class IpInterface
       include DataMapper::Resource
 
-      storage_names[:default] = 'ip_interfaces'
-
       property :id,      Serial
-      property :address, String,  :null => false
-      property :virtual, Boolean, :null => false, :default => false
-      property :custom,  String
+      property :address, String, :nullable => false
 
       belongs_to :layer3_interface, :child_key => [:id]
 
-      has_tags_on :tags
-
-      before :create, :create_layer3_interface
-
-      # Existing layer 3 network the layer 3 interface
-      # automatically created for this IP interface
-      # should belong to.
-      attr_writer :layer3_network
-
-      # Protocol of the layer 3 network automatically
-      # created for the layer 3 interface created for
-      # this IP interface.
-      attr_writer :layer3_network_protocol
-
-      # Protocol of the layer 3 interface automatically
-      # created for this IP interface.
-      attr_writer :layer3_interface_protocol
-
-      # Ethernet (MAC) address of the ethernet interface
-      # to be created for this IP interface.
-      attr_writer :ethernet_address
-
-      # Existing layer 2 interface the layer 3 interface
-      # automatically created for this IP interface
-      # should belong to.
-      attr_writer :layer2_interface
-
-      # Media type of the layer 2 interface automatically
-      # creted for this layer 3 interface.
-      attr_writer :layer2_interface_media_type
-
-      # Existing node the layer 2 interface automatically
-      # created for this layer 3 interface should belong to.
-      attr_writer :node
-
-      # Name of the node automatically created by the layer 2
-      # interface created for this layer 3 interface.
-      attr_writer :node_name
-
-      # Device type of the node automatically created by the
-      # layer 2 interface created for this layer 3 interface.
-      attr_writer :node_device_type
+      validates_present :address
 
       # Overriding the address setter in order to create an instance variable for an
       # Antfarm::IPAddrExt object ip_addr.  This way the rest of the methods in this
       # class can confidently access the ip address for this interface.  IPAddr also
       # validates the address.
       #
-      # the method address= is called by the constructor of this class.
+      # the method 'address=' is called by the constructor of this class.
       def address=(ip_addr) #:nodoc:
         @ip_addr = Antfarm::IPAddrExt.new(ip_addr)
         attribute_set :address, @ip_addr.to_s
       end
 
-      # Validate data for requirements before saving interface to the database.
+      before :save do
+        # TODO <scrapcoder>: move to before :create?
+        # Not sure if both before :create and before :save get called
+        # when a new record is created. If so, the stuff below in the
+        # else section will get called unnecessarily when a new record
+        # is created.
+        #
+        # NOTE <scrapcoder>: looks like 'before :create' and 'before :save' are hooked
+        # directly into create and save methods, rather than being associated with
+        # new/existing records. Thus, the way we're doing things below is the best way.
+        if new_record?
+          puts 'This is a new IpInterface object'
 
-      validates_present :address
+          # Will not have already created a Layer3Interface object, so create one
+          puts 'Creating new Layer3Interface object'
+          self.layer3_interface = Layer3Interface.new
 
-      # Don't save the interface if it's a loopback address.
-      validates_with_block :address do
-        if @ip_addr.loopback_address?
-          [ false, 'loopback address not allowed' ]
+          # Will not have already created an IpNetwork object, so create one
+          # This automatically creates a Layer3Network object
+          puts 'Creating new IpNetwork object'
+          l3net = create_ip_network
+          self.layer3_interface.layer3_network = l3net
+
+          # If a MAC Address was provided, create an EthernetInterface object
+          # This automatically creates a Layer2Interface object
+          if DataStore[:mac_address]
+            puts 'Creating new EthernetInterface object'
+            ethif = EthernetInterface.create
+            self.layer3_interface.layer2_interface = ethif.layer2_interface
+          end
+
+          # Save the resulting Layer3Interface object
+          self.layer3_interface.save
         else
-          true
-        end
-      end
+          puts 'This is an existing IpInterface object'
+          # Since this is an existing record, we need to see if the given IP Address
+          # or MAC Address have changed. If they have, we need to make sure things
+          # get tidied up appropriately.
+          #
+          # In the case of a change of IP Address, we'll need to make sure we're still
+          # assigned to the correct IpNetwork/Layer3Network at the Layer3Interface level.
+          # TODO <scrapcoder>: We'll also want to see if any networks can be destroyed if empty.
+          #
+          # In the case of a change of MAC Address, we'll need to create a new EthernetInterface
+          # object, assign the Layer3Interface to the new Layer2Interface, and destroy the
+          # old EthernetInterface object and corresponding Layer2Interface object.
 
-      # If the address is public and it already exists in the database, don't create
-      # a new one but still create a new IP Network just in case the data given for
-      # this address includes more detailed information about its network.
-      validates_with_block :address do
-        if @ip_addr.private_address?
-          true
-        else
-          if interface = IpInterface.find_by_address(address)
-            create_ip_network
-            [ false, "#{address} already exists, but a new IP Network was created" ]
-          else
-            true
+          # Check to see what network the current IP Address belongs to.
+          l3net = Layer3Network.network_containing(self.address)
+          # If no network exists that would contain the current IP Address, create a new one
+          # and reassign Layer3Interface object to new Layer3Network object.
+          if l3net.nil?
+            puts 'No Layer3Network exists that would contain this IpInterface'
+            puts 'Creating new IpNetwork object'
+            l3net = create_ip_network
+            self.layer3_interface.layer3_network = l3net
+            self.layer3_interface.save
+            # If a network does exist, check to see if its the same as the one currently assigned.
+            # If not, reassign Layer3Interface object to correct Layer3Network object.
+          elsif l3net.id != self.layer3_interface.layer3_network.id
+            puts 'Reassigning Layer3Interface to correct Layer3Network'
+            self.layer3_interface.layer3_network = l3net
+            self.layer3_interface.save
+          end
+
+          # Check to see if a new MAC Address has been specified.
+          if DataStore[:mac_address]
+            # If no EthernetInterface object currently exists or the existing EthernetInterface
+            # object's assigned MAC Address doesn't match the one specified, create a new
+            # EthernetInterface object and destroy the existing one (if it exists).
+            #
+            # TODO <scrapcoder>: what about the Node object belonging to the Layer2Interface
+            # object being destroyed?! The Layer2Interface object belongs to the Node object,
+            # which means the Node object will not be destroyed.  However, it will be 'left
+            # to hang' so-to-speak. We should probably grab the Node object before destroying
+            # the Layer2Interface object, and reassign it to the new Layer2Interface object.
+            ethif = self.layer3_interface.layer2_interface.ethernet_interface
+            if ethif.nil? or ethif.address != @args[:mac_address]
+              puts 'New or different MAC Address detected'
+              node = self.layer3_interface.layer2_interface.node
+              puts "Old Node is #{node.id}"
+              puts "Old Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
+              self.layer3_interface.layer2_interface.destroy
+
+              puts 'Creating new EthernetInterface object'
+              ethif = EthernetInterface.create :address => @args[:mac_address]
+              ethif.layer2_interface.node = node
+
+              puts 'Reassigning Layer3Interface to correct Layer2Interface'
+              self.layer3_interface.layer2_interface = ethif.layer2_interface
+              puts "New Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
+              puts "New Node is #{self.layer3_interface.layer2_interface.node.id}"
+              self.layer3_interface.save
+            end
           end
         end
       end
 
-      #######
       private
-      #######
-
-      def create_layer3_interface
-        # If we get to this point, then we know an interface does not
-        # already exist because validate gets called before
-        # this method and we're checking for existing interfaces in
-        # validate.  Therefore, we know a new interface needs to be created,
-        # unless it was specified by the user.
-        unless self.layer3_interface
-          layer3_interface = Layer3Interface.new :certainty_factor => 0.75
-          layer3_interface.protocol = @layer3_interface_protocol if @layer3_interface_protocol
-
-          if @layer3_network
-            layer3_interface.layer3_network = @layer3_network
-          else
-            layer3_interface.layer3_network = create_ip_network
-          end
-
-          if @layer2_interface
-            layer3_interface.layer2_interface = @layer2_interface
-          else
-            if @ethernet_address
-              ethernet_interface = EthernetInterface.create :address => @ethernet_address
-              layer3_interface.layer2_interface = ethernet_interface.layer2_interface
-            end
-            layer3_interface.layer2_interface_media_type = @layer2_interface_media_type if @layer2_interface_media_type
-            layer3_interface.node = @node if @node
-            layer3_interface.node_name = @node_name if @node_name
-            layer3_interface.node_device_type = @node_device_type if @node_device_type
-          end
-
-          if layer3_interface.save
-            Antfarm::Helpers.log :info, "IpInterface: Created Layer 3 Interface"
-          else
-            Antfarm::Helpers.log :warn, "IpInterface: Errors occured while creating Layer 3 Interface"
-            layer3_interface.errors.each do |msg|
-              Antfarm::Helpers.log :warn, msg
-            end
-          end
-
-          self.layer3_interface = layer3_interface
-        end
-      end
 
       def create_ip_network
         # Check to see if a network exists that contains this address.
@@ -185,12 +132,11 @@ module Antfarm
             network.netmask = network.netmask << 3
           end
           ip_network = IpNetwork.new :address => network.to_cidr_string
-          ip_network.layer3_network_protocol = @layer3_network_protocol if @layer3_network_protocol
           if ip_network.save
             Antfarm::Helpers.log :info, "IpInterface: Created IP Network"
           else
             Antfarm::Helpers.log :warn, "IpInterface: Errors occured while creating IP Network"
-            ip_network.errors.each_full do |msg|
+            ip_network.errors.each do |msg|
               Antfarm::Helpers.log :warn, msg
             end
           end

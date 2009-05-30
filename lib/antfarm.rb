@@ -21,8 +21,9 @@
 
 require 'ipaddr'
 
-require 'antfarm/models'
+require 'antfarm/data_store'
 require 'antfarm/helpers'
+require 'antfarm/models'
 
 # Ensure that an application directory for the current user exists
 Antfarm::Helpers.create_user_directory
