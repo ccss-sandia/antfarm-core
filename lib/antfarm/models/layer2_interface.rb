@@ -15,6 +15,9 @@ module Antfarm
         ethernet_interface.destroy
       end
 #     after :save, :destroy_orphaned_nodes
+      after :create do
+        Antfarm::Helpers.log :debug, "Just created a Layer2Interface belonging to Node #{node.id}"
+      end
 
       private
 

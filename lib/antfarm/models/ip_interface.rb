@@ -33,30 +33,38 @@ module Antfarm
         # directly into create and save methods, rather than being associated with
         # new/existing records. Thus, the way we're doing things below is the best way.
         if new_record?
-          puts 'This is a new IpInterface object'
-
-          # Will not have already created a Layer3Interface object, so create one
-          puts 'Creating new Layer3Interface object'
-          self.layer3_interface = Layer3Interface.new
+          Antfarm::Helpers.log :debug, "This is a new IpInterface object - #{self.address}"
 
           # Will not have already created an IpNetwork object, so create one
           # This automatically creates a Layer3Network object
-          puts 'Creating new IpNetwork object'
+          Antfarm::Helpers.log :debug, 'Creating new IpNetwork object'
           l3net = create_ip_network
-          self.layer3_interface.layer3_network = l3net
+#         self.layer3_interface.layer3_network = l3net
+
+          # This will cause the l3net just created to get assigned to the
+          # Layer3Interface being created below...
+          DataStore[:layer3_network] = l3net
 
           # If a MAC Address was provided, create an EthernetInterface object
           # This automatically creates a Layer2Interface object
           if DataStore[:mac_address]
-            puts 'Creating new EthernetInterface object'
+            Antfarm::Helpers.log :debug, 'Creating new EthernetInterface object'
             ethif = EthernetInterface.create
-            self.layer3_interface.layer2_interface = ethif.layer2_interface
+#           self.layer3_interface.layer2_interface = ethif.layer2_interface
+
+            # This will cause the layer2_interface from the ethif just created
+            # to get assigned to the Layer3Interface being created below...
+            DataStore[:layer2_interface] = ethif.layer2_interface
           end
+
+          # Will not have already created a Layer3Interface object, so create one
+          Antfarm::Helpers.log :debug, 'Creating new Layer3Interface object'
+          self.layer3_interface = Layer3Interface.create
 
           # Save the resulting Layer3Interface object
           self.layer3_interface.save
         else
-          puts 'This is an existing IpInterface object'
+          Antfarm::Helpers.log :debug, "This is an existing IpInterface object - #{self.address}"
           # Since this is an existing record, we need to see if the given IP Address
           # or MAC Address have changed. If they have, we need to make sure things
           # get tidied up appropriately.
@@ -74,15 +82,15 @@ module Antfarm
           # If no network exists that would contain the current IP Address, create a new one
           # and reassign Layer3Interface object to new Layer3Network object.
           if l3net.nil?
-            puts 'No Layer3Network exists that would contain this IpInterface'
-            puts 'Creating new IpNetwork object'
+            Antfarm::Helpers.log :debug, 'No Layer3Network exists that would contain this IpInterface'
+            Antfarm::Helpers.log :debug, 'Creating new IpNetwork object'
             l3net = create_ip_network
             self.layer3_interface.layer3_network = l3net
             self.layer3_interface.save
             # If a network does exist, check to see if its the same as the one currently assigned.
             # If not, reassign Layer3Interface object to correct Layer3Network object.
           elsif l3net.id != self.layer3_interface.layer3_network.id
-            puts 'Reassigning Layer3Interface to correct Layer3Network'
+            Antfarm::Helpers.log :debug, 'Reassigning Layer3Interface to correct Layer3Network'
             self.layer3_interface.layer3_network = l3net
             self.layer3_interface.save
           end
@@ -100,20 +108,20 @@ module Antfarm
             # the Layer2Interface object, and reassign it to the new Layer2Interface object.
             ethif = self.layer3_interface.layer2_interface.ethernet_interface
             if ethif.nil? or ethif.address != @args[:mac_address]
-              puts 'New or different MAC Address detected'
+              Antfarm::Helpers.log :debug, 'New or different MAC Address detected'
               node = self.layer3_interface.layer2_interface.node
-              puts "Old Node is #{node.id}"
-              puts "Old Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
+              Antfarm::Helpers.log :debug, "Old Node is #{node.id}"
+              Antfarm::Helpers.log :debug, "Old Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
               self.layer3_interface.layer2_interface.destroy
 
-              puts 'Creating new EthernetInterface object'
+              Antfarm::Helpers.log :debug, 'Creating new EthernetInterface object'
               ethif = EthernetInterface.create :address => @args[:mac_address]
               ethif.layer2_interface.node = node
 
-              puts 'Reassigning Layer3Interface to correct Layer2Interface'
+              Antfarm::Helpers.log :debug, 'Reassigning Layer3Interface to correct Layer2Interface'
               self.layer3_interface.layer2_interface = ethif.layer2_interface
-              puts "New Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
-              puts "New Node is #{self.layer3_interface.layer2_interface.node.id}"
+              Antfarm::Helpers.log :debug, "New Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
+              Antfarm::Helpers.log :debug, "New Node is #{self.layer3_interface.layer2_interface.node.id}"
               self.layer3_interface.save
             end
           end

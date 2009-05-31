@@ -16,17 +16,23 @@ module Antfarm
       private
 
       def create_layer2_interface
-        puts 'Layer3Interface#create_layer2_interface called'
-        unless self.layer2_interface
-          self.layer2_interface = Layer2Interface.create
-        end
+        Antfarm::Helpers.log :debug, 'Layer3Interface#create_layer2_interface called'
+
+        self.layer2_interface = DataStore[:layer2_interface] or Layer2Interface.create
+
+#       unless self.layer2_interface
+#         self.layer2_interface = Layer2Interface.create
+#       end
       end
 
       def create_layer3_network
-        puts 'Layer3Interface#create_layer3_network called'
-        unless self.layer3_network
-          self.layer3_network = Layer3Network.create
-        end
+        Antfarm::Helpers.log :debug, 'Layer3Interface#create_layer3_network called'
+
+        self.layer3_network = DataStore[:layer3_network] or Layer3Network.create
+
+#       unless self.layer3_network
+#         self.layer3_network = Layer3Network.create
+#       end
       end
 
       def clamp_certainty_factor

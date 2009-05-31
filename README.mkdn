@@ -26,6 +26,7 @@
 ## Current Bugs:
 
   - For some reason, the 'before :create' hook isn't getting ran when a new Layer 3 Interface is created.  This keeps a Layer 2 Interface from being created, which causes validations to fail.
+  - Along those same lines, the 'before :create' is now getting called, but the Layer2Interface being created isn't getting set in Layer3Interface's layer2_interface_id column...
 
 ## Structure of ANTFARM Database:
 
