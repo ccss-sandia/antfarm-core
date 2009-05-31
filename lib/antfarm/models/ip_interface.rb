@@ -55,6 +55,8 @@ module Antfarm
             # This will cause the layer2_interface from the ethif just created
             # to get assigned to the Layer3Interface being created below...
             DataStore[:layer2_interface] = ethif.layer2_interface
+          else
+            DataStore[:layer2_interface] = Layer2Interface.create
           end
 
           # Will not have already created a Layer3Interface object, so create one

@@ -16,7 +16,7 @@ module Antfarm
         Antfarm::Helpers.log :debug, "Just created Layer3Network #{self.id}"
       end
       after :destroy do
-        puts "Just destroyed Layer3Network #{self.id}"
+        puts "Just destroyed Layer3Network #{self.ip_network.address}"
       end
 
       # Take the given network and merge with it
