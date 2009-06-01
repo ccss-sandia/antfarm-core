@@ -139,7 +139,7 @@ module Antfarm
         unless layer3_network
           network = @ip_addr.clone
           if network == network.network
-            network.netmask = network.netmask << 3
+            network.netmask = network.netmask << 2
           end
           ip_network = IpNetwork.new :address => network.to_cidr_string
           if ip_network.save
