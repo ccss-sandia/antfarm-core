@@ -36,7 +36,7 @@ module Antfarm
       end
 
       def clamp_certainty_factor
-        puts 'Layer3Interface#clamp_certainty_factor called'
+        Antfarm::Helpers.log :debug, 'Layer3Interface#clamp_certainty_factor called'
       end
     end
   end

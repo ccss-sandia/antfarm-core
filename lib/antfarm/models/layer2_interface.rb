@@ -22,22 +22,21 @@ module Antfarm
       private
 
       def create_node
-        puts 'Layer2Interface#create_node called'
+        Antfarm::Helpers.log :debug, 'Layer2Interface#create_node called'
 
         self.node = DataStore[:node] or Node.create
       end
 
       def clamp_certainty_factor
-        puts 'Layer2Interface#clamp_certainty_factor called'
+        Antfarm::Helpers.log :debug, 'Layer2Interface#clamp_certainty_factor called'
       end
 
       def destroy_orphaned_nodes
-        puts 'Layer2Interface#destroy_orphaned_nodes called'
-        puts caller
+        Antfarm::Helpers.log :debug, "Layer2Interface#destroy_orphaned_nodes called by #{caller}"
 
         Node.all.each do |n|
           if n.layer2_interfaces.empty?
-            puts 'Layer2Interface - destroying orphaned node'
+            Antfarm::Helpers.log :debug, 'Layer2Interface - destroying orphaned node'
             n.destroy
           end
         end

@@ -16,7 +16,7 @@ module Antfarm
         Antfarm::Helpers.log :debug, "Just created Layer3Network #{self.id}"
       end
       after :destroy do
-        puts "Just destroyed Layer3Network #{self.ip_network.address}"
+        Antfarm::Helpers.log :debug, "Just destroyed Layer3Network #{self.id}"
       end
 
       # Take the given network and merge with it
@@ -40,7 +40,13 @@ module Antfarm
 
             merge_certainty_factor = Antfarm::Helpers.clamp(merge_certainty_factor)
 
-            sub_network.layer3_interfaces.each { |interface| network.layer3_interfaces << interface }
+            sub_network.layer3_interfaces.each do |interface|
+              network.layer3_interfaces << interface
+              # TODO <scrapcoder>: is this not done automatically when added above?
+              interface.layer3_network = network
+              interface.save
+            end
+
             network.layer3_interfaces.uniq!
 
             # TODO: update network's certainty factor using sub_network's certainty factor.
@@ -95,7 +101,7 @@ module Antfarm
       private
 
       def clamp_certainty_factor
-        puts 'Layer3Network#clamp_certainty_factor called'
+        Antfarm::Helpers.log :debug, 'Layer3Network#clamp_certainty_factor called'
       end
     end
   end

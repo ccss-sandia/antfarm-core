@@ -15,7 +15,8 @@ module Antfarm
       private
 
       def create_layer2_interface
-        puts 'EthernetInterface#create_layer2_interface called'
+        Antfarm::Helpers.log :debug, 'EthernetInterface#create_layer2_interface called'
+
         self.layer2_interface = Layer2Interface.create
       end
     end

@@ -13,35 +13,20 @@ module Antfarm
 
       has_tags_on :tags
 
-      def self.with_layer2_interface(iface)
-        all.each do |node|
-          if node.layer2_interfaces.include?(iface)
-            return node
-          end
-        end
-        return nil
-      end
-
       before :save, :clamp_certainty_factor
       before :save do
-        puts 'Save'
         unless DataStore[:node_name].nil? # TODO <scrapcoder>: should we also check to see if name is already set?
           attribute_set :name, DataStore.delete(:node_name)
-          puts "Saving Node with name '#{name}' set by DataStore"
+          Antfarm::Helpers.log :debug, "Saving Node with name '#{name}' set by DataStore"
         else
-          puts "Saving Node with name '#{name}'"
+          Antfarm::Helpers.log :debug, "Saving Node with name '#{name}'"
         end
-      end
-
-      def save(context = :default)
-        puts 'Save Method'
-        super
       end
 
       private
 
       def clamp_certainty_factor
-        puts 'Node#clamp_certainty_factor called'
+        Antfarm::Helpers.log :debug, 'Node#clamp_certainty_factor called'
 
         self.certainty_factor = Antfarm::Helpers.clamp(self.certainty_factor)
       end
