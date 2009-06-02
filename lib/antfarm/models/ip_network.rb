@@ -10,6 +10,8 @@ module Antfarm
 
       validates_present :address
 
+      has_tags_on :tags
+
       before :create, :create_layer3_network
       before :create, :set_private_address
       after  :create, :merge_layer3_networks

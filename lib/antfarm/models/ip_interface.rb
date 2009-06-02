@@ -11,6 +11,8 @@ module Antfarm
 
       validates_present :address
 
+      has_tags_on :tags
+
       # Overriding the address setter in order to create an instance variable for an
       # Antfarm::IPAddrExt object ip_addr.  This way the rest of the methods in this
       # class can confidently access the ip address for this interface.  IPAddr also
@@ -142,6 +144,12 @@ module Antfarm
             network.netmask = network.netmask << 2
           end
           ip_network = IpNetwork.new :address => network.to_cidr_string
+          if DataStore[:ip_network_tags]
+            tags = [DataStore[:ip_network_tags]].flatten
+            tags.each do |tag|
+              ip_network.tag_list << tag
+            end
+          end
           if ip_network.save
             Antfarm::Helpers.log :info, "IpInterface: Created IP Network"
           else
