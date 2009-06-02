@@ -6,6 +6,8 @@ module Antfarm
       property :id, Serial
 
       has 1,     :ip_interface, :child_key => [:id]
+      has n,     :incoming, :class_name => 'Traffic', :child_key => [:target_id]
+      has n,     :outgoing, :class_name => 'Traffic', :child_key => [:source_id]
       belongs_to :layer2_interface
       belongs_to :layer3_network
 
