@@ -7,24 +7,25 @@ module Antfarm
 
       has n,     :layer3_interfaces
       has 1,     :ethernet_interface, :child_key => [:id]
-      belongs_to :node
+      belongs_to :node, :nullable => true
 
       before :create, :create_node
-      before :save,   :clamp_certainty_factor
+#     before :save,   :clamp_certainty_factor
       before :destroy do
-        ethernet_interface.destroy
+        self.ethernet_interface.destroy
+      end
+      after :create do
+        Antfarm::Helpers.log :debug, 'Just created a Layer2Interface'
       end
 #     after :save, :destroy_orphaned_nodes
-      after :create do
-        Antfarm::Helpers.log :debug, "Just created a Layer2Interface belonging to Node #{node.id}"
-      end
 
+      #######
       private
+      #######
 
       def create_node
         Antfarm::Helpers.log :debug, 'Layer2Interface#create_node called'
-
-        self.node = DataStore[:node] or Node.create
+        self.node = DataStore[:node].nil? ? Node.create : DataStore.delete(:node)
       end
 
       def clamp_certainty_factor

@@ -23,7 +23,6 @@ module Antfarm
 
       def create_layer3_network
         Antfarm::Helpers.log :debug, 'IpNetwork#create_layer3_network called'
-
         self.layer3_network = Layer3Network.create
       end
 

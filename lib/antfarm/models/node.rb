@@ -17,17 +17,25 @@ module Antfarm
       before :save do
         unless DataStore[:node_name].nil? # TODO <scrapcoder>: should we also check to see if name is already set?
           attribute_set :name, DataStore.delete(:node_name)
-          Antfarm::Helpers.log :debug, "Saving Node with name '#{name}' set by DataStore"
+          Antfarm::Helpers.log :debug, "Saving Node with name '#{self.name}' set by DataStore"
         else
-          Antfarm::Helpers.log :debug, "Saving Node with name '#{name}'"
+          Antfarm::Helpers.log :debug, 'Saving Node with no name'
+        end
+
+        unless DataStore[:node_tags].nil?
+          attribute_set :tag_list => DataStore.delete(:node_tags)
+          Antfarm::Helpers.log :debug, "Saving Node with tags '#{self.tag_list}' set by DataStore"
+        else
+          Antfarm::Helpers.log :debug, 'Saving Node with no tags'
         end
       end
 
+      #######
       private
+      #######
 
       def clamp_certainty_factor
         Antfarm::Helpers.log :debug, 'Node#clamp_certainty_factor called'
-
         self.certainty_factor = Antfarm::Helpers.clamp(self.certainty_factor)
       end
     end

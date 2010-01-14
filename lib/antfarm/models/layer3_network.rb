@@ -23,7 +23,6 @@ module Antfarm
       # any sub_networks of the given network.
       def self.merge(network, merge_certainty_factor = Antfarm::CF_PROVEN_TRUE)
         Antfarm::Helpers.log :debug, 'Layer3Network#merge called'
-
         Antfarm::Helpers.log :debug, "Inside Layer3Network#merge - #{network.ip_network.address}"
 
         unless network
@@ -98,7 +97,9 @@ module Antfarm
         return sub_networks
       end
 
+      #######
       private
+      #######
 
       def clamp_certainty_factor
         Antfarm::Helpers.log :debug, 'Layer3Network#clamp_certainty_factor called'

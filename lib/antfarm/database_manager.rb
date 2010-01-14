@@ -61,7 +61,8 @@ Options:
         puts "Migrating database"
         DataMapper.auto_upgrade!
         puts "Database successfully migrated."
-      rescue ::PostgresError
+      rescue => e
+        puts e.class
         puts "No PostgreSQL database exists for the #{ANTFARM_ENV} environment. Creating PostgreSQL database..."
         `createdb #{ANTFARM_ENV}`
         puts "PostgreSQL database for this environment created. Continuing on with migration."

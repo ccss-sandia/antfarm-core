@@ -34,7 +34,7 @@ module Antfarm
         # NOTE <scrapcoder>: looks like 'before :create' and 'before :save' are hooked
         # directly into create and save methods, rather than being associated with
         # new/existing records. Thus, the way we're doing things below is the best way.
-        if new_record?
+        if new?
           Antfarm::Helpers.log :debug, "This is a new IpInterface object - #{self.address}"
 
           # Will not have already created an IpNetwork object, so create one
@@ -58,15 +58,13 @@ module Antfarm
             # to get assigned to the Layer3Interface being created below...
             DataStore[:layer2_interface] = ethif.layer2_interface
           else
+            Antfarm::Helpers.log :debug, 'Creating new Layer2Interface object'
             DataStore[:layer2_interface] = Layer2Interface.create
           end
 
           # Will not have already created a Layer3Interface object, so create one
           Antfarm::Helpers.log :debug, 'Creating new Layer3Interface object'
           self.layer3_interface = Layer3Interface.create
-
-          # Save the resulting Layer3Interface object
-          self.layer3_interface.save
         else
           Antfarm::Helpers.log :debug, "This is an existing IpInterface object - #{self.address}"
           # Since this is an existing record, we need to see if the given IP Address
@@ -88,6 +86,7 @@ module Antfarm
           if l3net.nil?
             Antfarm::Helpers.log :debug, 'No Layer3Network exists that would contain this IpInterface'
             Antfarm::Helpers.log :debug, 'Creating new IpNetwork object'
+
             l3net = create_ip_network
             self.layer3_interface.layer3_network = l3net
             self.layer3_interface.save
@@ -95,12 +94,13 @@ module Antfarm
             # If not, reassign Layer3Interface object to correct Layer3Network object.
           elsif l3net.id != self.layer3_interface.layer3_network.id
             Antfarm::Helpers.log :debug, 'Reassigning Layer3Interface to correct Layer3Network'
+
             self.layer3_interface.layer3_network = l3net
             self.layer3_interface.save
           end
 
           # Check to see if a new MAC Address has been specified.
-          if DataStore[:mac_address]
+          unless DataStore[:mac_address].nil?
             # If no EthernetInterface object currently exists or the existing EthernetInterface
             # object's assigned MAC Address doesn't match the one specified, create a new
             # EthernetInterface object and destroy the existing one (if it exists).
@@ -114,6 +114,7 @@ module Antfarm
             if ethif.nil? or ethif.address != @args[:mac_address]
               Antfarm::Helpers.log :debug, 'New or different MAC Address detected'
               node = self.layer3_interface.layer2_interface.node
+
               Antfarm::Helpers.log :debug, "Old Node is #{node.id}"
               Antfarm::Helpers.log :debug, "Old Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
               self.layer3_interface.layer2_interface.destroy
@@ -124,6 +125,7 @@ module Antfarm
 
               Antfarm::Helpers.log :debug, 'Reassigning Layer3Interface to correct Layer2Interface'
               self.layer3_interface.layer2_interface = ethif.layer2_interface
+
               Antfarm::Helpers.log :debug, "New Layer2Interface id is #{self.layer3_interface.layer2_interface.id}"
               Antfarm::Helpers.log :debug, "New Node is #{self.layer3_interface.layer2_interface.node.id}"
               self.layer3_interface.save
@@ -132,34 +134,39 @@ module Antfarm
         end
       end
 
+      #######
       private
+      #######
 
       def create_ip_network
         # Check to see if a network exists that contains this address.
         # If not, create a small one that does.
         layer3_network = Layer3Network.network_containing(@ip_addr.to_cidr_string)
-        unless layer3_network
+
+        if layer3_network.nil?
           network = @ip_addr.clone
           if network == network.network
             network.netmask = network.netmask << 2
           end
+
           ip_network = IpNetwork.new :address => network.to_cidr_string
-          if DataStore[:ip_network_tags]
-            tags = [DataStore[:ip_network_tags]].flatten
+
+          unless DataStore[:ip_network_tags].nil?
+            tags = Array.new(DataStore.delete(:ip_network_tags)).flatten
             tags.each do |tag|
               ip_network.tag_list << tag
             end
           end
+
           if ip_network.save
             Antfarm::Helpers.log :info, "IpInterface: Created IP Network"
+            layer3_network = ip_network.layer3_network
           else
             Antfarm::Helpers.log :warn, "IpInterface: Errors occured while creating IP Network"
-            ip_network.errors.each do |msg|
-              Antfarm::Helpers.log :warn, msg
-            end
+            ip_network.errors.each { |msg| Antfarm::Helpers.log :warn, msg }
           end
-          layer3_network = ip_network.layer3_network
         end
+
         return layer3_network
       end
     end
