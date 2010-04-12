@@ -5,8 +5,14 @@ ANTFARM_ENV = 'test'
 
 require 'logger'
 require 'config/environment'
-
 require 'antfarm/database_manager'
+
+# This must be set after the ANTFARM environment is loaded due to the fact
+# that requiring the 'bundler' library, which occurs in the initializer called
+# by the boot loader called by the ANTFARM environment, clears out the load path
+# and only adds paths to the gems specified in the Gemfile as they are
+# setup/required.
+Bundler.setup(:testing)
 
 LOGGER = Logger.new(STDERR)
 if level = ENV['LOG_LEVEL']

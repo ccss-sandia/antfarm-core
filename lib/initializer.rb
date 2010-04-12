@@ -20,12 +20,12 @@
 #
 # This script is modeled after the Rails initializer class.
 
-# require 'logger'
 require 'yaml'
 
 require 'rubygems'
-require 'dm-core'
-# require 'sequel'
+require 'bundler'
+
+Bundler.require(:core)
 
 module Antfarm
   class Initializer
