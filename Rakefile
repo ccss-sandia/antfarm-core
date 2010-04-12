@@ -1,3 +1,1 @@
-require 'config/boot'
-
-Dir["#{ANTFARM_ROOT}/lib/tasks/**/*.rake"].each { |file| load file }
+Dir["#{File.dirname(__FILE__)}/lib/tasks/**/*.rake"].each { |file| load file }
