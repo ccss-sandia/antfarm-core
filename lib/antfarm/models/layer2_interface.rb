@@ -17,7 +17,7 @@ module Antfarm
       validates_present :certainty_factor
 
       # Need to do this before validation
-      # since :nullable => false is specified
+      # since :required => true is specified
       # on the node association above.
       before :valid?, :create_node
       before :save,   :clamp_certainty_factor
