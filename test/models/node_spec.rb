@@ -1,5 +1,27 @@
 require 'test/spec_helper'
 
+# Required tests for the ANTFARM Node model:
+#
+# Create
+#
+# Creating a model should fail if no certainty factor is present (this doesn't
+# mean a default value can't be set).
+#
+# Creating a model should fail if the certainty factor present isn't between
+# the library-defined PROVEN values.
+#
+# Save
+#
+# Saving a model should fail if no certainty factor is present.
+#
+# Saving a model should fail if the certainty factor present isn't between
+# the library-defined PROVEN values.
+#
+# Destroy
+#
+# Destoying a model should also destroy any and all layer 2 interface models
+# associated with the model.
+
 describe Antfarm::Model::Node, '#create' do
   it 'should fail if no certainty factor exists' do
     node = Antfarm::Model::Node.create :certainty_factor => nil
