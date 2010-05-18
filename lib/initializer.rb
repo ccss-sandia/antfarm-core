@@ -22,6 +22,7 @@
 
 require 'yaml'
 
+# TODO: Hmmm... should we vendor Bundler?! <scrapcoder>
 require 'rubygems'
 require 'bundler'
 
@@ -76,9 +77,6 @@ module Antfarm
     # name used for the database file and the log file.
     def initialize_database
       config = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
-#     if (defined? USER_DIR) && File.exists?("#{USER_DIR}/config/defaults.yml")
-#       config = YAML::load(IO.read("#{USER_DIR}/config/defaults.yml"))
-#     end
       # Database setup based on adapter specified
       if config && config[ANTFARM_ENV] && config[ANTFARM_ENV].has_key?('adapter')
         if config[ANTFARM_ENV]['adapter'] == 'sqlite3'
@@ -102,17 +100,10 @@ module Antfarm
       else
         DataMapper.setup(:default, "sqlite3://#{config[ANTFARM_ENV]['database']}")
       end
-#     Sequel.connect("sqlite://#{config[ANTFARM_ENV]['database']}")
-#     ActiveRecord::Base.configurations = config
-#     ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[ANTFARM_ENV])
     end
 
     def initialize_logger
-#     @logger = Logger.new(Antfarm::Helpers.log_file(ANTFARM_ENV))
-#     @logger.level = Logger.const_get(configuration.log_level.to_s.upcase)
       @logger = DataMapper::Logger.new(Antfarm::Helpers.log_file(ANTFARM_ENV), configuration.log_level)
-#     Sequel::DATABASES.first.logger = @logger
-#     ActiveRecord::Base.logger = @logger
       Antfarm::Helpers.logger_callback = lambda do |severity,msg|
         @logger.send(severity,msg)
       end

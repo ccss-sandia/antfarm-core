@@ -22,10 +22,12 @@ require 'test/spec_helper'
 # Saving a model should fail if the certainty factor present isn't between
 # the library-defined PROVEN values.
 #
-# Saving a model should not modify any information on any models associated
-# with the model.
+# Saving a model should not create a new node model.
 #
 # Destroy
+#
+# TODO: add the '#destroy' tests once ethernet interface and layer 3 interface
+# models are added.
 #
 # Destoying a model should also destroy any and all ethernet interface and
 # layer 3 interface models associated with the model.
@@ -101,6 +103,48 @@ describe Antfarm::Model::Layer2Interface, '#save' do
     node.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_TRUE
   end
 
-  it 'should not update the associated node' do
+  it 'should not create a new node model' do
+    iface = Antfarm::Model::Layer2Interface.create
+    node_id = iface.node.id
+    iface.certainty_factor = 0.5
+    iface.save
+    iface.certainty_factor.should == 0.5
+    iface.node.id.should == node_id
+  end
+end
+
+describe Antfarm::Model::Layer2Interface, '#destroy' do
+  # TODO: figure out why this is failing
+  # For some reason, calling 'l2_iface.ethernet_interface'
+  # below leads to a 'no destroy method for nil object', yet
+  # when something similar is ran in an irb console it works
+  # just fine... :(
+  #
+  # 05/18/2010 - It's because the ethernet interface isn't being
+  # associated with the layer 2 interface via the 'id' column
+  # like it was when we were using ActiveRecord. See the
+  # EthernetInterface model for more details.
+  it 'should also destroy any associated ethernet interfaces' do
+    iface = Antfarm::Model::EthernetInterface.create :address => '00:00:00:00:00:00'
+
+    puts iface.errors.inspect
+
+    id    = iface.id
+
+    puts "EthernetInterface ID: #{id}"
+
+    count = Antfarm::Model::EthernetInterface.all.length
+    
+    puts "EthernetInterface Count: #{count}"
+
+    l2_iface = iface.layer2_interface
+
+    puts "Layer2Interface ID: #{l2_iface.id}"
+    puts "Layer2Interface EthernetInterface ID: #{l2_iface.ethernet_interface.id}"
+
+    l2_iface.destroy
+    l2_iface.destroyed?.should == true
+    Antfarm::Model::EthernetInterface.get(id).should == nil
+    Antfarm::Model::EthernetInterface.all.length.should == count - 1
   end
 end

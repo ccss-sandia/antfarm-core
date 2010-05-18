@@ -1,12 +1,7 @@
-# require 'dm-ar-finders'
-# require 'dm-constraints'
-# require 'dm-tags'
-# all the database models use validation
-# require 'dm-validations'
 Bundler.require(:models)
 
 # require all the models
-# require 'antfarm/models/ethernet_interface'
+require 'antfarm/models/ethernet_interface'
 # require 'antfarm/models/ip_interface'
 # require 'antfarm/models/ip_network'
 require 'antfarm/models/layer2_interface'

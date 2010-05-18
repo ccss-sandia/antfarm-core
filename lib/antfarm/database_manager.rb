@@ -44,6 +44,7 @@ Options:
     def db_clean(quiet = true)
       FileUtils.rm "#{Antfarm::Helpers.log_file(ANTFARM_ENV)}" if File.exists?(Antfarm::Helpers.log_file(ANTFARM_ENV))
       config = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
+
       if config && config[ANTFARM_ENV] && config[ANTFARM_ENV]['adapter'] == 'postgres'
         # TODO <scrapcoder>: can this stuff be done using the postgres gem instead?
         puts "Dropping PostgreSQL #{ANTFARM_ENV} database..." unless quiet

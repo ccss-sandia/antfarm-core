@@ -11,7 +11,8 @@ module Antfarm
       property :custom,           String
 
 #     has n,     :layer3_interfaces
-#     has 1,     :ethernet_interface, :child_key => [:id]
+      has 1,     :ethernet_interface, :child_key => :id, :constraint => :destroy
+#     has 1,     :ethernet_interface, :constraint => :destroy
       belongs_to :node, :required => true
 
       validates_present :certainty_factor
@@ -33,11 +34,15 @@ module Antfarm
       def create_node
         Antfarm::Helpers.log :debug, '[PRIVATE METHOD CALLED] Layer2Interface#create_node'
 
-        # Only do anything with given node if
-        # Layer 2 Interface is a new record.
-        # Makes sense since this method used to
-        # be called by before :create callback.
-        self.node ||= Antfarm::Model::Node.create if new?
+        # Only create a new node if a node model
+        # isn't already associated with this model.
+        # This protects against new nodes being
+        # created when one is already provided or
+        # when this model is being saved rather
+        # than created (since a node will be
+        # automatically created and associated with
+        # this model on creation).
+        self.node ||= Antfarm::Model::Node.create
       end
 
       def clamp_certainty_factor

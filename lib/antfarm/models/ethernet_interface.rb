@@ -23,7 +23,14 @@ module Antfarm
       # is created, along with the 'layer2_interface_id'
       # variable that matches the table column. The model
       # is not valid when created because 'layer2interface_id'
-      # ends up being nil... <scrapcoder>
+      # ends up being nil. Note that if I modify the
+      # Layer2Interface model to use the option ':child_key => :id'
+      # on the 'has 1 :ethernet_interface' definition then
+      # this model no longer has the weird 'layer2interface_id'
+      # instance variable. However, when I do that and I
+      # create a Layer2Interface by itself, the next time I
+      # create an EthernetInterface, its layer 2 interface
+      # won't point back to it... <scrapcoder>
       belongs_to :layer2_interface, :required => true
 
       # Need to do this before validation
