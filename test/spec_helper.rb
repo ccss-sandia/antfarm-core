@@ -1,5 +1,3 @@
-puts 'Hello from spec_helper!'
-
 ROOT = File.expand_path(File.dirname(__FILE__) + '/..')
 $LOAD_PATH.unshift("#{ROOT}/lib")
 
@@ -38,11 +36,10 @@ end
 # Global blocks can be setup in Spec::Runner.configure { |c| c.before ... }
 
 Spec::Runner.configure do |c|
-# c.before(:each) do
-  c.before(:all) do
-    # Use DBManager interface to reset the database
-    #
-    # TODO: is this using the test database?! <scrapcoder>
-#   Antfarm::DatabaseManager.new(['-r'])
+  c.before(:each) do
+    # Use DBManager interface to reset the database. This
+    # is using the test database due to the ANTFARM_ENV
+    # declaration at the top of this file.
+    Antfarm::DatabaseManager.new(['-r'])
   end
 end
