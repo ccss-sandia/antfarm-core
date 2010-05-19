@@ -17,7 +17,7 @@ require 'test/spec_helper'
 # happen if ethernet interface information is supplied to the IP interface when
 # it's being created. A similar process should follow for layer 2 interface
 # associations to the layer 3 interface, whereby an ethernet interface is first
-# created, then the layer 2 interface it created automatically is passed to the
+# created, then the layer 2 interface it created is automatically passed to the
 # layer 3 interface when it's being created.
 #
 # If the given IP address for the model being created is contained within an
