@@ -37,25 +37,25 @@ require 'test/spec_helper'
 # led to variable names not being correct for
 # clamping tests...
 
-describe Antfarm::Model::Layer2Interface, '#create' do
+describe Antfarm::Model::LayerTwoInterface, '#create' do
   it 'should fail if no certainty factor exists' do
-    iface = Antfarm::Model::Layer2Interface.create :certainty_factor => nil
+    iface = Antfarm::Model::LayerTwoInterface.create :certainty_factor => nil
     iface.valid?.should == false
     iface.saved?.should == false
   end
 
   it 'should clamp the certainty factor between the predefined PROVEN values' do
-    node = Antfarm::Model::Layer2Interface.create :certainty_factor => 0.5
+    node = Antfarm::Model::LayerTwoInterface.create :certainty_factor => 0.5
     node.certainty_factor.should == 0.5
-    node = Antfarm::Model::Layer2Interface.create :certainty_factor => -1.5
+    node = Antfarm::Model::LayerTwoInterface.create :certainty_factor => -1.5
     node.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_FALSE
-    node = Antfarm::Model::Layer2Interface.create :certainty_factor => 1.5
+    node = Antfarm::Model::LayerTwoInterface.create :certainty_factor => 1.5
     node.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_TRUE
   end
 
   it 'should create a new node' do
     count = Antfarm::Model::Node.all.length
-    iface = Antfarm::Model::Layer2Interface.create
+    iface = Antfarm::Model::LayerTwoInterface.create
     iface.node.should_not == nil
     Antfarm::Model::Node.all.length.should == count + 1
     iface.node.should == Antfarm::Model::Node.all.last
@@ -63,7 +63,7 @@ describe Antfarm::Model::Layer2Interface, '#create' do
 
   it 'should use a given node name when creating a new node' do
     count = Antfarm::Model::Node.all.length
-    iface = Antfarm::Model::Layer2Interface.create :node => { :name => 'Test Me' }
+    iface = Antfarm::Model::LayerTwoInterface.create :node => { :name => 'Test Me' }
     iface.node.should_not == nil
     Antfarm::Model::Node.all.length.should == count + 1
     iface.node.should == Antfarm::Model::Node.all.last
@@ -73,16 +73,16 @@ describe Antfarm::Model::Layer2Interface, '#create' do
   it 'should use a given node' do
     node = Antfarm::Model::Node.create
     count = Antfarm::Model::Node.all.length
-    iface = Antfarm::Model::Layer2Interface.create :node => node
+    iface = Antfarm::Model::LayerTwoInterface.create :node => node
     iface.node.should_not == nil
     Antfarm::Model::Node.all.length.should == count
     iface.node.should == node
   end
 end
 
-describe Antfarm::Model::Layer2Interface, '#save' do
+describe Antfarm::Model::LayerTwoInterface, '#save' do
   it 'should fail if no certainty factor exists' do
-    node = Antfarm::Model::Layer2Interface.create
+    node = Antfarm::Model::LayerTwoInterface.create
     node.certainty_factor = nil
     node.valid?.should == false
     node.errors.length.should == 1
@@ -90,7 +90,7 @@ describe Antfarm::Model::Layer2Interface, '#save' do
   end
 
   it 'should clamp the certainty factor between the predefined PROVEN values' do
-    node = Antfarm::Model::Layer2Interface.create
+    node = Antfarm::Model::LayerTwoInterface.create
     node.saved?.should == true
     node.certainty_factor = 0.5
     node.save
@@ -104,7 +104,7 @@ describe Antfarm::Model::Layer2Interface, '#save' do
   end
 
   it 'should not create a new node model' do
-    iface = Antfarm::Model::Layer2Interface.create
+    iface = Antfarm::Model::LayerTwoInterface.create
     node_id = iface.node.id
     iface.certainty_factor = 0.5
     iface.save
@@ -113,7 +113,7 @@ describe Antfarm::Model::Layer2Interface, '#save' do
   end
 end
 
-describe Antfarm::Model::Layer2Interface, '#destroy' do
+describe Antfarm::Model::LayerTwoInterface, '#destroy' do
   # TODO: figure out why this is failing
   # For some reason, calling 'l2_iface.ethernet_interface'
   # below leads to a 'no destroy method for nil object', yet
@@ -126,23 +126,12 @@ describe Antfarm::Model::Layer2Interface, '#destroy' do
   # EthernetInterface model for more details.
   it 'should also destroy any associated ethernet interfaces' do
     iface = Antfarm::Model::EthernetInterface.create :address => '00:00:00:00:00:00'
-
-    puts iface.errors.inspect
-
     id    = iface.id
-
-    puts "EthernetInterface ID: #{id}"
-
     count = Antfarm::Model::EthernetInterface.all.length
-    
-    puts "EthernetInterface Count: #{count}"
 
-    l2_iface = iface.layer2_interface
-
-    puts "Layer2Interface ID: #{l2_iface.id}"
-    puts "Layer2Interface EthernetInterface ID: #{l2_iface.ethernet_interface.id}"
-
+    l2_iface = iface.layer_two_interface
     l2_iface.destroy
+
     l2_iface.destroyed?.should == true
     Antfarm::Model::EthernetInterface.get(id).should == nil
     Antfarm::Model::EthernetInterface.all.length.should == count - 1
