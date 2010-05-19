@@ -2,9 +2,8 @@ ROOT = File.expand_path(File.dirname(__FILE__) + '/..')
 $LOAD_PATH.unshift("#{ROOT}/lib")
 
 ANTFARM_ENV       = 'test'
-ANTFARM_LOG_LEVEL = 'debug'
 
-# require 'logger'
+require 'logger'
 require 'config/environment'
 require 'antfarm/database_manager'
 
@@ -15,10 +14,9 @@ require 'antfarm/database_manager'
 # setup/required.
 Bundler.setup(:testing)
 
-# Override the logger setup configured by the
+# Override logger setup configured by the
 # ANTFARM initializer with one more suitable
 # for testing purposes.
-=begin
 LOGGER = Logger.new(STDERR)
 if level = ENV['LOG_LEVEL']
   # Use log level provided on command line
@@ -30,7 +28,6 @@ end
 Antfarm::Helpers.logger_callback = lambda do |level,msg|
   LOGGER.send(level,msg)
 end
-=end
 
 # before/after(:each/:all) can be used for setup.
 # Global blocks can be setup in Spec::Runner.configure { |c| c.before ... }
