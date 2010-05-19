@@ -63,7 +63,7 @@ Options:
         puts 'Migrating database' unless quiet
         DataMapper.auto_upgrade!
         puts 'Database successfully migrated.' unless quiet
-      rescue => e
+      rescue => e # TODO: better error catching - not EVERY error is PostreSQL...
         puts e unless quiet
         puts "No PostgreSQL database exists for the #{ANTFARM_ENV} environment. Creating PostgreSQL database..." unless quiet
         exec "createdb #{ANTFARM_ENV}"
