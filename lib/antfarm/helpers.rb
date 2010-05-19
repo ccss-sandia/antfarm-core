@@ -42,34 +42,43 @@ module Antfarm
     end
 
     def self.db_dir
-      return File.expand_path("#{@user_dir}/db")
+      return File.expand_path("#{self.user_dir}/db")
     end
 
     def self.db_file(environment)
-      return File.expand_path("#{@user_dir}/db/#{environment}.db")
+      return File.expand_path("#{self.user_dir}/db/#{environment}.db")
     end
 
     def self.log_dir
-      return File.expand_path("#{@user_dir}/log")
+      return File.expand_path("#{self.user_dir}/log")
     end
 
     def self.log_file(environment)
-      return File.expand_path("#{@user_dir}/log/#{environment}.log")
+      return File.expand_path("#{self.user_dir}/log/#{environment}.log")
     end
 
     def self.defaults_file
-      return File.expand_path("#{@user_dir}/config/defaults.yml")
+      return File.expand_path("#{self.user_dir}/config/defaults.yml")
     end
 
     def self.history_file
-      return File.expand_path("#{@user_dir}/history")
+      return File.expand_path("#{self.user_dir}/history")
     end
 
     def self.user_plugins_dir
-      return File.expand_path("#{@user_dir}/plugins")
+      return File.expand_path("#{self.user_dir}/plugins")
     end
 
+    #######
+    private
+    #######
+
     USER_DIRECTORIES = ['config', 'db', 'log', 'plugins']
+
+    def self.user_dir
+      return @user_dir unless @user_dir.nil?
+      return self.create_user_directory
+    end
 
     # Initializes a suitable directory structure for the user
     def self.create_user_directory
@@ -93,7 +102,7 @@ module Antfarm
         Antfarm::Helpers.log :warn, "Default config file created at #{ENV['HOME'] + '/.antfarm/config/defaults.yml'}"
       end
 
-      @user_dir = (ENV['HOME'] + '/.antfarm').dup
+      return @user_dir = (ENV['HOME'] + '/.antfarm').dup
     end
   end
 end
