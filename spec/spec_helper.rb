@@ -1,22 +1,25 @@
 ROOT = File.expand_path(File.dirname(__FILE__) + '/..')
 $LOAD_PATH.unshift("#{ROOT}/lib")
 
-ANTFARM_ENV       = 'test'
+# Set the ANTFARM environment to 'test'
+# so the correct database is used.
+ANTFARM_ENV = 'test'
 
-require 'logger'
 require 'config/environment'
-require 'antfarm/database_manager'
 
+# Require the additional gems needed for testing.
+#
 # This must be set after the ANTFARM environment is loaded due to the fact
 # that requiring the 'bundler' library, which occurs in the initializer called
 # by the boot loader called by the ANTFARM environment, clears out the load path
-# and only adds paths to the gems specified in the Gemfile as they are
-# setup/required.
+# and only adds paths to the gems specified in the Gemfile as they are setup.
 Bundler.setup(:testing)
 
 # Override logger setup configured by the
 # ANTFARM initializer with one more suitable
 # for testing purposes.
+require 'logger'
+
 LOGGER = Logger.new(STDERR)
 if level = ENV['LOG_LEVEL']
   # Use log level provided on command line
@@ -31,6 +34,8 @@ end
 
 # before/after(:each/:all) can be used for setup.
 # Global blocks can be setup in Spec::Runner.configure { |c| c.before ... }
+
+require 'antfarm/database_manager'
 
 Spec::Runner.configure do |c|
   c.before(:each) do
