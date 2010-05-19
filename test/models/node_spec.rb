@@ -65,12 +65,12 @@ end
 
 describe Antfarm::Model::Node, '#destroy' do
   it 'should destroy any associated layer 2 interfaces' do
-    iface = Antfarm::Model::Layer2Interface.create
+    iface = Antfarm::Model::LayerTwoInterface.create
     id    = iface.id
-    count = Antfarm::Model::Layer2Interface.all.length
+    count = Antfarm::Model::LayerTwoInterface.all.length
     iface.node.destroy
     iface.node.destroyed?.should == true
-    Antfarm::Model::Layer2Interface.get(id).should == nil
-    Antfarm::Model::Layer2Interface.all.length.should == count - 1
+    Antfarm::Model::LayerTwoInterface.get(id).should == nil
+    Antfarm::Model::LayerTwoInterface.all.length.should == count - 1
   end
 end

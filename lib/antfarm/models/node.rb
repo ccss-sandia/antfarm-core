@@ -11,7 +11,7 @@ module Antfarm
       property :device_type,      String
       property :custom,           String
 
-      has n, :layer2_interfaces, :constraint => :destroy
+      has n, :layer_two_interfaces, :constraint => :destroy
 
       validates_present :certainty_factor
 

@@ -31,13 +31,13 @@ module Antfarm
       # create a Layer2Interface by itself, the next time I
       # create an EthernetInterface, its layer 2 interface
       # won't point back to it... <scrapcoder>
-      belongs_to :layer2_interface, :required => true
+      belongs_to :layer_two_interface, :required => true
 
       # Need to do this before validation
       # since :required => true is specified
       # on the layer 2 interface association
       # above.
-      before :valid?, :create_layer2_interface
+      before :valid?, :create_layer_two_interface
 
       # This ensures that the MAC address entered
       # is of the right format. It is called
@@ -71,8 +71,8 @@ module Antfarm
       # that hash that match variables on the node class
       # will be used to create the node created by the
       # layer 2 interface. w00t!
-      def create_layer2_interface
-        Antfarm::Helpers.log :debug, '[PRIVATE METHOD CALLED] EthernetInterface#create_layer2_interface'
+      def create_layer_two_interface
+        Antfarm::Helpers.log :debug, '[PRIVATE METHOD CALLED] EthernetInterface#create_layer_two_interface'
 
         # Only create a new layer 2 interface if
         # a layer 2 interface  model isn't already
@@ -83,7 +83,7 @@ module Antfarm
         # than created (since a layer 2 interface
         # will be automatically created and associated
         # with this model on creation).
-        self.layer2_interface ||= Antfarm::Model::Layer2Interface.create
+        self.layer_two_interface ||= Antfarm::Model::LayerTwoInterface.create
       end
     end
   end
