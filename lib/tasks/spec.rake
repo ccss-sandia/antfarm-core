@@ -1,7 +1,7 @@
 require 'spec/rake/spectask'
 
 SPEC_SUITES = [
-  { :id => :models, :title => 'models', :files => %w(test/models/*_spec.rb) }
+  { :id => :models, :title => 'models', :files => %w(spec/models/*_spec.rb) }
 ]
 
 namespace :spec do

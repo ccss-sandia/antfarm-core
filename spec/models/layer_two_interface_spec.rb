@@ -1,4 +1,4 @@
-require 'test/spec_helper'
+require 'spec/spec_helper'
 
 # Required tests for the ANTFARM Layer2Interface model:
 #
