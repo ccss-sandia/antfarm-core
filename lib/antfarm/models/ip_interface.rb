@@ -5,14 +5,14 @@ module Antfarm
 
       storage_names[:default] = 'ip_interfaces'
 
-      property :id,                       Serial
+      property :id, Serial
 
       # I turn auto_validation off here since we are manually
       # validating that an address was provided below in the
       # 'validates_with_block' declaration below. Read below
       # for why we do this manually...
-      property :address,                  String, :required => true, :auto_validation => false
-      property :custom,                   String
+      property :address, String, :required => true, :auto_validation => false
+      property :custom,  String
 
       # So right now we have a problem... currently we do NOT
       # want to create a layer 3 interface (and consequently
@@ -22,7 +22,7 @@ module Antfarm
       # an IpInterface, but not auto-validating, which will
       # allow us to validate the data given BEFORE creating
       # a new layer 3 interface. However, currently the
-      # 'belongs_to' method does not act on ':auto_validate'
+      # 'belongs_to' method does not act on ':auto_validation'
       # (it will in a future dm-validations release) so we
       # have to specify the 'layer_three_interface_id' property
       # explicitly here until the new version is out. For more
@@ -30,16 +30,11 @@ module Antfarm
       # dkubb and ccss-sandia.
       property :layer_three_interface_id, Integer, :required => true, :auto_validation => false
 
-      belongs_to :layer_three_interface #, :required => true, :auto_validate => false
+      belongs_to :layer_three_interface #, :required => true, :auto_validation => false
 
-      # This can be changed once 'belongs_to' acts on the
-      # ':auto_validate' key when it's given.
-#     before :valid?, :create_layer_three_interface
       before :create, :create_layer_three_interface
 
-      # Make sure an address is given and it is in the required format.
-#     validates_present   :address
-#     validates_format    :address,
+#     validates_format :address,
 #       :with    => %r{\A(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)(?:\.(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)){3}(?:\/[1-3]\d)?\z},
 #       :message => 'invalid IP address format'
 
@@ -50,7 +45,8 @@ module Antfarm
       # an invalid address is given the @ip_addr object
       # doesn't exist and NoMethodErrors are thrown.
       validates_with_block :address do
-        format = %r{\A(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)(?:\.(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)){3}(?:\/[1-3]\d)?\z}
+        format     = %r{\A(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)(?:\.(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)){3}(?:\/[1-3]\d)?\z}
+        @ip_addr ||= Antfarm::IPAddrExt.new(self.address) rescue nil
 
         if self.address.nil?
           [ false, 'must be present' ]
@@ -73,20 +69,6 @@ module Antfarm
         end
       end
 
-      # Overriding the address setter in order to create an instance variable for an
-      # Antfarm::IPAddrExt object @ip_addr. This way the rest of the methods in this
-      # class can confidently access the ip address for this interface.
-      #
-      # The method 'address=' is called by the constructor of this class.
-      def address=(ip_addr)
-        # Creating a new IPAddr object will throw an exception if the ip_addr
-        # passed in is in an invalid format. Rescue the error and just set
-        # the @ip_addr object to nil, along with the 'address' variable, and
-        # let validations catch the issue.
-        @ip_addr = Antfarm::IPAddrExt.new(ip_addr) rescue nil
-        attribute_set :address, @ip_addr.to_s
-      end
-
       #######
       private
       #######
@@ -99,6 +81,8 @@ module Antfarm
 
       def create_ip_network
         Antfarm::Helpers.log :debug, '[PRIVATE METHOD CALLED] IpInterface#create_ip_network'
+
+        @ip_addr ||= Antfarm::IPAddrExt.new(self.address) rescue return nil
 
         network = Antfarm::Model::LayerThreeNetwork.network_containing(@ip_addr.to_cidr_string)
         return network unless network.nil?
