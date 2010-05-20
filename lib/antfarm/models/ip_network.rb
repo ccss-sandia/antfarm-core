@@ -12,6 +12,7 @@ module Antfarm
       belongs_to :layer_three_network, :required => true
 
       before :valid?, :create_layer_three_network
+      after  :create, :merge_layer_three_networks
 
       validates_format :address,
         :with    => %r{\A(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)(?:\.(?:25[0-5]|(?:2[0-4]|1\d|[1-9])?\d)){3}(?:\/[1-3]\d)?\z},
@@ -34,6 +35,12 @@ module Antfarm
         # will be automatically created and associated
         # with this model on creation).
         self.layer_three_network ||= Antfarm::Model::LayerThreeNetwork.create
+      end
+
+      def merge_layer_three_networks
+        # Merge any existing networks already in the database that are
+        # sub_networks of this new network.
+        LayerThreeNetwork.merge(self.layer_three_network, 0.80)
       end
     end
   end

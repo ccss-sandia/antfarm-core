@@ -22,6 +22,11 @@ require 'spec/spec_helper'
 # the correct format for an IP network.
 
 describe Antfarm::Model::IpNetwork, '#create' do
+  before(:each) do
+    Antfarm::Model::IpNetwork.all.destroy
+    Antfarm::Model::LayerThreeNetwork.all.destroy
+  end
+
   it 'should fail if no address exists' do
     network = Antfarm::Model::IpNetwork.create
     network.valid?.should == false
@@ -48,7 +53,11 @@ describe Antfarm::Model::IpNetwork, '#create' do
     network.address = '192.168.101.0/24'
     network.layer_three_network = { :certainty_factor => 0.5 }
     network.save
-    network.layer_three_network.should_not == nil
+    network.valid?.should == true
+    network.saved?.should == true
+    network.layer_three_network.nil?.should == false
+    network.layer_three_network.valid?.should == true
+    network.layer_three_network.saved?.should == true
     Antfarm::Model::LayerThreeNetwork.all.length.should == count + 1
     network.layer_three_network.should == Antfarm::Model::LayerThreeNetwork.all.last
     network.layer_three_network.certainty_factor.should == 0.5
@@ -66,5 +75,15 @@ describe Antfarm::Model::IpNetwork, '#create' do
     network.save
     network.layer_three_network.should_not == nil
     network.layer_three_network.should == l3_net
+  end
+
+  it 'should gobble up any networks that are sub networks of the newly created network' do
+    network = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/29'
+    iface   = Antfarm::Model::LayerThreeInterface.create :layer_three_network => network.layer_three_network
+    new_net = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/16'
+    Antfarm::Model::LayerThreeNetwork.get(network.layer_three_network.id).should == nil
+    Antfarm::Model::IpNetwork.get(network.id).should == nil
+    Antfarm::Model::LayerThreeInterface.get(iface.id).layer_three_network.should == new_net.layer_three_network
+    new_net.layer_three_network.layer_three_interfaces.include?(iface).should == true
   end
 end
