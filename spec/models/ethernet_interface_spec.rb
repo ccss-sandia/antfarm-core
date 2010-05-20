@@ -15,9 +15,6 @@ require 'spec/spec_helper'
 # information. If a layer two interface model is supplied, the model created
 # should be associated with the supplied layer two interface model.
 #
-# The failure of a model being created should NOT stop the creation
-# of a layer two interface model. TODO: what?! Why not? <scrapcoder>
-#
 # Save
 #
 # Saving a model should require the presence of an ethernet
@@ -70,5 +67,22 @@ describe Antfarm::Model::EthernetInterface, '#create' do
     iface.save
     iface.layer_two_interface.should_not == nil
     iface.layer_two_interface.should == l2_iface
+  end
+
+  it 'should not create a new layer 2 interface if invalid' do
+    count = Antfarm::Model::LayerTwoInterface.all.length
+    iface = Antfarm::Model::EthernetInterface.create
+
+    iface.valid?.should == false
+    Antfarm::Model::LayerTwoInterface.all.length.should == count
+  end
+
+  it 'should create a new layer 2 interface if valid' do
+    count = Antfarm::Model::LayerTwoInterface.all.length
+    iface = Antfarm::Model::EthernetInterface.create :address => '00:00:00:00:00:00'
+
+    iface.valid?.should == true
+    Antfarm::Model::LayerTwoInterface.all.length.should == count + 1
+    iface.layer_two_interface.should == Antfarm::Model::LayerTwoInterface.all.last
   end
 end
