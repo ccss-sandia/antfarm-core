@@ -42,4 +42,31 @@ describe Antfarm::Model::IpInterface, '#create' do
     iface.valid?.should == false
     iface.saved?.should == false
   end
+
+  it 'should not create any new associated models if invalid' do
+    l3_iface_count = Antfarm::Model::LayerThreeInterface.all.length
+    l3_net_count   = Antfarm::Model::LayerThreeNetwork.all.length
+    ip_net_count   = Antfarm::Model::IpNetwork.all.length
+
+    iface = Antfarm::Model::IpInterface.create
+
+    iface.valid?.should == false
+    Antfarm::Model::LayerThreeInterface.all.length.should == l3_iface_count
+    Antfarm::Model::LayerThreeNetwork.all.length.should == l3_net_count
+    Antfarm::Model::IpNetwork.all.length.should == ip_net_count
+  end
+
+  it 'should create new associated models if valid' do
+    l3_iface_count = Antfarm::Model::LayerThreeInterface.all.length
+    l3_net_count   = Antfarm::Model::LayerThreeNetwork.all.length
+    ip_net_count   = Antfarm::Model::IpNetwork.all.length
+
+    iface = Antfarm::Model::IpInterface.create :address => '192.168.101.1/24'
+
+    iface.valid?.should == true
+    Antfarm::Model::LayerThreeInterface.all.length.should == l3_iface_count + 1
+    Antfarm::Model::LayerThreeNetwork.all.length.should == l3_net_count + 1
+    Antfarm::Model::IpNetwork.all.length.should == ip_net_count + 1
+    iface.layer_three_interface.should == Antfarm::Model::LayerThreeInterface.all.last
+  end
 end
