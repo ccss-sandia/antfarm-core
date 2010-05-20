@@ -29,3 +29,17 @@ require 'spec/spec_helper'
 #
 # Saving a model should not modify any information on any models associated
 # with the model.
+
+describe Antfarm::Model::IpInterface, '#create' do
+  it 'should fail if no address exists' do
+    iface = Antfarm::Model::IpInterface.create
+    iface.valid?.should == false
+    iface.saved?.should == false
+  end
+
+  it 'should fail if the address is not in IP address format' do
+    iface = Antfarm::Model::IpInterface.create :address => 'foo.bar'
+    iface.valid?.should == false
+    iface.saved?.should == false
+  end
+end
