@@ -69,3 +69,50 @@ describe Antfarm::Model::LayerThreeNetwork, '#save' do
     iface.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_TRUE
   end
 end
+
+describe Antfarm::Model::LayerThreeNetwork, '#search' do
+  before(:each) do
+    Antfarm::Model::LayerThreeNetwork.all.destroy
+    Antfarm::Model::IpNetwork.all.destroy
+  end
+
+  it 'should return any networks that are sub networks of a given network' do
+    network = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/29'
+    subs    = Antfarm::Model::LayerThreeNetwork.networks_contained_within('192.168.101.0/24')
+    subs.length.should == 1
+    subs.first.ip_network.address.should == '192.168.101.0/29'
+  end
+
+  it 'should not return any networks that are not sub networks of a given network' do
+    network = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/16'
+    subs    = Antfarm::Model::LayerThreeNetwork.networks_contained_within('192.168.101.0/24')
+    subs.each { |s| puts s.ip_network.address }
+    subs.empty?.should == true
+  end
+
+  it 'should return the network a given network is the sub network of, if one exists' do
+    network = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/16'
+    Antfarm::Model::LayerThreeNetwork.network_containing('192.168.101.0/29').ip_network.address.should == '192.168.101.0/16'
+    Antfarm::Model::LayerThreeNetwork.network_containing('10.0.0.1/16').nil?.should == true
+  end
+
+  it 'should return the network with the given address' do
+    network = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/16'
+    Antfarm::Model::LayerThreeNetwork.network_addressed('192.168.101.0/16').should == network.layer_three_network
+    # See documentation for this method in lib/antfarm/models/LayerThreeNetwork.rb
+    # to understand why this test works.
+    Antfarm::Model::LayerThreeNetwork.network_containing('192.168.101.0/29').should == network.layer_three_network
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+

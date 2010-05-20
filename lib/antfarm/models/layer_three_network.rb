@@ -86,8 +86,8 @@ module Antfarm
           raise(ArgumentError, 'nil argument supplied to LayerThreeNetwork#networks_contained_within', caller)
         end
 
-        # Don't want to require a Layer3Network to be passed in case a check is being performed
-        # before a Layer3Network is created.
+        # Don't want to require a Layer3Network to be passed in case
+        # a check is being performed before a Layer3Network is created.
         network = Antfarm::IPAddrExt.new(ip_net_str)
         sub_networks = Array.new
 
