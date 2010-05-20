@@ -19,6 +19,7 @@ namespace :spec do
       end
 
       t.spec_files = files
+      t.spec_opts  = [ '--color' ]
     end
   end
 end
