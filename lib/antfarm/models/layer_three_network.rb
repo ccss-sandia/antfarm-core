@@ -39,13 +39,17 @@ module Antfarm
             sub_network.layer_three_interfaces.each { |interface| network.layer_three_interfaces << interface }
             network.layer_three_interfaces.uniq!
 
+            # Clear out the layer 3 interfaces on the network to
+            # be destroyed such that they aren't destroyed too.
+            sub_network.layer_three_interfaces.clear
+
             # TODO: update network's certainty factor using sub_network's certainty factor.
             
             network.save
 
             # Because of :constraint => :destroy above, calling destroy
             # here will also cause destroy to be called on ip_network.
-            # Calling destroy here should NOT destroy any layer 2 interface
+            # Calling destroy here should NOT destroy any layer 3 interface
             # since they were all moved over to the network being merged to.
             sub_network.destroy
           end

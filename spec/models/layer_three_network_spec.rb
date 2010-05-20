@@ -104,15 +104,3 @@ describe Antfarm::Model::LayerThreeNetwork, '#search' do
     Antfarm::Model::LayerThreeNetwork.network_containing('192.168.101.0/29').should == network.layer_three_network
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
