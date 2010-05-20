@@ -24,6 +24,10 @@ module Antfarm
           raise(ArgumentError, 'nil argument supplied to LayerThreeNetwork#merge', caller)
         end
 
+        unless network.is_a?(Antfarm::Model::LayerThreeNetwork)
+          raise(ArgumentError, 'argument supplied to LayerThreeNetwork#merge must be LayerThreeNetwork', caller)
+        end
+
         for sub_network in self.networks_contained_within(network.ip_network.address)
           unless sub_network == network 
             unless merge_certainty_factor
