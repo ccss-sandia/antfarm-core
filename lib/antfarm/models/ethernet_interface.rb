@@ -54,7 +54,7 @@ module Antfarm
       # a layer 2 interface exists without
       # an ethernet interface, since that's
       # the default anyway?
-      validates_format :address, :with => %r{^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$},
+      validates_format :address, :with => %r{\A([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}\z},
                                  :message => 'invalid MAC address format'
 
       #######
