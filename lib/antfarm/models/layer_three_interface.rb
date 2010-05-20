@@ -11,13 +11,18 @@ module Antfarm
       property :custom,           String
 
       belongs_to :layer_two_interface, :required => true
+      belongs_to :layer_three_network, :required => true
 
       validates_present :certainty_factor
 
-      # Need to do this before validation
-      # since :required => true is specified
-      # on the layer 2 interface association
-      # above.
+      # Need to do this before validation since
+      # :required => true is specified on the
+      # layer 2 interface association above.
+      #
+      # Note that we do NOT automatically create
+      # a layer 3 network on creation. That should
+      # ALWAYS be provided to this model by the
+      # IP interface model when it's being created.
       before :valid?, :create_layer_two_interface
       before :save,   :clamp_certainty_factor
 

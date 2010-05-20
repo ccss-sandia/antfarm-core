@@ -43,17 +43,37 @@ require 'spec/spec_helper'
 
 describe Antfarm::Model::LayerThreeInterface, '#create' do
   it 'should fail if no certainty factor exists' do
-    iface = Antfarm::Model::LayerThreeInterface.create :certainty_factor => nil
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.certainty_factor = nil
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
     iface.valid?.should == false
     iface.saved?.should == false
   end
 
   it 'should clamp the certainty factor between the predefined PROVEN values' do
-    iface = Antfarm::Model::LayerThreeInterface.create :certainty_factor => 0.5
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.certainty_factor = 0.5
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
+    iface.valid?.should == true
+    iface.saved?.should == true
     iface.certainty_factor.should == 0.5
-    iface = Antfarm::Model::LayerThreeInterface.create :certainty_factor => -1.5
+
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.certainty_factor = -1.5
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
+    iface.valid?.should == true
+    iface.saved?.should == true
     iface.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_FALSE
-    iface = Antfarm::Model::LayerThreeInterface.create :certainty_factor => 1.5
+
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.certainty_factor = 1.5
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
+    iface.valid?.should == true
+    iface.saved?.should == true
     iface.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_TRUE
   end
 
@@ -77,7 +97,12 @@ end
 
 describe Antfarm::Model::LayerThreeInterface, '#save' do
   it 'should fail if no certainty factor exists' do
-    iface = Antfarm::Model::LayerThreeInterface.create
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
+    iface.valid?.should == true
+    iface.saved?.should == true
+
     iface.certainty_factor = nil
     iface.valid?.should == false
     iface.errors.length.should == 1
@@ -85,22 +110,33 @@ describe Antfarm::Model::LayerThreeInterface, '#save' do
   end
 
   it 'should clamp the certainty factor between the predefined PROVEN values' do
-    iface = Antfarm::Model::LayerThreeInterface.create
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
+    iface.valid?.should == true
     iface.saved?.should == true
+
     iface.certainty_factor = 0.5
     iface.save
     iface.certainty_factor.should == 0.5
+
     iface.certainty_factor = -1.5
     iface.save
     iface.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_FALSE
+
     iface.certainty_factor = 1.5
     iface.save
     iface.certainty_factor.should == Antfarm::Helpers::CF_PROVEN_TRUE
   end
 
   it 'should not create a new layer 2 interface model' do
-    iface = Antfarm::Model::LayerThreeInterface.create
-    id    = iface.layer_two_interface.id
+    iface = Antfarm::Model::LayerThreeInterface.new
+    iface.layer_three_network = Antfarm::Model::LayerThreeNetwork.create
+    iface.save
+    iface.valid?.should == true
+    iface.saved?.should == true
+
+    id = iface.layer_two_interface.id
     iface.certainty_factor = 0.5
     iface.save
     iface.certainty_factor.should == 0.5
