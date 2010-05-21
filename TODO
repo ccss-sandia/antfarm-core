@@ -1,5 +1,35 @@
 AS OF 05/20/2010
 
+ - Get available plugins sorted alphabetically
+ - Read in defaults from user configs - DONE by scrapcoder, 5/13/09
+ - Convert all the plugins for gosh sakes!
+ - Implement DataMapper tagging - DONE by scrapcoder, 5/11/09
+   - Need to redo this using new models (see models in orig/ for details)
+ - Test DataMapper validations - DONE by scrapcoder, 5/13/09
+   - DONE again by scrapcoder, 05/20/2010 (spec tests)
+ - Fix address functions in ip_interface and ip_network models - DONE by scrapcoder, 5/11/09
+   - Now removed, scrapcoder, 05/20/2010
+ - Modify framework class to avoid loading all plugins if not necessary
+ - Decide on tagging contexts for individual model (each model currently only has a generic 'tags' context)
+ - Add attribute accessors for each tag context in models
+ - See if a parent model class can be created to roll up the following:
+   - storage_names[:default] = <model name>
+   - property :id, Serial
+   - has_tags_on :tags
+   - attribute accessor for generic 'tags' context
+ - Create gemspec (don't forget about all the dm-* gem requirements!!!)
+ - Make sure ANTFARM and user-specified plugins don't clash
+   - First try - when loading a plugin, check to see if it's already defined.  If so, raise an error (be specific with the error!).
+ - Convert underscores in plugin names to hyphens for command line usage
+ - Figure out why :constraint => :destroy isn't working (needed for Layer3Network#merge) - DONE by scrapcoder, 5/28/09
+ - Create initializer for each class that strips out junk to be used for creating classes each class belongs to.
+   - What about a centalized DataStore? Models can check it to see if anything is set that they care about. Could make it thread safe with Mutex stuff if need be.
+   - Nah, DataMapper support the passing of a hash that describes model attributes... even nested ones. 05/20/2010
+ - Utilize new Bundler gem environment solution being used by Heroku and others
+   - In use as of 05/20/2010 - scrapcoder
+ - Ditzify! This helps to support CHANGELOGs and such.
+   - Is it possible to update GitHub Issues with Ditz information? Would be cool...
+
 lib/antfarm.rb:
   * [ 50] [TODO] If a netmask is given, should we somehow check
   * [ 70] [TODO] Error
