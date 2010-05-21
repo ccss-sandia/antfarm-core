@@ -1,0 +1,41 @@
+AS OF 05/20/2010
+
+lib/antfarm.rb:
+  * [ 50] [TODO] If a netmask is given, should we somehow check
+  * [ 70] [TODO] Error
+  * [103] [TODO] track down the IPv6 private use ranges and include them
+  * [110] [TODO] track down IPv6 localnet mask (guessing /10 for now)
+
+lib/antfarm/database_manager.rb:
+  * [ 40] [TODO] <scrapcoder>: all these 'puts' statements need to be logged rather than printed, just in case
+  * [ 49] [TODO] <scrapcoder>: can this stuff be done using the postgres gem instead?
+  * [ 66] [TODO] better error catching - not EVERY error is PostreSQL...
+
+lib/antfarm/framework.rb:
+  * [ 11] [TODO] <scrapcoder>: make it possible to only load a single plugin.
+  * [ 64] [TODO] <scrapcoder>: make it possible to load single plugin.
+  * [ 67] [TODO] <scrapcoder>: check for error raised when a plugin already exists.
+
+lib/antfarm/helpers.rb:
+  * [ 33] [TODO] 
+
+lib/antfarm/models/ip_interface.rb:
+  * [ 63] [TODO] what should we do about multiple private networks?
+
+lib/antfarm/models/ip_network.rb:
+  * [ 76] [TODO] Create private network objects.
+
+lib/antfarm/models/layer_three_network.rb:
+  * [ 46] [TODO] update network's certainty factor using sub_network's certainty factor.
+  * [ 67] [TODO] figure out how to use alias with class methods
+
+lib/antfarm/models/layer_two_interface.rb:
+  * [ 25] [TODO] be sure to write test if used!
+
+lib/antfarm/plugin.rb:
+  * [ 16] [TODO] <scrapcoder>: add 'custom/' to the front of
+  * [ 49] [TODO] <scrapcoder>: is there a better way to do this?!
+  * [ 72] [TODO] <scrapcoder>: check to see if module is already defined.
+
+lib/initializer.rb:
+  * [ 25] [TODO] Hmmm... should we vendor Bundler?! <scrapcoder>
