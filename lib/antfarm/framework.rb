@@ -40,7 +40,7 @@ module Antfarm
     end
 
     def run(options = Hash.new)
-      raise ArgumentError, 'No plugin loaded' unless @plugin
+      raise Antfarm::AntfarmError, 'No plugin loaded' unless @plugin
       if @plugin.options.nil?
         @plugin.run
       else
@@ -49,7 +49,7 @@ module Antfarm
     end
 
     def method_missing(method, *args)
-      raise ArgumentError, "Command '#{method}' not recognized"
+      raise Antfarm::AntfarmError, "Command '#{method}' not recognized"
     end
 
     #######
@@ -57,7 +57,7 @@ module Antfarm
     #######
 
     def load_plugin(plugin)
-      raise ArgumentError, 'Must supply name of one plugin to use' if plugin.nil? or plugin.empty?
+      raise Antfarm::AntfarmError, 'Must supply name of one plugin to use' if plugin.nil? or plugin.empty?
 
       @plugins ||= Hash.new
       return @plugins[plugin] if @plugins.has_key?(plugin)
