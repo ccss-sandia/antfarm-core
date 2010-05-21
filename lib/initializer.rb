@@ -60,6 +60,9 @@ module Antfarm
       # Load the Antfarm::Helpers module
       load_helpers
 
+      # Load the general Antfarm error classes
+      load_errors
+
       # Make sure an application directory exists for the current user
       Antfarm::Helpers.create_user_directory
     end
@@ -70,6 +73,10 @@ module Antfarm
 
     def load_helpers
       require 'antfarm/helpers'
+    end
+
+    def load_errors
+      require 'antfarm/errors'
     end
 
     # Currently, SQLite3 and PostgreSQL databases are the only ones supported.
