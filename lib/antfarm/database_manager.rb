@@ -6,7 +6,7 @@ module Antfarm
     def initialize(args = ARGV)
       options = parse_options(args)
       if options[:clean]
-        db_clean
+        db_clean { |m| puts m }
       elsif options[:migrate]
         db_migrate
       elsif options[:reset]
@@ -37,46 +37,85 @@ Options:
       end
     end
 
-    # TODO <scrapcoder>: all these 'puts' statements need to be logged rather than printed, just in case
-    # the command line interface isn't the one using the framework.
+    # TODO <scrapcoder>: figure out how to DRY up logging and notification block/yield code
 
     # Removes the database and log files based on the ANTFARM environment given
-    def db_clean(quiet = true)
+    def db_clean
+      message = "Deleting #{ANTFARM_ENV} log file..."
+      Antfarm::Helpers.log :info, message
+      yield message if block_given?
+
       FileUtils.rm "#{Antfarm::Helpers.log_file(ANTFARM_ENV)}" if File.exists?(Antfarm::Helpers.log_file(ANTFARM_ENV))
+
+      message = "Deleted #{ANTFARM_ENV} log file successfully."
+      Antfarm::Helpers.log :info, message
+      yield message if block_given?
+
       config = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
 
+      # TODO <scrapcoder>: can this stuff be done using the postgres gem instead?
       if config && config[ANTFARM_ENV] && config[ANTFARM_ENV]['adapter'] == 'postgres'
-        # TODO <scrapcoder>: can this stuff be done using the postgres gem instead?
-        puts "Dropping PostgreSQL #{ANTFARM_ENV} database..." unless quiet
+        message = "Dropping PostgreSQL #{ANTFARM_ENV} database..."
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
+
         exec "dropdb #{ANTFARM_ENV}"
-        puts "Dropped PostgreSQL #{ANTFARM_ENV} database successfully." unless quiet
+
+        message = "Dropped PostgreSQL #{ANTFARM_ENV} database successfully."
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
       else
-        FileUtils.rm "#{Antfarm::Helpers.db_file(ANTFARM_ENV)}"  if File.exists?(Antfarm::Helpers.db_file(ANTFARM_ENV))
+        message = "Dropping SQLite3 #{ANTFARM_ENV} database..."
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
+
+        FileUtils.rm "#{Antfarm::Helpers.db_file(ANTFARM_ENV)}" if File.exists?(Antfarm::Helpers.db_file(ANTFARM_ENV))
+
+        message = "Dropped SQLite3 #{ANTFARM_ENV} database successfully."
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
       end
     end
 
     # Creates a new database and schema file.  The location of the newly created
     # database file is set in the initializer class via the user
     # configuration hash, and is based on the current ANTFARM environment.
-    def db_migrate(quiet = true)
+    def db_migrate
       begin
-        puts 'Migrating database' unless quiet
+        message = 'Migrating database...'
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
+
         DataMapper.auto_upgrade!
-        puts 'Database successfully migrated.' unless quiet
+
+        message = 'Database successfully migrated.'
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
       rescue => e # TODO: better error catching - not EVERY error is PostreSQL...
-        puts e unless quiet
-        puts "No PostgreSQL database exists for the #{ANTFARM_ENV} environment. Creating PostgreSQL database..." unless quiet
+        yield e.message if block_given?
+
+        message = "No PostgreSQL database exists for the #{ANTFARM_ENV} environment. Creating PostgreSQL database..."
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
+
         exec "createdb #{ANTFARM_ENV}"
-        puts 'PostgreSQL database for this environment created. Continuing on with migration.' unless quiet
+
+        message = 'PostgreSQL database for this environment created. Continuing on with migration.'
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
+
         DataMapper.auto_upgrade!
-        puts 'Database successfully migrated.' unless quiet
+
+        message = 'Database successfully migrated.'
+        Antfarm::Helpers.log :info, message
+        yield message if block_given?
       end
     end
 
     # Forces a destructive migration
-    def db_reset(quiet = true)
-      db_clean(quiet)
-      db_migrate(quiet)
+    def db_reset
+      db_clean   { |m| puts m }
+      db_migrate { |m| puts m }
     end
 
     def db_console
