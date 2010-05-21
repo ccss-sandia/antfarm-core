@@ -11,7 +11,8 @@ module Antfarm
       # validating that an address was provided below in the
       # 'validates_with_block' declaration below. Read below
       # for why we do this manually...
-      property :address, String, :required => true, :auto_validation => false
+      property :address, String,  :required => true, :auto_validation => false
+      property :virtual, Boolean, :required => true, :default => false
       property :custom,  String
 
       # So right now we have a problem... currently we do NOT
