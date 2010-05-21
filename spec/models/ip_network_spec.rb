@@ -86,4 +86,11 @@ describe Antfarm::Model::IpNetwork, '#create' do
     Antfarm::Model::LayerThreeInterface.get(iface.id).layer_three_network.should == new_net.layer_three_network
     new_net.layer_three_network.layer_three_interfaces.include?(iface).should == true
   end
+
+  it 'should be marked as private if the given address is in private address space' do
+    network = Antfarm::Model::IpNetwork.create :address => '192.168.101.0/29'
+    network.valid?.should == true
+    network.saved?.should == true
+    network.private.should == true
+  end
 end

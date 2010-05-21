@@ -11,7 +11,8 @@ module Antfarm
       # validating that an address was provided below in the
       # 'validates_with_block' declaration below. Read below
       # for why we do this manually...
-      property :address, String, :required => true, :auto_validation => false
+      property :address, String,  :required => true, :auto_validation => false
+      property :private, Boolean, :required => true, :default => false
       property :custom,  String
 
       # See the IpInterface model for an explanation of why we're doing this.
@@ -20,6 +21,7 @@ module Antfarm
       belongs_to :layer_three_network #, :required => true, :auto_validation => false
 
       before :create, :create_layer_three_network
+      before :create, :set_private_address
       after  :create, :merge_layer_three_networks
 
 #     validates_format :address,
@@ -64,6 +66,15 @@ module Antfarm
         # will be automatically created and associated
         # with this model on creation).
         self.layer_three_network ||= Antfarm::Model::LayerThreeNetwork.create
+      end
+
+      def set_private_address
+        Antfarm::Helpers.log :debug, '[PRIVATE METHOD CALLED] IpNetwork#set_private_address'
+
+        @ip_net    ||= Antfarm::IPAddrExt.new(self.address) rescue return nil
+        self.private = @ip_net.private_address?
+        # TODO: Create private network objects.
+        return # if we don't do this, then a false is returned and the save fails
       end
 
       def merge_layer_three_networks
