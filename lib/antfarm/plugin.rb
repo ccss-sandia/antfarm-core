@@ -29,8 +29,10 @@ module Antfarm
       end
     end
 
-    def self.load(plugin = :all)
-      if plugin == :all
+    def self.load(plugin = nil)
+      if plugin.nil? # load them all!
+        plugins = Hash.new
+
         PLUGIN_ROOTS.each do |root|
           # dive into the root directory to look for plugins
           Find.find("#{root}/") do |path|
@@ -39,27 +41,29 @@ module Antfarm
               # only proceed if the file looks like a ruby file
               if path =~ /rb$/ and File.file?(path)
                 instance = self.load_single_plugin(path, root)
-                yield instance unless instance.nil?
+                plugins[instance.name] = instance unless instance.nil?
               end
             end
           end
         end
+
+        return plugins
       else
         begin
-          #TODO <scrapcoder>: is there a better way to do this?!
           found = false
+
           PLUGIN_ROOTS.each do |root|
             path = "#{root}/#{plugin}.rb"
+
             if File.file?(path)
-              found = true
               instance = self.load_single_plugin(path, root)
-              unless instance.nil?
-                yield instance
-                break
-              end
+              return instance unless instance.nil?
             end
           end
-          raise Antfarm::PluginExistanceError unless found
+
+          # If we get here, a plugin was never
+          # loaded and returned.
+          raise Antfarm::PluginExistanceError
         rescue Antfarm::PluginExistanceError => err
           puts "The plugin '#{plugin}' cannot be found."
           Antfarm::Helpers.log :warn, err
@@ -79,6 +83,8 @@ module Antfarm
         path.sub! /.rb/, ''
         # the name of the plugin is the full file name (directories included)
         # without everything up to and including the 'root plugins' directory
+        #
+        # NOTE at this point name now == plugin variable passed to 'load()'
         name = path.sub /^.*#{root}\//, ''
         require path.untaint
         # capitalize each of the directory names since they signify modules

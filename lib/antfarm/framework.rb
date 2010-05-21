@@ -6,14 +6,11 @@ require 'antfarm/ui'
 module Antfarm
   class Framework
     attr_reader :plugin
-    attr_reader :plugins
 
-    # TODO <scrapcoder>: make it possible to only load a single plugin.
-    # See if the plugin is already in the plugins hash, and if not,
-    # load the single plugin.
+    # If this method is ever called, ALL plugins will be
+    # loaded and cached for the duration of process.
     def plugins
-      load_plugins if @plugins.nil?
-      return @plugins
+      return @plugins ||= Antfarm::Plugin.load
     end
 
     def db(args)
@@ -34,9 +31,7 @@ module Antfarm
     end
 
     def use(plugin)
-      raise ArgumentError, 'Must supply name of one plugin to use' if plugin.nil? or plugin.empty?
-      raise ArgumentError, "#{plugin} does not exist" unless plugins.has_key?(plugin)
-      @plugin = plugins[plugin]
+      @plugin = load_plugin(plugin)
     end
 
     def back
@@ -61,13 +56,19 @@ module Antfarm
     private
     #######
 
-    # TODO <scrapcoder>: make it possible to load single plugin.
-    def load_plugins
-      @plugins = Hash.new
-      # TODO <scrapcoder>: check for error raised when a plugin already exists.
-      Antfarm::Plugin.load(:all) do |plugin|
-        @plugins[plugin.name] = plugin
-      end
+    def load_plugin(plugin)
+      raise ArgumentError, 'Must supply name of one plugin to use' if plugin.nil? or plugin.empty?
+
+      @plugins ||= Hash.new
+      return @plugins[plugin] if @plugins.has_key?(plugin)
+
+      # Load and save the plugin. An exception will be
+      # thrown if the plugin cannot be found or loaded.
+      @plugins[plugin] = Antfarm::Plugin.load(plugin)
+
+      # will not get here if plugin doesn't exist.
+      # Exception will have been thrown by now.
+      return @plugins[plugin]
     end
   end
 end
