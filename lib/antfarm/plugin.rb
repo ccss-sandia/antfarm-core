@@ -2,9 +2,9 @@ require 'antfarm/ui'
 require 'find'
 
 module Antfarm
-  class PluginExistanceError < RuntimeError; end
+  class PluginExistanceError   < RuntimeError; end
   class PluginInheritanceError < RuntimeError; end
-  class PluginOptionsError < RuntimeError; end
+  class PluginOptionsError     < RuntimeError; end
 
   class Plugin
     attr_accessor :name
@@ -127,7 +127,7 @@ module Antfarm
 
       if @options
         for option in @options
-          raise Antfarm::PluginOptionsError, 'Each option must specify a name' unless option[:name]
+          raise Antfarm::PluginOptionsError, 'Each option must specify a name'        unless option[:name]
           raise Antfarm::PluginOptionsError, 'Each option must specify a description' unless option[:desc]
           option.reject! { |k,v| !ALLOWED_OPTIONS.include?(k) }
         end
