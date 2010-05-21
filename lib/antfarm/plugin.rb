@@ -2,9 +2,9 @@ require 'antfarm/ui'
 require 'find'
 
 module Antfarm
-  class PluginExistanceError   < RuntimeError; end
-  class PluginInheritanceError < RuntimeError; end
-  class PluginOptionsError     < RuntimeError; end
+  class PluginExistanceError   < Antfarm::AntfarmError; end
+  class PluginInheritanceError < Antfarm::AntfarmError; end
+  class PluginOptionsError     < Antfarm::AntfarmError; end
 
   class Plugin
     attr_accessor :name
