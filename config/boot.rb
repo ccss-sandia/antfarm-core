@@ -20,7 +20,7 @@
 #
 # This script is modeled after the Rails boot script.
 
-ANTFARM_ROOT = (ENV['ANTFARM_ROOT'] || File.dirname(__FILE__) + "/..").dup unless defined? ANTFARM_ROOT
+ANTFARM_ROOT = (ENV['ANTFARM_ROOT'] || File.expand_path(File.dirname(__FILE__) + "/..")).dup unless defined? ANTFARM_ROOT
 
 module Antfarm
   class << self
