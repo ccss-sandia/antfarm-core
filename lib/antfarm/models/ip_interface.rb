@@ -59,6 +59,10 @@ module Antfarm
           # If the address is public and it already exists in the database, don't create
           # a new one but still create a new IP Network just in case the data given for
           # this address includes more detailed information about its network.
+          #
+          # TODO: what should we do about multiple private networks?
+          # Right now, multiple private interfaces of the same address can exist,
+          # but they will just be associated with the same private network...
           if interface = Antfarm::Model::IpInterface.find_by_address(self.address)
             create_ip_network
             [ false, "#{self.address} already exits, but a new IP network was created anyway" ]
