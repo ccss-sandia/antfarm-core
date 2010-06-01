@@ -37,7 +37,7 @@ require 'yaml'
 require 'rubygems'
 require 'trollop'
 
-require 'antfarm/framework'
+require 'antfarm/cli/framework'
 
 defaults = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
 
@@ -48,7 +48,7 @@ ENV['ANTFARM_LOG_LEVEL'] = options[:log_level]
 
 require File.dirname(__FILE__) + '/../config/environment'
 
-framework = Antfarm::Framework.new
+framework = Antfarm::CLI::Framework.new
 
 begin
   arg = ARGV.shift
@@ -62,8 +62,8 @@ begin
       framework.console ['-h']
     else
       framework.use ARGV.shift
-      framework.plugin.show_info
-      framework.plugin.show_options
+      framework.show_info
+      framework.show_options
     end
   when 'db'
     framework.db ARGV
