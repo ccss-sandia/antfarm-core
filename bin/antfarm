@@ -37,7 +37,7 @@ require 'yaml'
 require 'rubygems'
 require 'trollop'
 
-require 'antfarm/cli/framework'
+require 'antfarm/cli'
 
 defaults = YAML::load(IO.read(Antfarm::Helpers.defaults_file))
 
