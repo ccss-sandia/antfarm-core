@@ -1,13 +1,11 @@
-require 'antfarm/console'
 require 'antfarm/database_manager'
 require 'antfarm/plugin'
-require 'antfarm/ui'
 
 module Antfarm
   class Framework
     attr_reader :plugin
 
-    # If this method is ever called, ALL plugins will be
+    # If this method is called first, ALL plugins will be
     # loaded and cached for the duration of process.
     def plugins
       return @plugins ||= Antfarm::Plugin.load
@@ -15,19 +13,6 @@ module Antfarm
 
     def db(args)
       Antfarm::DatabaseManager.new(args)
-    end
-
-    def console(opts = [])
-      Antfarm::Console.new(opts)
-    end
-
-    def show
-      table        = Antfarm::UI::Console::Table.new
-      table.header = ['Plugin Name', 'Plugin Description']
-      plugins.each do |name,plugin|
-        table.add_row([name, plugin.info[:desc]])
-      end
-      table.print
     end
 
     def use(plugin)
