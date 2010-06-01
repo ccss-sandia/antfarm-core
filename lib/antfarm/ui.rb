@@ -1,1 +1,0 @@
-require 'antfarm/ui/console'
