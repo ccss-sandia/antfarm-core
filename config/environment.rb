@@ -23,7 +23,7 @@
 ANTFARM_ENV       = (ENV['ANTFARM_ENV'] || 'antfarm').dup unless defined? ANTFARM_ENV
 ANTFARM_LOG_LEVEL = (ENV['ANTFARM_LOG_LEVEL'] || 'warn').dup unless defined? ANTFARM_LOG_LEVEL
 
-require File.dirname(__FILE__) + "/boot"
+require File.dirname(__FILE__) + '/boot'
 
 Antfarm::Initializer.run do |config|
   config.log_level = ANTFARM_LOG_LEVEL

@@ -2,6 +2,10 @@ AS OF 06/01/2010
 
  - USE BLUEMONK'S IPAddress LIBRARY
    - I already forked it and added in loopback and private methods for IPv4
+ - Figure out how to tell Bunder where to find Gemfile
+   - When ANTFARM client is ran from different project, antfarm-core looks for Gemfile in
+     that project's root rather than it's own.
+   - To replicate, remove Gemfile from ANTFARM project's root directory and run 'bin/antfarm'
  - Get available plugins sorted alphabetically
  - Read in defaults from user configs - DONE by scrapcoder, 5/13/09
  - Convert all the plugins for gosh sakes!
