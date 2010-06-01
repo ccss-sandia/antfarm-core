@@ -1,5 +1,4 @@
 require 'antfarm/framework'
-require 'antfarm/cli/ui/console'
 
 module Antfarm
   module CLI
