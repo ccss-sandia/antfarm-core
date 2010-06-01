@@ -1,5 +1,5 @@
 module Antfarm
-  class CLI
+  module CLI
     class Console
       def initialize(opts = [])
         if opts.include? '-h'
