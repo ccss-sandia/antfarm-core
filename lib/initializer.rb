@@ -119,6 +119,11 @@ module Antfarm
     def load_requirements
       # This will most likely already have been required by RubyGems, but let's
       # keep it in here anyway just in case...
+      #
+      # Note that 'antfarm-core' calls for boot strapping the ANTFARM
+      # environment. However, that shouldn't lead to a circular dependency
+      # here since this 'load_requirements' method is called by the initializer
+      # 'process' method, not the boot strap's 'setup' method.
       require 'antfarm-core'
     end
   end
