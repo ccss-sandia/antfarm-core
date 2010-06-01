@@ -117,7 +117,9 @@ module Antfarm
     end
     
     def load_requirements
-      require 'antfarm'
+      # This will most likely already have been required by RubyGems, but let's
+      # keep it in here anyway just in case...
+      require 'antfarm-core'
     end
   end
 
