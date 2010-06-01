@@ -21,6 +21,8 @@
 
 require 'ipaddr'
 
+require File.dirname(__FILE__) + '/../config/boot'
+
 require 'antfarm/helpers'
 require 'antfarm/models'
 
