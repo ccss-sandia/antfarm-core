@@ -1,4 +1,3 @@
-require 'antfarm/ui'
 require 'find'
 
 module Antfarm
@@ -118,7 +117,6 @@ module Antfarm
 
     ALLOWED_INFO      = [:name, :author, :desc ]
     ALLOWED_OPTIONS   = [:name, :desc, :long, :short, :type, :default, :required]
-    DISPLAYED_OPTIONS = [:name, :desc, :type, :default, :required]
 
     attr_reader :info
     attr_reader :options
@@ -138,26 +136,6 @@ module Antfarm
           option.reject! { |k,v| !ALLOWED_OPTIONS.include?(k) }
         end
       end
-    end
-
-    def show_info
-      table        = Antfarm::UI::Console::Table.new
-      table.header = ['Plugin Info', '']
-      for key in ALLOWED_INFO
-        table.add_row([key.to_s.capitalize, @info[key].to_s])
-      end
-      table.print
-    end
-
-    def show_options
-      table        = Antfarm::UI::Console::Table.new
-      table.header = DISPLAYED_OPTIONS.map { |key| key.to_s.capitalize }
-      for option in @options
-        row = DISPLAYED_OPTIONS.map { |key| key == :name ? "--#{option[key].to_s.gsub(/_/,'-')}" : option[key].to_s }
-        table.add_row(row)
-      end
-      puts 'Plugin Options:'
-      table.print
     end
   end
 end
