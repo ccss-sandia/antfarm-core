@@ -21,7 +21,6 @@
 
 require 'ipaddr'
 
-require 'antfarm/data_store'
 require 'antfarm/helpers'
 require 'antfarm/models'
 
