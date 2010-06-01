@@ -1,5 +1,7 @@
-AS OF 05/20/2010
+AS OF 06/01/2010
 
+ - USE BLUEMONK'S IPAddress LIBRARY
+   - I already forked it and added in loopback and private methods for IPv4
  - Get available plugins sorted alphabetically
  - Read in defaults from user configs - DONE by scrapcoder, 5/13/09
  - Convert all the plugins for gosh sakes!
@@ -45,6 +47,10 @@ lib/antfarm/framework.rb:
   * [ 11] [TODO] <scrapcoder>: make it possible to only load a single plugin.
   * [ 64] [TODO] <scrapcoder>: make it possible to load single plugin.
   * [ 67] [TODO] <scrapcoder>: check for error raised when a plugin already exists.
+
+lib/antfarm/cli/framework.rb:
+  * [ 22] [TODO] <scrapcoder> - throw error if @plugin is nil
+  * [ 27] [TODO] <scrapcoder> - throw error if @plugin is nil
 
 lib/antfarm/helpers.rb:
   * [ 33] [TODO] 
