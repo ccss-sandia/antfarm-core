@@ -20,13 +20,13 @@
 #
 # This script is modeled after the Rails boot script.
 
-ANTFARM_ROOT = (ENV['ANTFARM_ROOT'] || File.expand_path(File.dirname(__FILE__) + "/..")).dup unless defined? ANTFARM_ROOT
+ANTFARM_ROOT = (ENV['ANTFARM_ROOT'] || File.expand_path(File.dirname(__FILE__) + '/..')).dup unless defined? ANTFARM_ROOT
 
 module Antfarm
   class << self
     def boot!
       unless booted?
-        require ANTFARM_ROOT + "/lib/initializer"
+        require ANTFARM_ROOT + '/lib/initializer'
         Antfarm::Initializer.run(:setup)
       end
     end
