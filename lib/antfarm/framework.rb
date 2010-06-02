@@ -1,5 +1,8 @@
 require 'antfarm/database_manager'
-require 'antfarm/plugin'
+
+# TODO: fix once 'antfarm-plugin' is a gem!
+$LOAD_PATH.unshift("#{ANTFARM_ROOT}/../antfarm-plugins/lib")
+require 'antfarm-plugins'
 
 module Antfarm
   class Framework
