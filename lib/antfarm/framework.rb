@@ -1,7 +1,6 @@
-require 'antfarm/database_manager'
+Bundler.require(:plugins)
 
-# TODO: fix once 'antfarm-plugin' is a gem!
-$LOAD_PATH.unshift("#{ANTFARM_ROOT}/../antfarm-plugins/lib")
+require 'antfarm/database_manager'
 require 'antfarm-plugins'
 
 module Antfarm
