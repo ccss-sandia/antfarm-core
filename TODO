@@ -4,6 +4,8 @@ AS OF 06/01/2010
    - I already forked it and added in loopback and private methods for IPv4
  - Move around database stuff such that command line stuff (like Trollop) is
    in antfarm and not antfarm-core.
+ - Consider using Main instead of Trollop in command line interface
+   - Can Trollop be totally removed? What about its use in database manager?
  - Re-evaluate boot strapping routine
    - Currently, Bundler.require calls have to be spread out throughout the code
      in order for things to load in the correct order. Is there a way to redo
