@@ -1,3 +1,4 @@
+require 'fileutils'
 module Antfarm
   module Helpers
     # Symbolic marker points on the fuzzy logic certainty factor scale.
