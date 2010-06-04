@@ -22,11 +22,8 @@
 
 require 'yaml'
 
-# TODO: Hmmm... should we vendor Bundler?! <scrapcoder>
 require 'rubygems'
-require 'bundler'
-
-Bundler.require(:core)
+require 'dm-core'
 
 module Antfarm
   class Initializer

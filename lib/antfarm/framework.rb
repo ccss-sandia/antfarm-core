@@ -1,4 +1,4 @@
-Bundler.require(:plugins)
+require 'antfarm-plugins'
 
 require 'antfarm/database_manager'
 require 'antfarm-plugins'

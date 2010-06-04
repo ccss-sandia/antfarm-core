@@ -1,4 +1,8 @@
-Bundler.require(:models)
+require 'data_objects'
+require 'do_sqlite3'
+
+require 'dm-constraints'
+require 'dm-validations'
 
 # require all the models
 require 'antfarm/models/ethernet_interface'
