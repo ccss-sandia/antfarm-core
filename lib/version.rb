@@ -1,5 +1,0 @@
-MAJOR    = 0
-MINOR    = 4
-REVISION = 0
-
-puts "ANTFARM Version #{MAJOR}.#{MINOR}.#{REVISION}"
