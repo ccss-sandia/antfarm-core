@@ -1,4 +1,5 @@
 require 'fileutils'
+
 module Antfarm
   module Helpers
     # Symbolic marker points on the fuzzy logic certainty factor scale.
@@ -16,8 +17,9 @@ module Antfarm
     @user_dir        = nil
     @logger_callback = nil
     class << self
-      attr_accessor :user_dir
       attr_accessor :logger_callback
+      attr_accessor :outputter
+      attr_accessor :user_dir
     end
 
     def self.clamp(x, low = CF_PROVEN_FALSE, high = CF_PROVEN_TRUE)
@@ -36,6 +38,10 @@ module Antfarm
 
     def self.timestamp
       return Time.now.utc.xmlschema
+    end
+
+    def self.output(message)
+      @outputter.puts(message) unless @outputter.nil?
     end
 
     def self.log(level, *msg)
