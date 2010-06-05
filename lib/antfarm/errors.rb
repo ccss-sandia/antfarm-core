@@ -1,7 +1,11 @@
 module Antfarm
   class AntfarmError < RuntimeError
-    def initialize(*args)
-      Antfarm::Helpers.log :error, "#{self.class}: #{args}"
+    def initialize(message)
+      super
+
+      message = "#{self.class}: #{message}"
+      Antfarm::Helpers.output("Exception: #{message}")
+      Antfarm::Helpers.log :error, message
     end
   end
 end
