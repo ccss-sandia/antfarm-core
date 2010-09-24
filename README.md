@@ -19,10 +19,6 @@ rather be part of a larger application needing ANTFARM functionality. Please
 see the ANTFARM (as opposed to the ANTFARM-CORE) library if you are looking for
 the command-line application.
 
-Also note that this library does not include any ANTFARM plugins. All plugins
-are located in the ANTFARM-PLUGINS project to better support the addition of new
-plugins by other developers without having to fork the core library.
-
 ## HOW IT WORKS
 
 At the center of the ANTFARM-CORE library is a boot-strapping and initialization
@@ -69,6 +65,68 @@ Right now, only SQLite3 is supported. As such, it is the default. Future plans
 include supporting Postgres as well, in which case different databases can be
 configured for different environments via the default settings in the .antfarm
 directory.
+
+## PLUGINS
+
+Detailed information for each plugin is provided via the ANTFARM-PLUGINS man
+page (`gem man antfarm-plugins`). Plugins included in the core library are
+located in the 'lib/antfarm/plugins/' directory, and custom plugins created by
+a user would/should be located in the '~/.antfarm/plugins' directory.
+
+## HOW TO WRITE A PLUGIN
+
+The requirements for a plugin are as follows:
+
+* Plugin must belong to the Antfarm::Plugin namespace
+* Below the Antfarm::Plugin namespace, namespacing must follow the directory
+  structure of the location of the plugin
+* Plugin must include the Antfarm::Plugin module
+* Plugin must provide a hash that describes the plugin and an array of hashes
+  that describe possible plugin options to 'super' in the constructor
+** Required description options are :name, :desc, and :author
+** Required parameter options are :name, :desc, :type, :default and :required
+* Plugin must implement a 'run' method that accepts a single hash parameter
+** The single hash parameter will contain options provided as described in the
+   constructor
+
+Here is a very simple example plugin located at 'plugins/custom/foo-bar.rb':
+
+    module Antfarm
+      module Plugin
+        module Custom
+          class FooBar
+            include Antfarm::Plugin
+
+            def initialize
+              super( { :name => 'Foo Bar Plugin',
+                       :desc => 'This plugin does nothing',
+                       :author => 'Me <me@you.com>' },
+                    [{ :name => :input_file,
+                       :desc => 'File that has data in it',
+                       :type => String,
+                       :required => true },
+                     { :name => :use,
+                       :desc => 'To use or not to use' }
+                   ])
+            end
+
+            def run(options)
+              # options[:input_file] will contain a string
+              # options[:use] will either be true or false, depending on whether or
+              # not the user provided the flag
+              
+              # TODO: do something!
+              # Database models can be used like so:
+              #   Antfarm::Model::IpInterface.create :address => 'w.x.y.z'
+            end
+          end
+        end
+      end
+    end
+
+Note that for optional parameters, if a type is not provided it is assumed to be
+a flag (true if the flag is provided, false if not). Obviously the default will
+be false and it is not required.
 
 ## VERSIONING INFORMATION
 
