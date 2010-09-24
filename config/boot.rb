@@ -26,7 +26,7 @@ module Antfarm
   class << self
     def boot!
       unless booted?
-        require ANTFARM_ROOT + '/lib/initializer'
+        require ANTFARM_ROOT + '/lib/antfarm/initializer'
         Antfarm::Initializer.run(:setup)
       end
     end
