@@ -35,6 +35,7 @@ require File.dirname(__FILE__) + '/../config/boot'
 
 require 'antfarm/helpers'
 require 'antfarm/models'
+require 'antfarm/version'
 
 module Antfarm
   # Some explanation to having @netmask and such:

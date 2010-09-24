@@ -35,6 +35,10 @@ module Antfarm
   class Framework
     attr_reader :plugin
 
+    def version
+      return Antfarm.version
+    end
+
     # If this method is called first, ALL plugins will be
     # loaded and cached for the duration of process.
     def plugins
