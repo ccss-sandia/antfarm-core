@@ -1,4 +1,4 @@
-require 'antfarm-plugins'
+require 'antfarm/plugin'
 
 module Antfarm
   class Framework
