@@ -21,7 +21,7 @@ if level = ENV['LOG_LEVEL']
   # Use log level provided on command line
   LOGGER.level = eval("Logger::#{level.upcase}") 
 else
-  LOGGER.level = Logger::INFO
+  LOGGER.level = Logger::WARN
 end
 
 Antfarm::Helpers.logger_callback = lambda do |level,msg|
@@ -31,13 +31,13 @@ end
 # before/after(:each/:all) can be used for setup.
 # Global blocks can be setup in Spec::Runner.configure { |c| c.before ... }
 
-require 'antfarm/database_manager'
+require 'antfarm/framework'
 
 Spec::Runner.configure do |c|
   c.before(:each) do
-    # Use DBManager interface to reset the database. This
+    # Use the Antfarm framework to reset the database. This
     # is using the test database due to the ANTFARM_ENV
     # declaration at the top of this file.
-    Antfarm::DatabaseManager.new(['-r'])
+    Antfarm::Framework.new.reset_db
   end
 end
