@@ -19,14 +19,25 @@ rather be part of a larger application needing ANTFARM functionality. Please
 see the ANTFARM (as opposed to the ANTFARM-CORE) library if you are looking for
 the command-line application.
 
-## NOTICE OF REGRESSION IN FUNCTIONALITY
+## STATUS OF BETA RELEASE
 
-Please note that  not all of the database models and plugins available in
-version 0.4.0 are available in version 0.5.0. This decision was made in
-support of getting version 0.5.0 released early such that users could become
-familiar with the new API and command-line interface. As the existing models and
-plugins get moved over from version 0.4.0, the minor version number will be
-increased.
+Please note that not all of the database models and plugins available in
+version 0.4.0 are available in the beta release of version 0.5.0. The 'beta'
+status will be removed once all the functionality available in version 0.4.0 is
+implemented in version 0.5.0.
+
+The database models not yet available in the beta release of version 0.5.0 are:
+
+* Action
+* DnsEntry
+* OperatingSystem
+* PrivateNetwork
+* Service
+* Traffic
+
+Note that in order to install a pre-release version of a gem (such as the beta
+version of ANTFARM 0.5.0), you must specify the --pre-release option when using
+'gem install' along with the full version name (i.e. --version 0.5.0.beta).
 
 ## HOW IT WORKS
 
