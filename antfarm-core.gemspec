@@ -31,7 +31,7 @@
 
 Gem::Specification.new do |s| 
   s.name          = %q{antfarm-core}
-  s.version       = '0.5.0.beta'
+  s.version       = '0.5.0.beta1'
   s.authors       = ['Bryan T. Richardson']
   s.email         = %q{scada@sandia.gov}
   s.date          = %q{2010-09-27}
@@ -51,9 +51,9 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.has_rdoc      = false
 
-  s.add_dependency 'dm-core'
-  s.add_dependency 'data_objects'
-  s.add_dependency 'do_sqlite3'
-  s.add_dependency 'dm-constraints'
-  s.add_dependency 'dm-validations'
+  s.add_dependency 'dm-core',        '0.10.2'
+  s.add_dependency 'data_objects',   '0.10.2'
+  s.add_dependency 'do_sqlite3',     '0.10.2'
+  s.add_dependency 'dm-constraints', '0.10.2'
+  s.add_dependency 'dm-validations', '0.10.2'
 end
